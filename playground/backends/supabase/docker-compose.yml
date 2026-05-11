@@ -1,1 +1,58 @@
-services: {}
+services:
+  supabase_db:
+    image: supabase/postgres:15.1.0.117
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pilota
+      POSTGRES_DB: pilota_supabase
+      POSTGRES_USER: pilota
+    volumes:
+      - ./migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql
+      - ./seed.sql:/docker-entrypoint-initdb.d/002_seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pilota -d pilota_supabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  supabase_rest:
+    image: postgrest/postgrest:v12.0.2
+    environment:
+      PGRST_DB_URI: postgres://pilota:pilota@supabase_db:5432/pilota_supabase
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    depends_on:
+      supabase_db:
+        condition: service_healthy
+
+  supabase_realtime:
+    image: supabase/realtime:v2.25.35
+    environment:
+      DB_HOST: supabase_db
+      DB_PORT: "5432"
+      DB_USER: pilota
+      DB_PASSWORD: pilota
+      DB_NAME: pilota_supabase
+      DB_SSL: "false"
+      JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      REPLICATION_MODE: RLS
+      REPLICATION_POLL_INTERVAL: "100"
+      SECURE_CHANNELS: "false"
+      SLOT_NAME: supabase_realtime
+      TEMPORARY_SLOT: "true"
+    depends_on:
+      supabase_db:
+        condition: service_healthy
+
+  supabase_gateway:
+    image: nginx:alpine
+    ports:
+      - "54321:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - supabase_rest
+      - supabase_realtime
