@@ -1,0 +1,13 @@
+{
+    "name": "pilota",
+    "private": true,
+    "scripts": {
+        "build": "pnpm -r build",
+        "test": "pnpm -r test",
+        "lint": "pnpm -r lint",
+        "dev": "pnpm --filter playground-nuxt dev"
+    },
+    "devDependencies": {
+        "typescript": "^5.5.0"
+    }
+}

@@ -1,0 +1,4 @@
+include:
+  - playground/backends/laravel/docker-compose.yml
+  - playground/backends/nhost/docker-compose.yml
+  - playground/backends/supabase/docker-compose.yml
