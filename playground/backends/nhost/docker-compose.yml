@@ -1,1 +1,30 @@
-services: {}
+services:
+  nhost_hasura:
+    image: hasura/graphql-engine:v2.36.0
+    ports:
+      - "8080:8080"
+      - "1337:8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://pilota:pilota@nhost_db:5432/pilota_nhost
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: pilota-admin-secret
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public
+      HASURA_GRAPHQL_STRINGIFY_NUMERIC_TYPES: "true"
+    depends_on:
+      nhost_db:
+        condition: service_healthy
+
+  nhost_db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: pilota_nhost
+      POSTGRES_USER: pilota
+      POSTGRES_PASSWORD: pilota
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pilota -d pilota_nhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
