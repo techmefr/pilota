@@ -1,4 +1,4 @@
-import type { AnyResource, PilotaConfig, PilotaDriver, PilotaSDK } from './types.ts'
+import type { PilotaConfig, PilotaDriver, PilotaSDK } from './types.ts'
 
 export function createPilota<TDrivers extends Record<string, PilotaDriver>>(
     config: PilotaConfig<TDrivers>,
@@ -7,7 +7,7 @@ export function createPilota<TDrivers extends Record<string, PilotaDriver>>(
 
     for (const key in config.drivers) {
         const driver = config.drivers[key]
-        sdk[key] = createDriverProxy(driver) as TDrivers[typeof key]
+        sdk[key] = createDriverProxy(driver) as PilotaSDK<TDrivers>[typeof key]
     }
 
     return sdk
@@ -32,7 +32,7 @@ function createResourceProxy(driver: PilotaDriver, resourceName: string): unknow
         {
             get(_target, methodName: string) {
                 return (payload?: unknown, onEvent?: unknown, mock?: unknown) => {
-                    const method = (driver as Record<string, unknown>)[methodName]
+                    const method = (driver as unknown as Record<string, unknown>)[methodName]
 
                     if (typeof method !== 'function') {
                         throw new Error(

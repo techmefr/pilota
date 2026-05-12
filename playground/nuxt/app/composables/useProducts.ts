@@ -16,15 +16,18 @@ const products = ref<Product[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 
+type ProductsApi = { query: (p: object) => Promise<NhostQueryResult<{ products: Product[] }>> }
+const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
+
 export function useProducts() {
     async function fetchProducts(): Promise<void> {
         isLoading.value = true
         error.value = null
         try {
-            const result = await sdk.nhost.products.query({}) as NhostQueryResult<{ products: Product[] }>
+            const result = await productsApi.query({})
             products.value = result.data?.products ?? []
         } catch {
-            error.value = 'Impossible de charger le catalogue'
+            error.value = 'Unable to load catalog'
         } finally {
             isLoading.value = false
         }

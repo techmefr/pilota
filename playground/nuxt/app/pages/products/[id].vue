@@ -16,9 +16,9 @@ const isAdded = ref(false)
 onMounted(async () => {
     try {
         product.value = await findProduct(id.value)
-        if (product.value === null) error.value = t('Product not found')
+        if (product.value === null) error.value = t.value('Product not found')
     } catch {
-        error.value = t('Error loading product')
+        error.value = t.value('Error loading product')
     } finally {
         isLoading.value = false
     }

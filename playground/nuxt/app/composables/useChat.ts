@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import type { PilotaEventHandler } from '@pilota/core'
 import { sdk } from '../utils/sdk'
 
 export type ChatMessage = {
@@ -12,20 +13,28 @@ const messages = ref<ChatMessage[]>([])
 const isConnected = ref(false)
 let cleanup: (() => void) | null = null
 
+type MessagesApi = {
+    subscribe: (p: object, handler: PilotaEventHandler) => () => void
+    insert: (p: object) => Promise<unknown>
+}
+const messagesApi = (sdk.supabase as unknown as { messages: MessagesApi }).messages
+
 export function useChat() {
     function connect(): void {
         if (cleanup !== null) return
-        cleanup = sdk.supabase.messages.subscribe(
+        cleanup = messagesApi.subscribe(
             { room_id: 'sav' },
             (event, data) => {
                 if (event === 'connected') isConnected.value = true
                 if (event === 'data' && data) {
-                    const msg = data as ChatMessage
-                    if (msg.author !== 'client') messages.value.push(msg)
+                    const payload = data as { eventType: string; new: ChatMessage }
+                    if (payload.eventType === 'INSERT' && payload.new.author !== 'client') {
+                        messages.value.push(payload.new)
+                    }
                 }
                 if (event === 'disconnected') isConnected.value = false
             },
-        ) as () => void
+        )
     }
 
     function disconnect(): void {
@@ -41,7 +50,7 @@ export function useChat() {
             created_at: new Date().toISOString(),
         }
         messages.value.push(msg)
-        await sdk.supabase.messages.insert({
+        await messagesApi.insert({
             room_id: 'sav',
             content,
             author: 'client',
