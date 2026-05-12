@@ -43,6 +43,8 @@ export type PilotaConfig<TDrivers extends Record<string, PilotaDriver>> = {
     drivers: TDrivers
 }
 
+export type ResourceProxy = Record<string, (...args: unknown[]) => unknown>
+
 export type PilotaSDK<TDrivers extends Record<string, PilotaDriver>> = {
-    [K in keyof TDrivers]: TDrivers[K]
+    [K in keyof TDrivers]: TDrivers[K] & Record<string, ResourceProxy>
 }

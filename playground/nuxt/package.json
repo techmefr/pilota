@@ -1,0 +1,22 @@
+{
+    "name": "playground-nuxt",
+    "private": true,
+    "scripts": {
+        "dev": "nuxt dev",
+        "build": "nuxt build",
+        "preview": "nuxt preview"
+    },
+    "dependencies": {
+        "@pilota/core": "workspace:*",
+        "@pilota/driver-lomkit": "workspace:*",
+        "@pilota/driver-nhost": "workspace:*",
+        "@pilota/driver-supabase": "workspace:*",
+        "@pilota/hooks": "workspace:*",
+        "miragejs": "^0.1.47",
+        "nuxt": "^3.15.0",
+        "vue": "^3.5.0",
+        "vuetify": "^3.7.0",
+        "vuetify-nuxt-module": "^0.18.0",
+        "zod": "^3.23.8"
+    }
+}
