@@ -1,70 +1,111 @@
 <script setup lang="ts">
-const pocs = [
-    {
-        to: '/poc-1-driver',
-        title: 'POC 1 — Driver + chainage',
-        subtitle: 'Deux drivers coexistent, chainage typé, zéro any',
-        icon: 'mdi-transit-connection-variant',
-    },
-    {
-        to: '/poc-2-resource',
-        title: 'POC 2 — Resource + schema',
-        subtitle: 'defineResource, Zod, fragments GraphQL',
-        icon: 'mdi-database-outline',
-    },
-    {
-        to: '/poc-3-payload',
-        title: 'POC 3 — Payload Builder',
-        subtitle: 'Seul le delta est envoyé, pas tout le formulaire',
-        icon: 'mdi-delta',
-    },
-    {
-        to: '/poc-4-mock',
-        title: 'POC 4 — Mock',
-        subtitle: 'Mock par appel, mock invalide, toggle',
-        icon: 'mdi-test-tube',
-    },
-    {
-        to: '/poc-5-events',
-        title: 'POC 5 — Moteur d\'events',
-        subtitle: 'request / success / error, local vs global hooks',
-        icon: 'mdi-lightning-bolt',
-    },
-    {
-        to: '/poc-6-subscription',
-        title: 'POC 6 — Subscriptions',
-        subtitle: 'Realtime Nhost + Supabase, cleanup',
-        icon: 'mdi-wifi',
-    },
-    {
-        to: '/poc-7-form',
-        title: 'POC 7 — defineForm',
-        subtitle: 'useResourceForm, isDirty, erreurs Vuetify, reset',
-        icon: 'mdi-form-select',
-    },
-]
+import { computed, onMounted, ref } from 'vue'
+import { useCart } from '../composables/useCart'
+import { useProducts } from '../composables/useProducts'
+
+const { products, categories, isLoading, error, fetchProducts } = useProducts()
+const { count, addItem } = useCart()
+
+const activeCategory = ref<string | null>(null)
+const addedIds = ref<Set<number>>(new Set())
+
+const filtered = computed(() =>
+    activeCategory.value === null
+        ? products.value
+        : products.value.filter(p => p.category === activeCategory.value),
+)
+
+async function handleAddToCart(product: Parameters<typeof addItem>[0]): Promise<void> {
+    await addItem(product)
+    addedIds.value.add(product.id)
+    setTimeout(() => addedIds.value.delete(product.id), 1500)
+}
+
+onMounted(fetchProducts)
 </script>
 
 <template>
-    <div data-test-id="page-index">
-        <h1 class="text-h4 font-weight-bold mb-2">Pilota POC</h1>
-        <p class="text-medium-emphasis mb-6">
-            SDK Driver-Based Architecture — <code>sdk.[driver].[resource].[method](payload?, onEvent?, mock?)</code>
-        </p>
+    <div data-test-id="page-catalog">
+        <v-container fluid class="py-8 px-6">
+            <div class="mb-8">
+                <h1 class="text-h4 font-weight-bold mb-1">Catalogue</h1>
+                <p class="text-medium-emphasis">
+                    Produits via
+                    <code class="text-primary">sdk.nhost.products.query()</code>
+                    — GraphQL Hasura
+                </p>
+            </div>
 
-        <v-list data-test-id="poc-list" lines="two" class="rounded border">
-            <template v-for="(poc, i) in pocs" :key="poc.to">
-                <v-list-item
-                    :to="poc.to"
-                    :prepend-icon="poc.icon"
-                    :title="poc.title"
-                    :subtitle="poc.subtitle"
-                    :data-test-class="'poc-item'"
-                    :data-test-id="`poc-item-${i + 1}`"
-                    nav
-                />
-                <v-divider v-if="i < pocs.length - 1" />
+            <div v-if="isLoading" data-test-id="catalog-loading">
+                <v-row>
+                    <v-col v-for="n in 6" :key="n" cols="12" sm="6" md="4" lg="3">
+                        <v-skeleton-loader type="card" />
+                    </v-col>
+                </v-row>
+            </div>
+
+            <div v-else-if="error !== null" data-test-id="catalog-error" class="text-center py-12">
+                <v-icon size="64" color="error" class="mb-4">mdi-wifi-off</v-icon>
+                <p class="text-body-1 text-medium-emphasis mb-4">{{ error }}</p>
+                <v-btn color="primary" variant="tonal" prepend-icon="mdi-refresh" @click="fetchProducts">
+                    Réessayer
+                </v-btn>
+            </div>
+
+            <template v-else>
+                <div v-if="categories.length > 0" class="d-flex gap-2 flex-wrap mb-6">
+                    <v-chip
+                        :variant="activeCategory === null ? 'flat' : 'tonal'"
+                        :color="activeCategory === null ? 'primary' : 'default'"
+                        data-test-id="filter-all"
+                        @click="activeCategory = null"
+                    >
+                        Tous ({{ products.length }})
+                    </v-chip>
+                    <v-chip
+                        v-for="cat in categories"
+                        :key="cat"
+                        :variant="activeCategory === cat ? 'flat' : 'tonal'"
+                        :color="activeCategory === cat ? 'primary' : 'default'"
+                        :data-test-class="'filter-category'"
+                        :data-test-id="`filter-${cat}`"
+                        @click="activeCategory = cat"
+                    >
+                        {{ cat }}
+                    </v-chip>
+                </div>
+
+                <div v-if="filtered.length === 0" data-test-id="catalog-empty" class="text-center py-12">
+                    <v-icon size="64" color="medium-emphasis" class="mb-4">mdi-package-variant-closed</v-icon>
+                    <p class="text-body-1 text-medium-emphasis">Aucun produit disponible</p>
+                </div>
+
+                <v-row v-else data-test-id="product-grid">
+                    <v-col
+                        v-for="product in filtered"
+                        :key="product.id"
+                        cols="12"
+                        sm="6"
+                        md="4"
+                        lg="3"
+                    >
+                        <ProductCard
+                            :product="product"
+                            @add-to-cart="handleAddToCart"
+                        />
+                    </v-col>
+                </v-row>
             </template>
-        </v-list>
+        </v-container>
+
+        <v-snackbar
+            :model-value="count > 0 && addedIds.size > 0"
+            color="success"
+            timeout="1500"
+            location="bottom left"
+        >
+            <v-icon class="mr-2">mdi-check-circle</v-icon>
+            Produit ajouté au panier
+        </v-snackbar>
     </div>
 </template>
