@@ -33,6 +33,13 @@ export default defineNuxtConfig({
         },
     },
 
+    runtimeConfig: {
+        public: {
+            tolgeeApiUrl: '',
+            tolgeeApiKey: '',
+        },
+    },
+
     future: {
         compatibilityVersion: 4,
     },

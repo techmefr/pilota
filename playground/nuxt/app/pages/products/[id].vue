@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useTranslate } from '@tolgee/vue'
+
 const route = useRoute()
 const id = computed(() => parseInt(route.params.id as string))
 
 const { findProduct } = useProducts()
 const { addItem } = useCart()
+const { t } = useTranslate()
 
 const product = ref<Awaited<ReturnType<typeof findProduct>>>(null)
 const isLoading = ref(true)
@@ -13,9 +16,9 @@ const isAdded = ref(false)
 onMounted(async () => {
     try {
         product.value = await findProduct(id.value)
-        if (product.value === null) error.value = 'Produit introuvable'
+        if (product.value === null) error.value = t('Product not found')
     } catch {
-        error.value = 'Erreur lors du chargement du produit'
+        error.value = t('Error loading product')
     } finally {
         isLoading.value = false
     }
@@ -53,7 +56,7 @@ const categoryIcon = computed(() => {
             size="small"
             class="mb-8 text-medium-emphasis"
         >
-            Retour au catalogue
+            {{ t('Back to catalog') }}
         </v-btn>
 
         <div v-if="isLoading" class="text-center py-16">
@@ -64,7 +67,7 @@ const categoryIcon = computed(() => {
             <v-icon size="64" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
             <h2 class="text-h5 mb-6">{{ error }}</h2>
             <v-btn to="/" color="primary" variant="tonal" prepend-icon="mdi-arrow-left">
-                Retour au catalogue
+                {{ t('Back to catalog') }}
             </v-btn>
         </div>
 
@@ -79,7 +82,7 @@ const categoryIcon = computed(() => {
                                 variant="tonal"
                             >
                                 <v-icon start size="16">mdi-package-variant</v-icon>
-                                {{ product.stock > 0 ? `${product.stock} en stock` : 'Rupture de stock' }}
+                                {{ product.stock > 0 ? t('{stock} in stock', { stock: product.stock }) : t('Out of stock') }}
                             </v-chip>
                         </div>
                     </div>
@@ -94,7 +97,7 @@ const categoryIcon = computed(() => {
                 <h1 class="text-h4 font-weight-bold mb-4">{{ product.name }}</h1>
 
                 <p class="text-body-1 text-medium-emphasis mb-8" style="line-height: 1.7;">
-                    {{ product.description || 'Aucune description disponible pour ce produit.' }}
+                    {{ product.description || t('No description available.') }}
                 </p>
 
                 <div class="price-block mb-8">
@@ -113,7 +116,7 @@ const categoryIcon = computed(() => {
                         :prepend-icon="isAdded ? 'mdi-check' : 'mdi-cart-plus'"
                         @click="handleAddToCart"
                     >
-                        {{ isAdded ? 'Ajouté au panier !' : 'Ajouter au panier' }}
+                        {{ isAdded ? t('Added to cart!') : t('Add to cart') }}
                     </v-btn>
 
                     <v-btn
@@ -124,7 +127,7 @@ const categoryIcon = computed(() => {
                         block
                         prepend-icon="mdi-cart-outline"
                     >
-                        Voir le panier
+                        {{ t('View cart') }}
                     </v-btn>
                 </div>
             </v-col>

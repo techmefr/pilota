@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useCart } from '../composables/useCart'
+import { useTranslate } from '@tolgee/vue'
 
 const { items, count, total, isLoading, loadCart, removeItem, updateQuantity } = useCart()
+const { t } = useTranslate()
 
 onMounted(loadCart)
 
@@ -14,12 +14,14 @@ function formatPrice(n: number): string {
 <template>
     <v-container class="py-8" data-test-id="page-cart">
         <div class="d-flex align-center gap-3 mb-6">
-            <h1 class="text-h4 font-weight-bold">Panier</h1>
-            <v-chip v-if="count > 0" color="primary" size="small">{{ count }} article{{ count > 1 ? 's' : '' }}</v-chip>
+            <h1 class="text-h4 font-weight-bold">{{ t('Cart') }}</h1>
+            <v-chip v-if="count > 0" color="primary" size="small">
+                {{ count > 1 ? t('{count} items', { count }) : t('{count} item', { count }) }}
+            </v-chip>
         </div>
 
         <p class="text-medium-emphasis mb-6 text-body-2">
-            Géré via <code class="text-primary">sdk.lomkit.cartItems.get/mutate/delete()</code> — REST Laravel
+            <code class="text-primary">sdk.lomkit.cartItems.get/mutate/delete()</code> — REST Laravel
         </p>
 
         <div v-if="isLoading" data-test-id="cart-loading" class="text-center py-12">
@@ -42,7 +44,7 @@ function formatPrice(n: number): string {
                                     {{ item.product_name }}
                                 </v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ formatPrice(item.unit_price) }} / unité
+                                    {{ formatPrice(item.unit_price) }} {{ t('per unit') }}
                                 </v-list-item-subtitle>
 
                                 <template #append>
@@ -85,7 +87,7 @@ function formatPrice(n: number): string {
 
             <v-col cols="12" md="4">
                 <v-card variant="outlined" data-test-id="order-summary">
-                    <v-card-title class="text-body-1 font-weight-medium">Récapitulatif</v-card-title>
+                    <v-card-title class="text-body-1 font-weight-medium">{{ t('Summary') }}</v-card-title>
                     <v-card-text>
                         <div
                             v-for="item in items"
@@ -99,7 +101,7 @@ function formatPrice(n: number): string {
                         <v-divider class="my-3" />
 
                         <div class="d-flex justify-space-between text-body-1 font-weight-bold">
-                            <span>Total</span>
+                            <span>{{ t('Total') }}</span>
                             <span data-test-id="cart-total" class="text-primary">{{ formatPrice(total) }}</span>
                         </div>
                     </v-card-text>
@@ -113,7 +115,7 @@ function formatPrice(n: number): string {
                             size="large"
                             prepend-icon="mdi-lock-outline"
                         >
-                            Commander
+                            {{ t('Checkout') }}
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -122,10 +124,10 @@ function formatPrice(n: number): string {
 
         <div v-else data-test-id="cart-empty" class="text-center py-16">
             <v-icon size="80" color="medium-emphasis" class="mb-4">mdi-cart-outline</v-icon>
-            <h2 class="text-h5 mb-2">Panier vide</h2>
-            <p class="text-medium-emphasis mb-6">Ajoutez des produits depuis le catalogue</p>
+            <h2 class="text-h5 mb-2">{{ t('Empty cart') }}</h2>
+            <p class="text-medium-emphasis mb-6">{{ t('Add products from the catalog') }}</p>
             <v-btn color="primary" variant="tonal" to="/" prepend-icon="mdi-arrow-left">
-                Retour au catalogue
+                {{ t('Back to catalog') }}
             </v-btn>
         </div>
     </v-container>

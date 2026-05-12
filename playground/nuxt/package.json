@@ -18,6 +18,8 @@
         "@pilota/driver-nhost": "workspace:*",
         "@pilota/driver-supabase": "workspace:*",
         "@pilota/hooks": "workspace:*",
+        "@tolgee/vue": "^7.0.0",
+        "@tolgee/web": "^7.0.0",
         "miragejs": "^0.1.47",
         "nuxt": "^3.15.0",
         "vue": "^3.5.0",

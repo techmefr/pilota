@@ -1,5 +1,14 @@
 <script setup lang="ts">
+import { useTranslate, useTolgee } from '@tolgee/vue'
+
 const { count } = useCart()
+const { t } = useTranslate()
+const tolgee = useTolgee(['language'])
+const currentLang = computed(() => tolgee.value.getLanguage() ?? 'en')
+
+function setLanguage(lang: string): void {
+    tolgee.value.changeLanguage(lang)
+}
 </script>
 
 <template>
@@ -13,10 +22,29 @@ const { count } = useCart()
                 </NuxtLink>
 
                 <v-btn to="/" variant="text" size="small" class="text-medium-emphasis">
-                    Catalogue
+                    {{ t('Catalog') }}
                 </v-btn>
 
                 <v-spacer />
+
+                <v-btn-group density="compact" variant="tonal" color="surface-variant" class="mr-3 lang-switcher">
+                    <v-btn
+                        size="small"
+                        :color="currentLang === 'en' ? 'primary' : undefined"
+                        :variant="currentLang === 'en' ? 'flat' : 'text'"
+                        @click="setLanguage('en')"
+                    >
+                        EN
+                    </v-btn>
+                    <v-btn
+                        size="small"
+                        :color="currentLang === 'fr' ? 'primary' : undefined"
+                        :variant="currentLang === 'fr' ? 'flat' : 'text'"
+                        @click="setLanguage('fr')"
+                    >
+                        FR
+                    </v-btn>
+                </v-btn-group>
 
                 <v-btn
                     data-test-id="nav-cart"
@@ -45,7 +73,7 @@ const { count } = useCart()
                 <div class="d-flex align-center justify-space-between flex-wrap gap-3">
                     <p class="text-caption text-medium-emphasis">
                         <span class="font-weight-medium text-on-surface">Pilota POC</span> —
-                        sdk.[driver].[resource].[method]() unifié sur GraphQL, REST et WebSocket
+                        {{ t('Pilota POC — sdk.[driver].[resource].[method]() unified over GraphQL, REST and WebSocket') }}
                     </p>
                     <div class="d-flex gap-2">
                         <v-chip size="x-small" variant="tonal" color="primary" label>GraphQL</v-chip>
@@ -59,3 +87,10 @@ const { count } = useCart()
         <ChatWidget />
     </v-app>
 </template>
+
+<style scoped>
+.lang-switcher {
+    border-radius: 8px;
+    overflow: hidden;
+}
+</style>

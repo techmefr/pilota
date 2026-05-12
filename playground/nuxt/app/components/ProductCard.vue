@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useTranslate } from '@tolgee/vue'
 import type { Product } from '../composables/useProducts'
 
 defineProps<{ product: Product }>()
 defineEmits<{ addToCart: [product: Product] }>()
+
+const { t } = useTranslate()
 
 const CATEGORY_ICONS: Record<string, string> = {
     Informatique: 'mdi-laptop',
@@ -59,7 +62,7 @@ const CATEGORY_ICONS: Record<string, string> = {
                 size="x-small"
                 variant="tonal"
             >
-                {{ product.stock > 0 ? `${product.stock} en stock` : 'Rupture' }}
+                {{ product.stock > 0 ? t('{stock} in stock', { stock: product.stock }) : t('Out of stock') }}
             </v-chip>
 
             <v-spacer />
@@ -73,7 +76,7 @@ const CATEGORY_ICONS: Record<string, string> = {
                 prepend-icon="mdi-cart-plus"
                 @click="$emit('addToCart', product)"
             >
-                Ajouter
+                {{ t('Add') }}
             </v-btn>
         </v-card-actions>
     </v-card>

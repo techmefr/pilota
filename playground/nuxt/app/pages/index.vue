@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useTranslate } from '@tolgee/vue'
+
 const { products, categories, isLoading, error, fetchProducts } = useProducts()
 const { count, addItem } = useCart()
+const { t } = useTranslate()
 
 const activeCategory = ref<string | null>(null)
 const addedIds = ref<Set<number>>(new Set())
@@ -28,10 +31,10 @@ onMounted(fetchProducts)
                     sdk.nhost.products.query() — GraphQL Hasura
                 </v-chip>
                 <h1 class="text-h3 font-weight-black mb-4 text-on-surface">
-                    Découvrez notre <span class="text-gradient">catalogue</span>
+                    {{ t('Discover our') }} <span class="text-gradient">{{ t('catalog') }}</span>
                 </h1>
                 <p class="text-body-1 text-medium-emphasis mx-auto" style="max-width: 480px;">
-                    Les meilleures tech, gérées via une architecture driver-based unifiée.
+                    {{ t('The best tech, managed via a unified driver-based architecture.') }}
                 </p>
             </v-container>
         </div>
@@ -49,7 +52,7 @@ onMounted(fetchProducts)
                 <v-icon size="64" color="error" class="mb-4">mdi-wifi-off</v-icon>
                 <p class="text-body-1 text-medium-emphasis mb-4">{{ error }}</p>
                 <v-btn color="primary" variant="tonal" prepend-icon="mdi-refresh" @click="fetchProducts">
-                    Réessayer
+                    {{ t('Retry') }}
                 </v-btn>
             </div>
 
@@ -61,7 +64,7 @@ onMounted(fetchProducts)
                         data-test-id="filter-all"
                         @click="activeCategory = null"
                     >
-                        Tous ({{ products.length }})
+                        {{ t('All ({count})', { count: products.length }) }}
                     </v-chip>
                     <v-chip
                         v-for="cat in categories"
@@ -78,7 +81,7 @@ onMounted(fetchProducts)
 
                 <div v-if="filtered.length === 0" data-test-id="catalog-empty" class="text-center py-16">
                     <v-icon size="64" color="medium-emphasis" class="mb-4">mdi-package-variant-closed</v-icon>
-                    <p class="text-body-1 text-medium-emphasis">Aucun produit disponible</p>
+                    <p class="text-body-1 text-medium-emphasis">{{ t('No products available') }}</p>
                 </div>
 
                 <v-row v-else data-test-id="product-grid">
@@ -103,7 +106,7 @@ onMounted(fetchProducts)
             location="bottom left"
         >
             <v-icon class="mr-2">mdi-check-circle</v-icon>
-            Produit ajouté au panier
+            {{ t('Product added to cart') }}
         </v-snackbar>
     </div>
 </template>

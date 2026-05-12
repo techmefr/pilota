@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
+import { useTranslate } from '@tolgee/vue'
 import { useChat } from '../composables/useChat'
 
 const open = ref(false)
@@ -7,6 +8,7 @@ const input = ref('')
 const messagesEl = ref<HTMLElement | null>(null)
 
 const { messages, isConnected, connect, disconnect, send } = useChat()
+const { t } = useTranslate()
 
 function toggle(): void {
     open.value = !open.value
@@ -50,7 +52,7 @@ async function submit(): Promise<void> {
         >
             <v-card-title class="d-flex align-center gap-2 py-3 px-4 border-b">
                 <v-icon color="primary" size="20">mdi-headset</v-icon>
-                <span class="text-body-1 font-weight-medium">Service client</span>
+                <span class="text-body-1 font-weight-medium">{{ t('Customer service') }}</span>
                 <v-spacer />
                 <v-chip
                     data-test-id="chat-status"
@@ -59,7 +61,7 @@ async function submit(): Promise<void> {
                     size="x-small"
                     variant="tonal"
                 >
-                    {{ isConnected ? 'En ligne' : 'Connexion…' }}
+                    {{ isConnected ? t('Online') : t('Connecting…') }}
                 </v-chip>
             </v-card-title>
 
@@ -73,7 +75,7 @@ async function submit(): Promise<void> {
                     data-test-id="chat-empty"
                     class="text-body-2 text-medium-emphasis text-center py-4"
                 >
-                    Bonjour ! Comment puis-je vous aider ?
+                    {{ t('Hello! How can I help you?') }}
                 </div>
                 <div
                     v-for="(msg, i) in messages"
@@ -96,7 +98,7 @@ async function submit(): Promise<void> {
                 <v-text-field
                     v-model="input"
                     data-test-id="chat-input"
-                    placeholder="Votre message…"
+                    :placeholder="t('Your message…')"
                     density="compact"
                     variant="outlined"
                     hide-details

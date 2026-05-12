@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { useTranslate } from '@tolgee/vue'
 import { useResourceForm } from '@pilota/hooks'
 import { orderResource } from '../resources/order.resource'
 
 const { items, total, count } = useCart()
+const { t } = useTranslate()
 const isSuccess = ref(false)
 const isSubmitting = ref(false)
 
@@ -32,10 +34,10 @@ function formatPrice(n: number): string {
             size="small"
             class="mb-8 text-medium-emphasis"
         >
-            Retour au panier
+            {{ t('Back to cart') }}
         </v-btn>
 
-        <h1 class="text-h4 font-weight-bold mb-8">Finaliser la commande</h1>
+        <h1 class="text-h4 font-weight-bold mb-8">{{ t('Finalize your order') }}</h1>
 
         <v-row v-if="!isSuccess">
             <v-col cols="12" md="7">
@@ -49,7 +51,7 @@ function formatPrice(n: number): string {
                             <v-text-field
                                 v-model="values.full_name"
                                 :error-messages="errors.full_name"
-                                label="Nom complet"
+                                :label="t('Full name')"
                                 placeholder="Jean Dupont"
                                 prepend-inner-icon="mdi-account-outline"
                             />
@@ -59,7 +61,7 @@ function formatPrice(n: number): string {
                             <v-text-field
                                 v-model="values.email"
                                 :error-messages="errors.email"
-                                label="Adresse email"
+                                :label="t('Email address')"
                                 placeholder="jean@exemple.fr"
                                 type="email"
                                 prepend-inner-icon="mdi-email-outline"
@@ -70,7 +72,7 @@ function formatPrice(n: number): string {
                             <v-text-field
                                 v-model="values.phone"
                                 :error-messages="errors.phone"
-                                label="Téléphone (optionnel)"
+                                :label="t('Phone (optional)')"
                                 placeholder="06 12 34 56 78"
                                 prepend-inner-icon="mdi-phone-outline"
                             />
@@ -78,14 +80,14 @@ function formatPrice(n: number): string {
 
                         <v-col cols="12">
                             <v-divider class="my-2" />
-                            <p class="text-caption text-medium-emphasis mt-4 mb-2">Adresse de livraison</p>
+                            <p class="text-caption text-medium-emphasis mt-4 mb-2">{{ t('Delivery address') }}</p>
                         </v-col>
 
                         <v-col cols="12">
                             <v-text-field
                                 v-model="values.address"
                                 :error-messages="errors.address"
-                                label="Adresse"
+                                :label="t('Address')"
                                 placeholder="12 rue de la Paix"
                                 prepend-inner-icon="mdi-map-marker-outline"
                             />
@@ -95,7 +97,7 @@ function formatPrice(n: number): string {
                             <v-text-field
                                 v-model="values.city"
                                 :error-messages="errors.city"
-                                label="Ville"
+                                :label="t('City')"
                                 placeholder="Paris"
                                 prepend-inner-icon="mdi-city-variant-outline"
                             />
@@ -105,7 +107,7 @@ function formatPrice(n: number): string {
                             <v-text-field
                                 v-model="values.zip_code"
                                 :error-messages="errors.zip_code"
-                                label="Code postal"
+                                :label="t('Postal code')"
                                 placeholder="75001"
                                 prepend-inner-icon="mdi-post-outline"
                                 maxlength="5"
@@ -116,7 +118,7 @@ function formatPrice(n: number): string {
                             <v-textarea
                                 v-model="values.notes"
                                 :error-messages="errors.notes"
-                                label="Notes (optionnel)"
+                                :label="t('Notes (optional)')"
                                 placeholder="Instructions de livraison…"
                                 rows="2"
                                 variant="outlined"
@@ -129,12 +131,12 @@ function formatPrice(n: number): string {
 
             <v-col cols="12" md="5">
                 <v-card variant="outlined" class="pa-6" data-test-id="checkout-summary">
-                    <h2 class="text-body-1 font-weight-medium mb-4">Récapitulatif</h2>
+                    <h2 class="text-body-1 font-weight-medium mb-4">{{ t('Summary') }}</h2>
 
                     <div v-if="count === 0" class="text-center py-6">
-                        <p class="text-medium-emphasis text-body-2">Panier vide</p>
+                        <p class="text-medium-emphasis text-body-2">{{ t('Empty cart') }}</p>
                         <v-btn to="/" variant="text" color="primary" size="small" class="mt-2">
-                            Voir le catalogue
+                            {{ t('Catalog') }}
                         </v-btn>
                     </div>
 
@@ -155,7 +157,7 @@ function formatPrice(n: number): string {
                         <v-divider class="my-4" />
 
                         <div class="d-flex justify-space-between text-body-1 font-weight-bold mb-6">
-                            <span>Total</span>
+                            <span>{{ t('Total') }}</span>
                             <span data-test-id="checkout-total" class="text-primary">
                                 {{ formatPrice(total) }}
                             </span>
@@ -170,12 +172,12 @@ function formatPrice(n: number): string {
                             prepend-icon="mdi-lock-outline"
                             @click="submit"
                         >
-                            Confirmer la commande
+                            {{ t('Confirm order') }}
                         </v-btn>
 
                         <p class="text-caption text-medium-emphasis text-center mt-3">
                             <v-icon size="12" class="mr-1">mdi-shield-check-outline</v-icon>
-                            Paiement sécurisé
+                            {{ t('Secure payment') }}
                         </p>
                     </template>
                 </v-card>
@@ -186,12 +188,12 @@ function formatPrice(n: number): string {
             <div class="success-icon mb-6">
                 <v-icon size="80" color="success">mdi-check-circle-outline</v-icon>
             </div>
-            <h2 class="text-h4 font-weight-bold mb-4">Commande confirmée !</h2>
+            <h2 class="text-h4 font-weight-bold mb-4">{{ t('Order confirmed!') }}</h2>
             <p class="text-body-1 text-medium-emphasis mb-8">
-                Merci pour votre commande. Vous recevrez une confirmation par email.
+                {{ t('Thank you for your order. You will receive a confirmation by email.') }}
             </p>
             <v-btn to="/" color="primary" size="large" prepend-icon="mdi-store-outline">
-                Retour au catalogue
+                {{ t('Back to catalog') }}
             </v-btn>
         </div>
     </v-container>
