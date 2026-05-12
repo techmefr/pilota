@@ -14,10 +14,33 @@
           }
         },
         "tables": [
-          { "table": { "schema": "public", "name": "users" } },
-          { "table": { "schema": "public", "name": "posts" } },
-          { "table": { "schema": "public", "name": "messages" } },
-          { "table": { "schema": "public", "name": "products" } }
+          {
+            "table": { "schema": "public", "name": "users" },
+            "select_permissions": [
+              { "role": "public", "permission": { "columns": "*", "filter": {} } }
+            ]
+          },
+          {
+            "table": { "schema": "public", "name": "posts" },
+            "select_permissions": [
+              { "role": "public", "permission": { "columns": "*", "filter": {} } }
+            ]
+          },
+          {
+            "table": { "schema": "public", "name": "messages" },
+            "select_permissions": [
+              { "role": "public", "permission": { "columns": "*", "filter": {} } }
+            ],
+            "insert_permissions": [
+              { "role": "public", "permission": { "columns": ["room_id", "content", "author"], "check": {} } }
+            ]
+          },
+          {
+            "table": { "schema": "public", "name": "products" },
+            "select_permissions": [
+              { "role": "public", "permission": { "columns": "*", "filter": {} } }
+            ]
+          }
         ]
       }
     ]

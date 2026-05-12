@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useCart } from '../composables/useCart'
-import { useProducts } from '../composables/useProducts'
-
 const { products, categories, isLoading, error, fetchProducts } = useProducts()
 const { count, addItem } = useCart()
 
@@ -26,25 +22,30 @@ onMounted(fetchProducts)
 
 <template>
     <div data-test-id="page-catalog">
-        <v-container fluid class="py-8 px-6">
-            <div class="mb-8">
-                <h1 class="text-h4 font-weight-bold mb-1">Catalogue</h1>
-                <p class="text-medium-emphasis">
-                    Produits via
-                    <code class="text-primary">sdk.nhost.products.query()</code>
-                    — GraphQL Hasura
+        <div class="hero-section">
+            <v-container class="text-center py-16">
+                <v-chip color="primary" variant="tonal" size="small" class="mb-5 font-mono">
+                    sdk.nhost.products.query() — GraphQL Hasura
+                </v-chip>
+                <h1 class="text-h3 font-weight-black mb-4 text-on-surface">
+                    Découvrez notre <span class="text-gradient">catalogue</span>
+                </h1>
+                <p class="text-body-1 text-medium-emphasis mx-auto" style="max-width: 480px;">
+                    Les meilleures tech, gérées via une architecture driver-based unifiée.
                 </p>
-            </div>
+            </v-container>
+        </div>
 
+        <v-container fluid class="pb-16 px-6">
             <div v-if="isLoading" data-test-id="catalog-loading">
                 <v-row>
-                    <v-col v-for="n in 6" :key="n" cols="12" sm="6" md="4" lg="3">
-                        <v-skeleton-loader type="card" />
+                    <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3">
+                        <v-skeleton-loader type="card" color="surface" />
                     </v-col>
                 </v-row>
             </div>
 
-            <div v-else-if="error !== null" data-test-id="catalog-error" class="text-center py-12">
+            <div v-else-if="error !== null" data-test-id="catalog-error" class="text-center py-16">
                 <v-icon size="64" color="error" class="mb-4">mdi-wifi-off</v-icon>
                 <p class="text-body-1 text-medium-emphasis mb-4">{{ error }}</p>
                 <v-btn color="primary" variant="tonal" prepend-icon="mdi-refresh" @click="fetchProducts">
@@ -75,7 +76,7 @@ onMounted(fetchProducts)
                     </v-chip>
                 </div>
 
-                <div v-if="filtered.length === 0" data-test-id="catalog-empty" class="text-center py-12">
+                <div v-if="filtered.length === 0" data-test-id="catalog-empty" class="text-center py-16">
                     <v-icon size="64" color="medium-emphasis" class="mb-4">mdi-package-variant-closed</v-icon>
                     <p class="text-body-1 text-medium-emphasis">Aucun produit disponible</p>
                 </div>
@@ -89,10 +90,7 @@ onMounted(fetchProducts)
                         md="4"
                         lg="3"
                     >
-                        <ProductCard
-                            :product="product"
-                            @add-to-cart="handleAddToCart"
-                        />
+                        <ProductCard :product="product" @add-to-cart="handleAddToCart" />
                     </v-col>
                 </v-row>
             </template>
@@ -109,3 +107,20 @@ onMounted(fetchProducts)
         </v-snackbar>
     </div>
 </template>
+
+<style scoped>
+.hero-section {
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.text-gradient {
+    background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.font-mono {
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+}
+</style>

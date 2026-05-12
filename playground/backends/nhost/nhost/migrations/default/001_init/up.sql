@@ -36,7 +36,6 @@ create table products (
     created_at timestamptz not null default now()
 );
 
-create role public nologin;
 grant usage on schema public to public;
 grant select, insert, update, delete on all tables in schema public to public;
 alter default privileges in schema public grant select, insert, update, delete on tables to public;

@@ -42,11 +42,8 @@ services:
         condition: service_healthy
     volumes:
       - ./nhost/metadata/hasura-metadata.json:/hasura-metadata.json
-    command: >
-      sh -c "apk add --no-cache curl &&
-        curl -f -X POST
-        -H 'X-Hasura-Admin-Secret: pilota-admin-secret'
-        -H 'Content-Type: application/json'
-        -d @/hasura-metadata.json
-        http://nhost_hasura:8080/v1/metadata"
+    entrypoint:
+      - sh
+      - -c
+      - "apk add --no-cache curl && curl -f -X POST -H 'X-Hasura-Admin-Secret: pilota-admin-secret' -H 'Content-Type: application/json' -d @/hasura-metadata.json http://nhost_hasura:8080/v1/metadata"
     restart: on-failure

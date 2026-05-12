@@ -107,6 +107,7 @@ function formatPrice(n: number): string {
                     <v-card-actions class="px-4 pb-4">
                         <v-btn
                             data-test-id="btn-checkout"
+                            to="/checkout"
                             color="primary"
                             block
                             size="large"

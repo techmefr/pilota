@@ -30,13 +30,23 @@ services:
   supabase_realtime:
     image: supabase/realtime:v2.25.35
     environment:
+      PORT: "4000"
       DB_HOST: supabase_db
       DB_PORT: "5432"
       DB_USER: pilota
       DB_PASSWORD: pilota
       DB_NAME: pilota_supabase
+      DB_AFTER_CONNECT_QUERY: SET search_path TO public
+      DB_ENC_KEY: supabaseencryptionkey
       DB_SSL: "false"
+      API_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
       JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      SECRET_KEY_BASE: super-secret-key-base-with-at-least-64-characters-long-for-realtime-xoxo
+      FLY_APP_NAME: realtime
+      FLY_ALLOC_ID: realtime-dev
+      ERL_AFLAGS: -proto_dist inet_tcp
+      ENABLE_TAILSCALE: "false"
+      DNS_NODES: "''"
       REPLICATION_MODE: RLS
       REPLICATION_POLL_INTERVAL: "100"
       SECURE_CHANNELS: "false"

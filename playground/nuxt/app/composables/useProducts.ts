@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { NhostQueryResult } from '@pilota/driver-nhost'
 import { sdk } from '../utils/sdk'
 
@@ -30,7 +30,12 @@ export function useProducts() {
         }
     }
 
+    async function findProduct(id: number): Promise<Product | null> {
+        if (products.value.length === 0) await fetchProducts()
+        return products.value.find(p => p.id === id) ?? null
+    }
+
     const categories = computed(() => [...new Set(products.value.map(p => p.category))])
 
-    return { products, categories, isLoading, error, fetchProducts }
+    return { products, categories, isLoading, error, fetchProducts, findProduct }
 }
