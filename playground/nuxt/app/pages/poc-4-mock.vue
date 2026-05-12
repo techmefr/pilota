@@ -49,7 +49,7 @@ async function callWithInvalidMock(): Promise<void> {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-4">
         <h2 class="text-h5 mb-1">POC 4 — Mock par appel</h2>
         <p class="text-medium-emphasis mb-4">
             Le 3e argument de chaque méthode court-circuite l'appel réseau.
@@ -60,6 +60,8 @@ async function callWithInvalidMock(): Promise<void> {
             <v-col cols="auto">
                 <v-switch
                     v-model="mockEnabled"
+                    data-test-id="mock-switch"
+                    :data-test-state="mockEnabled ? 'on' : 'off'"
                     label="Mock activé"
                     color="primary"
                     hide-details
@@ -70,6 +72,7 @@ async function callWithInvalidMock(): Promise<void> {
 
         <div class="d-flex gap-2 flex-wrap mb-4">
             <v-btn
+                data-test-id="btn-call"
                 color="primary"
                 variant="outlined"
                 :loading="status === 'loading'"
@@ -77,22 +80,28 @@ async function callWithInvalidMock(): Promise<void> {
             >
                 sdk.lomkit.users.get(…, onEvent, {{ mockEnabled ? 'VALID_MOCK' : 'undefined' }})
             </v-btn>
-            <v-btn color="error" variant="outlined" @click="callWithInvalidMock">
+            <v-btn
+                data-test-id="btn-invalid-mock"
+                color="error"
+                variant="outlined"
+                @click="callWithInvalidMock"
+            >
                 Tester mock invalide (Zod)
             </v-btn>
         </div>
 
-        <v-row v-if="usedMock !== null">
-            <v-col cols="12" md="6">
+        <v-row v-if="status !== 'idle'">
+            <v-col v-if="usedMock !== null" cols="12" md="6">
                 <v-card variant="outlined" class="mb-3">
                     <v-card-title class="text-body-1">Mock passé</v-card-title>
                     <v-card-text>
-                        <pre class="code-block">{{ JSON.stringify(usedMock, null, 2) }}</pre>
+                        <pre data-test-id="mock-preview" class="code-block">{{ JSON.stringify(usedMock, null, 2) }}</pre>
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12">
                 <PocResult
+                    data-test-id="result-mock"
                     title="Résultat"
                     :status="status"
                     :response="response"

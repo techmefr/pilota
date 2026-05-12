@@ -22,7 +22,7 @@ const statusColor = computed(
 </script>
 
 <template>
-    <v-card variant="outlined" class="mt-4">
+    <v-card variant="outlined" class="mt-4" :data-test-state="status">
         <v-card-title class="d-flex align-center gap-2 py-3">
             <v-chip :color="statusColor" size="small" class="text-uppercase">{{ status }}</v-chip>
             <span class="text-body-1">{{ title }}</span>

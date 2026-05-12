@@ -59,7 +59,7 @@ async function callWithEvents(): Promise<void> {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-5">
         <h2 class="text-h5 mb-1">POC 5 — Moteur d'events</h2>
         <p class="text-medium-emphasis mb-4">
             Local handler a la priorité sur les hooks globaux.
@@ -70,6 +70,8 @@ async function callWithEvents(): Promise<void> {
             <v-col cols="auto">
                 <v-switch
                     v-model="useLocal"
+                    data-test-id="local-switch"
+                    :data-test-state="useLocal ? 'local' : 'global'"
                     :label="useLocal ? 'Handler local actif' : 'Hooks globaux actifs'"
                     color="primary"
                     hide-details
@@ -78,6 +80,7 @@ async function callWithEvents(): Promise<void> {
             </v-col>
             <v-col cols="auto">
                 <v-btn
+                    data-test-id="btn-call"
                     color="primary"
                     variant="outlined"
                     :loading="status === 'loading'"
@@ -91,6 +94,7 @@ async function callWithEvents(): Promise<void> {
         <v-row>
             <v-col cols="12" md="6">
                 <PocResult
+                    data-test-id="result-events"
                     title="Résultat"
                     :status="status"
                     :response="response"
@@ -98,15 +102,16 @@ async function callWithEvents(): Promise<void> {
             </v-col>
 
             <v-col cols="12" md="6">
-                <v-card variant="outlined">
+                <v-card data-test-id="events-list" variant="outlined">
                     <v-card-title class="text-body-1">Events reçus</v-card-title>
                     <v-card-text>
-                        <div v-if="events.length === 0" class="text-medium-emphasis text-body-2">
+                        <div v-if="events.length === 0" data-test-id="events-empty" class="text-medium-emphasis text-body-2">
                             Aucun event pour l'instant
                         </div>
                         <div
                             v-for="(e, i) in events"
                             :key="i"
+                            :data-test-class="'event-item'"
                             class="d-flex gap-2 align-center mb-1"
                         >
                             <v-chip

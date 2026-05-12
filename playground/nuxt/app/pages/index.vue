@@ -46,19 +46,21 @@ const pocs = [
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-index">
         <h1 class="text-h4 font-weight-bold mb-2">Pilota POC</h1>
         <p class="text-medium-emphasis mb-6">
             SDK Driver-Based Architecture — <code>sdk.[driver].[resource].[method](payload?, onEvent?, mock?)</code>
         </p>
 
-        <v-list lines="two" class="rounded border">
+        <v-list data-test-id="poc-list" lines="two" class="rounded border">
             <template v-for="(poc, i) in pocs" :key="poc.to">
                 <v-list-item
                     :to="poc.to"
                     :prepend-icon="poc.icon"
                     :title="poc.title"
                     :subtitle="poc.subtitle"
+                    :data-test-class="'poc-item'"
+                    :data-test-id="`poc-item-${i + 1}`"
                     nav
                 />
                 <v-divider v-if="i < pocs.length - 1" />

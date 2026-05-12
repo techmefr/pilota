@@ -26,7 +26,7 @@ const onSubmit = handleSubmit(async data => {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-7">
         <h2 class="text-h5 mb-1">POC 7 — useResourceForm</h2>
         <p class="text-medium-emphasis mb-4">
             Formulaire typé par le schema Zod. Erreurs Vuetify. isDirty. Reset. Erreurs serveur injectées.
@@ -34,9 +34,10 @@ const onSubmit = handleSubmit(async data => {
 
         <v-row>
             <v-col cols="12" md="6">
-                <v-form @submit.prevent="onSubmit">
+                <v-form data-test-id="user-form" @submit.prevent="onSubmit">
                     <v-text-field
                         v-model="values.name"
+                        data-test-id="field-name"
                         label="Nom"
                         :error-messages="errors.name"
                         density="compact"
@@ -44,6 +45,7 @@ const onSubmit = handleSubmit(async data => {
                     />
                     <v-text-field
                         v-model="values.email"
+                        data-test-id="field-email"
                         label="Email"
                         :error-messages="errors.email"
                         density="compact"
@@ -51,10 +53,16 @@ const onSubmit = handleSubmit(async data => {
                     />
 
                     <div class="d-flex gap-2 align-center mb-4">
-                        <v-chip :color="isDirty ? 'warning' : 'success'" size="small">
+                        <v-chip
+                            data-test-id="dirty-chip"
+                            :data-test-state="isDirty ? 'dirty' : 'clean'"
+                            :color="isDirty ? 'warning' : 'success'"
+                            size="small"
+                        >
                             {{ isDirty ? 'modifié' : 'propre' }}
                         </v-chip>
                         <v-btn
+                            data-test-id="btn-submit"
                             type="submit"
                             color="primary"
                             size="small"
@@ -62,22 +70,28 @@ const onSubmit = handleSubmit(async data => {
                         >
                             Soumettre
                         </v-btn>
-                        <v-btn size="small" variant="text" @click="reset">Reset</v-btn>
+                        <v-btn
+                            data-test-id="btn-reset"
+                            size="small"
+                            variant="text"
+                            @click="reset"
+                        >Reset</v-btn>
                     </div>
                 </v-form>
 
                 <v-card variant="outlined" class="text-caption">
                     <v-card-text>
                         <div class="mb-1 text-medium-emphasis">values</div>
-                        <pre>{{ JSON.stringify(values, null, 2) }}</pre>
+                        <pre data-test-id="values-output">{{ JSON.stringify(values, null, 2) }}</pre>
                         <div class="mt-2 mb-1 text-medium-emphasis">errors</div>
-                        <pre>{{ JSON.stringify(errors, null, 2) }}</pre>
+                        <pre data-test-id="errors-output">{{ JSON.stringify(errors, null, 2) }}</pre>
                     </v-card-text>
                 </v-card>
             </v-col>
 
             <v-col cols="12" md="6">
                 <PocResult
+                    data-test-id="result-submit"
                     title="Réponse serveur"
                     :status="submitStatus"
                     :response="submitResponse"

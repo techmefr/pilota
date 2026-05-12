@@ -42,7 +42,7 @@ async function queryNhost(): Promise<void> {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-1">
         <h2 class="text-h5 mb-1">POC 1 — Driver + chainage</h2>
         <p class="text-medium-emphasis mb-4">
             Deux drivers coexistent. Le chainage <code>sdk.[driver].[resource].[method]</code> est typé.
@@ -51,6 +51,7 @@ async function queryNhost(): Promise<void> {
         <v-row>
             <v-col cols="12" md="6">
                 <v-btn
+                    data-test-id="btn-lomkit-get"
                     color="primary"
                     variant="outlined"
                     :loading="lomkitStatus === 'loading'"
@@ -59,6 +60,7 @@ async function queryNhost(): Promise<void> {
                     sdk.lomkit.users.get()
                 </v-btn>
                 <PocResult
+                    data-test-id="result-lomkit"
                     title="LomkitDriver — REST"
                     :status="lomkitStatus"
                     :response="lomkitResponse"
@@ -68,6 +70,7 @@ async function queryNhost(): Promise<void> {
 
             <v-col cols="12" md="6">
                 <v-btn
+                    data-test-id="btn-nhost-query"
                     color="secondary"
                     variant="outlined"
                     :loading="nhostStatus === 'loading'"
@@ -76,6 +79,7 @@ async function queryNhost(): Promise<void> {
                     sdk.nhost.users.query()
                 </v-btn>
                 <PocResult
+                    data-test-id="result-nhost"
                     title="NhostDriver — GraphQL"
                     :status="nhostStatus"
                     :response="nhostResponse"

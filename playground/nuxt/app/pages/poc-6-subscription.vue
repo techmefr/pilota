@@ -55,7 +55,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-6">
         <h2 class="text-h5 mb-1">POC 6 — Subscriptions / Realtime</h2>
         <p class="text-medium-emphasis mb-4">
             Les méthodes reactive retournent un cleanup. Room : <code>{{ ROOM_ID }}</code>
@@ -66,13 +66,19 @@ onUnmounted(() => {
                 <v-card variant="outlined">
                     <v-card-title class="d-flex align-center gap-2 text-body-1">
                         Nhost (GraphQL WS)
-                        <v-chip :color="nhostConnected ? 'success' : 'default'" size="x-small">
+                        <v-chip
+                            data-test-id="nhost-status-chip"
+                            :data-test-state="nhostConnected ? 'connected' : 'disconnected'"
+                            :color="nhostConnected ? 'success' : 'default'"
+                            size="x-small"
+                        >
                             {{ nhostConnected ? 'connecté' : 'déconnecté' }}
                         </v-chip>
                     </v-card-title>
                     <v-card-text>
                         <div class="d-flex gap-2 mb-3">
                             <v-btn
+                                data-test-id="btn-nhost-subscribe"
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -82,6 +88,7 @@ onUnmounted(() => {
                                 Subscribe
                             </v-btn>
                             <v-btn
+                                data-test-id="btn-nhost-unsubscribe"
                                 size="small"
                                 color="error"
                                 variant="outlined"
@@ -111,13 +118,19 @@ onUnmounted(() => {
                 <v-card variant="outlined">
                     <v-card-title class="d-flex align-center gap-2 text-body-1">
                         Supabase (Realtime)
-                        <v-chip :color="supabaseConnected ? 'success' : 'default'" size="x-small">
+                        <v-chip
+                            data-test-id="supabase-status-chip"
+                            :data-test-state="supabaseConnected ? 'connected' : 'disconnected'"
+                            :color="supabaseConnected ? 'success' : 'default'"
+                            size="x-small"
+                        >
                             {{ supabaseConnected ? 'connecté' : 'déconnecté' }}
                         </v-chip>
                     </v-card-title>
                     <v-card-text>
                         <div class="d-flex gap-2 mb-3">
                             <v-btn
+                                data-test-id="btn-supabase-subscribe"
                                 size="small"
                                 color="primary"
                                 variant="outlined"
@@ -127,6 +140,7 @@ onUnmounted(() => {
                                 Subscribe
                             </v-btn>
                             <v-btn
+                                data-test-id="btn-supabase-unsubscribe"
                                 size="small"
                                 color="error"
                                 variant="outlined"

@@ -44,7 +44,7 @@ function testInvalidMock(): void {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-2">
         <h2 class="text-h5 mb-1">POC 2 — Resource + schema + fragments</h2>
         <p class="text-medium-emphasis mb-4">
             <code>defineResource</code> porte le schema Zod et les fragments GraphQL.
@@ -58,6 +58,8 @@ function testInvalidMock(): void {
                         <v-chip
                             v-for="field in schemaShape"
                             :key="field"
+                            :data-test-class="'schema-field'"
+                            :data-test-id="`schema-field-${field}`"
                             size="small"
                             class="mr-1 mb-1"
                         >{{ field }}</v-chip>
@@ -79,11 +81,17 @@ function testInvalidMock(): void {
 
             <v-col cols="12" md="6">
                 <div class="d-flex align-center gap-2 mb-3">
-                    <v-btn-toggle v-model="activeFragment" mandatory density="compact">
-                        <v-btn value="default" size="small">default</v-btn>
-                        <v-btn value="withPosts" size="small">withPosts</v-btn>
+                    <v-btn-toggle
+                        v-model="activeFragment"
+                        data-test-id="fragment-toggle"
+                        mandatory
+                        density="compact"
+                    >
+                        <v-btn value="default" size="small" data-test-id="btn-fragment-default">default</v-btn>
+                        <v-btn value="withPosts" size="small" data-test-id="btn-fragment-withposts">withPosts</v-btn>
                     </v-btn-toggle>
                     <v-btn
+                        data-test-id="btn-query"
                         size="small"
                         color="primary"
                         variant="outlined"
@@ -94,6 +102,7 @@ function testInvalidMock(): void {
                     </v-btn>
                 </div>
                 <PocResult
+                    data-test-id="result-query"
                     title="Query avec fragment"
                     :status="queryStatus"
                     :response="queryResponse"
@@ -101,6 +110,7 @@ function testInvalidMock(): void {
                 />
 
                 <v-btn
+                    data-test-id="btn-invalid-mock"
                     color="error"
                     variant="outlined"
                     size="small"
@@ -111,6 +121,7 @@ function testInvalidMock(): void {
                 </v-btn>
                 <PocResult
                     v-if="mockStatus !== 'idle'"
+                    data-test-id="result-mock-invalid"
                     title="Validation Zod"
                     :status="mockStatus"
                     :error="mockError"

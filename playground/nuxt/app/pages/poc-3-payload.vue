@@ -29,7 +29,7 @@ function reset(): void {
 </script>
 
 <template>
-    <div>
+    <div data-test-id="page-poc-3">
         <h2 class="text-h5 mb-1">POC 3 — Payload Builder (delta)</h2>
         <p class="text-medium-emphasis mb-4">
             Seuls les champs modifiés sont inclus dans le payload. Les champs non touchés ne transitent pas.
@@ -37,17 +37,59 @@ function reset(): void {
 
         <v-row>
             <v-col cols="12" md="6">
-                <v-text-field v-model="current.name" label="Nom" density="compact" class="mb-2" />
-                <v-text-field v-model="current.email" label="Email" density="compact" class="mb-2" />
-                <v-textarea v-model="current.bio" label="Bio" rows="2" density="compact" class="mb-2" />
-                <v-text-field v-model="current.city" label="Ville" density="compact" class="mb-2" />
-                <v-text-field v-model.number="current.age" label="Âge" type="number" density="compact" class="mb-2" />
+                <v-text-field
+                    v-model="current.name"
+                    data-test-id="field-name"
+                    label="Nom"
+                    density="compact"
+                    class="mb-2"
+                />
+                <v-text-field
+                    v-model="current.email"
+                    data-test-id="field-email"
+                    label="Email"
+                    density="compact"
+                    class="mb-2"
+                />
+                <v-textarea
+                    v-model="current.bio"
+                    data-test-id="field-bio"
+                    label="Bio"
+                    rows="2"
+                    density="compact"
+                    class="mb-2"
+                />
+                <v-text-field
+                    v-model="current.city"
+                    data-test-id="field-city"
+                    label="Ville"
+                    density="compact"
+                    class="mb-2"
+                />
+                <v-text-field
+                    v-model.number="current.age"
+                    data-test-id="field-age"
+                    label="Âge"
+                    type="number"
+                    density="compact"
+                    class="mb-2"
+                />
 
                 <div class="d-flex gap-2 mt-2">
-                    <v-chip :color="isDirty ? 'warning' : 'success'" size="small">
+                    <v-chip
+                        data-test-id="dirty-chip"
+                        :data-test-state="isDirty ? 'dirty' : 'clean'"
+                        :color="isDirty ? 'warning' : 'success'"
+                        size="small"
+                    >
                         {{ isDirty ? 'modifié' : 'propre' }}
                     </v-chip>
-                    <v-btn size="small" variant="text" @click="reset">Reset</v-btn>
+                    <v-btn
+                        data-test-id="btn-reset"
+                        size="small"
+                        variant="text"
+                        @click="reset"
+                    >Reset</v-btn>
                 </div>
             </v-col>
 
@@ -60,7 +102,7 @@ function reset(): void {
                         </v-chip>
                     </v-card-title>
                     <v-card-text>
-                        <pre class="code-block">{{ JSON.stringify(delta, null, 2) }}</pre>
+                        <pre data-test-id="delta-output" class="code-block">{{ JSON.stringify(delta, null, 2) }}</pre>
                     </v-card-text>
                 </v-card>
 
