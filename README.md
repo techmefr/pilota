@@ -8,7 +8,7 @@ Un frontend e-commerce parle à 3 backends différents (REST, GraphQL, WebSocket
 
 ```ts
 sdk.nhost.products.query({})               // GraphQL → catalogue produits
-sdk.lomkit.cartItems.mutate(item)          // REST Laravel → panier
+sdk.lomkit.cartItems.get({})               // REST Laravel → panier
 sdk.supabase.messages.subscribe(handler)   // WebSocket → chat SAV
 ```
 
@@ -24,8 +24,8 @@ sdk.[driver].[resource].[method](payload?, onEvent?, mock?)
 
 ### Drivers
 
-| Driver | Backend | Protocol | Usage |
-|--------|---------|----------|-------|
+| Driver | Backend | Protocole | Usage |
+|--------|---------|-----------|-------|
 | `nhost` | Hasura / PostgreSQL | GraphQL | Catalogue produits |
 | `lomkit` | Laravel + Lomkit REST API | REST | Panier, commandes |
 | `supabase` | Supabase Realtime | WebSocket | Chat SAV |
@@ -34,12 +34,12 @@ sdk.[driver].[resource].[method](payload?, onEvent?, mock?)
 
 ```
 packages/
-├── core/          @pilota/core        — createPilota, defineResource, Proxy SDK
+├── core/          @pilota/core            — createPilota, defineResource, Proxy SDK
 ├── drivers/
 │   ├── lomkit/    @pilota/driver-lomkit   — REST (search/mutate/delete)
-│   ├── nhost/     @pilota/driver-nhost    — GraphQL + WebSocket subscription
+│   ├── nhost/     @pilota/driver-nhost    — GraphQL + subscriptions
 │   └── supabase/  @pilota/driver-supabase — Realtime postgres_changes
-└── hooks/         @pilota/hooks       — bus d'events global, useResourceForm
+└── hooks/         @pilota/hooks           — useResourceForm (Zod validation)
 ```
 
 ### Playground e-commerce
@@ -48,17 +48,80 @@ packages/
 playground/nuxt/
 ├── app/
 │   ├── pages/
-│   │   ├── index.vue   — Catalogue (Nhost GraphQL)
-│   │   └── cart.vue    — Panier (Lomkit REST)
+│   │   ├── index.vue           — Catalogue produits
+│   │   ├── products/[id].vue   — Fiche produit
+│   │   ├── cart.vue            — Panier
+│   │   └── checkout.vue        — Formulaire commande (useResourceForm)
 │   ├── components/
-│   │   ├── ProductCard.vue
-│   │   └── ChatWidget.vue  — Chat SAV (Supabase Realtime)
+│   │   ├── ProductCard.vue     — Carte produit avec ajout panier
+│   │   └── ChatWidget.vue      — FAB + chat SAV (WebSocket simulé)
 │   ├── composables/
-│   │   ├── useProducts.ts  — sdk.nhost.products.query()
-│   │   ├── useCart.ts      — sdk.lomkit.cartItems.*
-│   │   └── useChat.ts      — sdk.supabase.messages.subscribe/insert()
-│   └── utils/sdk.ts        — configuration des 3 drivers
-└── e2e/            — Tests Playwright (page.route() mock des APIs)
+│   │   ├── useProducts.ts      ← sdk.nhost.products.query()
+│   │   ├── useCart.ts          ← sdk.lomkit.cartItems.get/mutate/delete()
+│   │   └── useChat.ts          ← sdk.supabase.messages.subscribe/insert()
+│   ├── resources/
+│   │   └── order.resource.ts   — Schema Zod + defineResource
+│   ├── plugins/
+│   │   └── tolgee.client.ts    — i18n (EN/FR/DE/ES/IT)
+│   └── utils/sdk.ts            — Configuration des 3 drivers
+└── e2e/                        — Tests Playwright (page.route() mock réseau)
+```
+
+---
+
+## Carte des appels SDK
+
+### `useProducts.ts` — GraphQL (Nhost/Hasura)
+
+```ts
+// Charge la liste complète des produits
+const result = await productsApi.query({})
+products.value = result.data?.products ?? []
+//                          ↑ structure GraphQL brute : { products: Product[] }
+```
+
+### `useCart.ts` — REST (Laravel/Lomkit)
+
+```ts
+// Lecture
+const result = await cartItemsApi.get({})
+items.value = result.data ?? []
+
+// Création / mise à jour
+await cartItemsApi.mutate({ product_id, product_name, unit_price, quantity })
+
+// Suppression — Lomkit attend { resources: [id] }, pas { id }
+await cartItemsApi.delete({ resources: [item.id] })
+```
+
+### `useChat.ts` — WebSocket (Supabase Realtime)
+
+```ts
+// Abonnement postgres_changes
+cleanup = messagesApi.subscribe(
+    { room_id: 'sav' },
+    (event, data) => {
+        // data = { eventType: 'INSERT', new: ChatMessage, old: ChatMessage }
+        // ↑ IMPORTANT : le payload n'est PAS ChatMessage directement
+        if (event === 'data' && data) {
+            const payload = data as { eventType: string; new: ChatMessage }
+            if (payload.eventType === 'INSERT') messages.value.push(payload.new)
+        }
+    },
+)
+
+// Insertion (déclenche le realtime côté serveur)
+await messagesApi.insert({ room_id: 'sav', content, author: 'client' })
+```
+
+### `checkout.vue` — Formulaire Zod (hooks)
+
+```ts
+// useResourceForm valide en temps réel avec le schema Zod du resource
+const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(
+    orderResource as unknown as Parameters<typeof useResourceForm>[0],
+    //              ↑ cast nécessaire — voir section "problèmes résolus"
+)
 ```
 
 ---
@@ -95,51 +158,139 @@ pnpm test:e2e     # Playwright — mock réseau, pas besoin des backends
 
 ---
 
-## Ce qu'on a validé
+## Ce qu'on a appris (problèmes rencontrés et solutions)
 
-### L'approche fonctionne
+### 1. `noUncheckedIndexedAccess` — index signature Nuxt
 
-Le pattern `sdk.[driver].[resource].[method]()` s'applique identiquement aux 3 backends. Les composables ne voient aucune différence de syntaxe entre un appel GraphQL, REST ou WebSocket.
+**Problème** : Nuxt active `noUncheckedIndexedAccess` dans son tsconfig strict. Le SDK est typé comme `Record<string, DriverProxy>`, donc `sdk.nhost` retourne `DriverProxy | undefined`. Et `DriverProxy` est `Record<string, ResourceProxy>`, donc `sdk.nhost.products` retourne `ResourceProxy | undefined`.
+
+**Solution** : Pattern d'accesseur typé explicite avec double cast :
 
 ```ts
-// useProducts.ts — GraphQL
-const result = await sdk.nhost.products.query({})
+type ProductsApi = { query: (p: object) => Promise<NhostQueryResult<{ products: Product[] }>> }
+const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
+```
 
-// useCart.ts — REST
-const result = await sdk.lomkit.cartItems.get({})
+On caste `sdk.nhost` vers un objet avec le type exact attendu. Le `as unknown` est nécessaire parce que les types ne sont pas compatibles structurellement.
 
-// useChat.ts — WebSocket
-cleanup = sdk.supabase.messages.subscribe({ room_id: 'sav' }, handler)
+### 2. `ZodObject<T>` est invariant sur T
+
+**Problème** : `ZodObject<{ full_name: ZodString, ... }>` n'est pas assignable à `ZodObject<any>` à cause d'une propriété interne `keyof()._cache` dont le type dépend de T. `Set<'full_name'|...>` n'est pas assignable à `Set<never>`.
+
+**Solution** : Cast double en entrée de `useResourceForm` :
+
+```ts
+useResourceForm(orderResource as unknown as Parameters<typeof useResourceForm>[0])
+```
+
+### 3. `t()` de Tolgee est une Ref dans `<script setup>`
+
+**Problème** : `useTranslate()` retourne `{ t: Ref<TFnType> }`. Dans le script, `t('key')` essaie d'appeler une Ref comme fonction → erreur runtime.
+
+**Solution** : Utiliser `t.value('key')` dans le script, mais `{{ t('key') }}` dans le template (Vue auto-unwrap les Refs).
+
+```ts
+// ❌ script setup
+error.value = t('Product not found')
+
+// ✅ script setup
+error.value = t.value('Product not found')
+
+// ✅ template (auto-unwrap)
+{{ t('Product not found') }}
+```
+
+### 4. Payload Supabase Realtime — structure imbriquée
+
+**Problème** : Le handler `subscribe` reçoit `data` qui contient `{ eventType, new, old }`, pas directement l'objet inséré.
+
+**Solution** :
+
+```ts
+// ❌ mauvais
+const msg = data as ChatMessage
+
+// ✅ correct
+const payload = data as { eventType: string; new: ChatMessage }
+messages.value.push(payload.new)
+```
+
+### 5. Lomkit delete — format du payload
+
+**Problème** : L'endpoint destroy de Lomkit attend `{ resources: [id] }`, pas `{ id }`.
+
+```ts
+// ❌ ignoré silencieusement
+await cartItemsApi.delete({ id: item.id })
+
+// ✅
+await cartItemsApi.delete({ resources: [item.id] })
+```
+
+### 6. `tsconfig.json` manquant pour vue-tsc
+
+**Problème** : Sans `tsconfig.json` à la racine du playground qui étend `.nuxt/tsconfig.json`, vue-tsc ne charge pas les déclarations d'auto-import Nuxt (`useCart`, `ref`, `computed`, etc. tous en erreur).
+
+**Solution** : Créer `playground/nuxt/tsconfig.json` :
+
+```json
+{ "extends": "./.nuxt/tsconfig.json" }
+```
+
+### 7. Vite Node IPC en mode dev
+
+**Contexte** : En développement, Nuxt fait communiquer Nitro (serveur) et Vite (bundler) via un socket Unix (`NUXT_VITE_NODE_OPTIONS.socketPath`). Si le processus est démarré en arrière-plan ou dans un environnement sandboxé, ce socket ne se crée pas et le serveur retourne 500 sur toutes les routes.
+
+**Solution** : Lancer `pnpm dev` depuis un terminal interactif, pas en processus détaché.
+
+---
+
+## Ce qu'on valide
+
+### Le pattern fonctionne
+
+Les composables ne voient aucune différence de syntaxe entre GraphQL, REST ou WebSocket :
+
+```ts
+// GraphQL
+const result = await productsApi.query({})
+
+// REST
+const result = await cartItemsApi.get({})
+
+// WebSocket
+const stop = messagesApi.subscribe({ room_id: 'sav' }, handler)
 ```
 
 ### Ce que ça simplifie
 
-- **Pas de switch/if sur le type de backend** dans les composables
-- **Onboarding d'un nouveau backend** = créer un Driver + bindResource, aucun changement dans les composables
-- **Mock sans changer une ligne** dans l'app : passer `mock` en 3e argument court-circuite l'appel réseau
-- **Event engine** : `onEvent` unifie la gestion des états loading/success/error, qu'on soit en REST ou GraphQL
+- **Pas de switch/if sur le backend** dans les composables
+- **Onboarding d'un nouveau backend** : créer un Driver + bindResource, rien à changer dans l'app
+- **Mock sans toucher l'app** : passer `mock` en 3e argument court-circuite l'appel réseau
+- **Formulaires validés** : `useResourceForm` + Zod, `isDirty` et `errors` en temps réel
 
-### Limites découvertes
+### Limites
 
-- **Typage du retour** : `NhostQueryResult<T>` retourne `{ data: T | null }` où T est la structure GraphQL brute `{ products: Product[] }`. C'est correct mais moins ergonomique qu'un type générique `T[]` direct.
-- **Noms de ressources** : le driver utilise le nom tel quel dans l'URL (`cartItems` → `/api/cartItems/search`). Lomkit génère les routes Laravel dans le même format, donc ça matche — mais c'est un couplage implicite à documenter.
-- **Auto-tracking Hasura** : Hasura ne track pas les tables automatiquement. Il faut appeler l'API metadata au démarrage. Résolu par un container init dans le docker-compose.
-- **Supabase Realtime** sans RLS : en dev c'est désactivé, en prod il faudra configurer les policies.
+- **Noms de ressources couplés** : `cartItems` → `/api/cartItems/search`. Lomkit génère ses routes au même format — couplage implicite.
+- **`NhostQueryResult<T>`** : le `data` est `{ products: Product[] }`, pas `Product[]` directement. Moins ergonomique.
+- **Supabase sans RLS** : en dev RLS est désactivé. En prod il faut configurer les policies.
+- **Realtime bot simulé** : en l'absence d'un vrai agent SAV, le chat génère des phrases lorem ipsum localement après chaque envoi.
 
 ### Ce qu'on ferait en production
 
-- Ajouter `@pilota/nuxt` pour injecter le SDK via `useNuxtApp()` (plugin Nuxt auto-import)
+- Plugin `@pilota/nuxt` pour injecter le SDK via `useNuxtApp()` (auto-import)
 - Typage générique strict sur les retours de chaque driver
-- Middleware d'authentification dans les drivers (JWT Bearer)
-- `useResourceForm` sur le formulaire de commande (déjà implémenté dans `@pilota/hooks`)
+- Middleware d'authentification JWT dans les drivers
+- `onEvent` pour unifier les états loading/error côté UI
 
 ---
 
 ## Stack technique
 
-- **Nuxt 4** (compatibilityVersion: 4, SPA mode)
-- **Vuetify 3** dark theme
-- **Zod** — validation schemas des resources
-- **Playwright** — tests E2E avec `page.route()` pour mocker les 3 APIs
+- **Nuxt 4** (compatibilityVersion: 4, SPA mode `ssr: false`)
+- **Vuetify 3** dark theme indigo/violet
+- **Tolgee** i18n (EN/FR/DE/ES/IT) — JSON statique offline-first
+- **Zod** validation schemas des resources
+- **Playwright** tests E2E avec `page.route()` pour mocker les 3 APIs
 - **pnpm workspaces** + **unbuild** pour les packages
-- **Vitest** — tests unitaires des drivers et hooks
+- **Vitest** tests unitaires des drivers et hooks
