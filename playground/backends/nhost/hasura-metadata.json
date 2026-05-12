@@ -1,0 +1,25 @@
+{
+  "type": "replace_metadata",
+  "args": {
+    "version": 3,
+    "sources": [
+      {
+        "name": "default",
+        "kind": "postgres",
+        "configuration": {
+          "connection_info": {
+            "database_url": { "from_env": "HASURA_GRAPHQL_DATABASE_URL" },
+            "isolation_level": "read-committed",
+            "use_prepared_statements": false
+          }
+        },
+        "tables": [
+          { "table": { "schema": "public", "name": "users" } },
+          { "table": { "schema": "public", "name": "posts" } },
+          { "table": { "schema": "public", "name": "messages" } },
+          { "table": { "schema": "public", "name": "products" } }
+        ]
+      }
+    ]
+  }
+}
