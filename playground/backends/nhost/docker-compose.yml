@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: pilota
       POSTGRES_PASSWORD: pilota
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./nhost/migrations/default/001_init/up.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U pilota -d pilota_nhost"]
       interval: 5s
@@ -41,7 +41,7 @@ services:
       nhost_hasura:
         condition: service_healthy
     volumes:
-      - ./hasura-metadata.json:/hasura-metadata.json
+      - ./nhost/metadata/hasura-metadata.json:/hasura-metadata.json
     command: >
       sh -c "apk add --no-cache curl &&
         curl -f -X POST

@@ -15,7 +15,7 @@ create table messages (
     created_at timestamptz not null default now()
 );
 
-alter publication supabase_realtime add table messages;
+create publication supabase_realtime for table messages;
 
 alter table messages disable row level security;
 alter table users disable row level security;

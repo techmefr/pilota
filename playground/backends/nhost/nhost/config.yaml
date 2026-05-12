@@ -1,0 +1,12 @@
+version: 3
+services:
+  postgres:
+    version: '14-alpine'
+  hasura:
+    version: 'v2.36.0'
+    adminSecret: pilota-admin-secret
+    enabledAPIs:
+      - metadata
+      - graphql
+      - pgdump
+      - config
