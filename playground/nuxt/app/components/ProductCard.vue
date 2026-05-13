@@ -17,88 +17,169 @@ const CATEGORY_ICONS: Record<string, string> = {
 </script>
 
 <template>
-    <v-card
-        :data-test-id="`product-card-${product.id}`"
-        data-test-class="product-card"
-        variant="outlined"
-        class="product-card h-100 d-flex flex-column"
-    >
-        <NuxtLink :to="`/products/${product.id}`" class="text-decoration-none">
-            <div class="product-image d-flex align-center justify-center product-image-hover">
-                <v-icon
-                    :icon="CATEGORY_ICONS[product.category] ?? 'mdi-package-variant'"
-                    size="64"
-                    color="primary"
-                    class="opacity-40"
-                />
-            </div>
-        </NuxtLink>
-
-        <v-card-text class="flex-grow-1 pb-2">
-            <v-chip size="x-small" variant="tonal" color="primary" class="mb-2">
-                {{ product.category }}
-            </v-chip>
-
-            <NuxtLink :to="`/products/${product.id}`" class="text-decoration-none">
-                <div
-                    :data-test-id="`product-name-${product.id}`"
-                    class="text-body-1 font-weight-medium mb-1 text-on-surface product-name"
-                >
-                    {{ product.name }}
-                </div>
-            </NuxtLink>
-
-            <div
-                :data-test-id="`product-price-${product.id}`"
-                class="text-h6 font-weight-bold text-primary"
-            >
-                {{ product.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}
-            </div>
-        </v-card-text>
-
-        <v-card-actions class="pt-0 px-4 pb-4">
+    <article class="pcard" :data-test-id="`product-card-${product.id}`" data-test-class="product-card">
+        <NuxtLink :to="`/products/${product.id}`" class="pcard-visual">
+            <v-icon
+                :icon="CATEGORY_ICONS[product.category] ?? 'mdi-package-variant'"
+                size="56"
+                color="primary"
+                class="pcard-icon"
+            />
             <v-chip
                 :color="product.stock > 5 ? 'success' : product.stock > 0 ? 'warning' : 'error'"
                 size="x-small"
-                variant="tonal"
+                variant="flat"
+                class="pcard-stock"
             >
                 {{ product.stock > 0 ? t('{stock} in stock', { stock: product.stock }) : t('Out of stock') }}
             </v-chip>
+        </NuxtLink>
 
-            <v-spacer />
+        <div class="pcard-body">
+            <p class="pcard-category">{{ product.category }}</p>
 
-            <v-btn
-                :data-test-id="`btn-add-to-cart-${product.id}`"
-                :disabled="product.stock === 0"
-                color="primary"
-                size="small"
-                variant="tonal"
-                prepend-icon="mdi-cart-plus"
-                @click="$emit('addToCart', product)"
-            >
-                {{ t('Add') }}
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+            <NuxtLink :to="`/products/${product.id}`" class="text-decoration-none">
+                <h3
+                    :data-test-id="`product-name-${product.id}`"
+                    class="pcard-name"
+                >
+                    {{ product.name }}
+                </h3>
+            </NuxtLink>
+
+            <div class="pcard-footer">
+                <span
+                    :data-test-id="`product-price-${product.id}`"
+                    class="pcard-price"
+                >
+                    {{ product.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}
+                </span>
+
+                <button
+                    :data-test-id="`btn-add-to-cart-${product.id}`"
+                    class="pcard-add"
+                    :disabled="product.stock === 0"
+                    @click="$emit('addToCart', product)"
+                >
+                    <v-icon size="16">mdi-plus</v-icon>
+                </button>
+            </div>
+        </div>
+    </article>
 </template>
 
 <style scoped>
-.product-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+.pcard {
+    background: rgb(var(--v-theme-surface));
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
-.product-card:hover {
-    transform: translateY(-2px);
+
+.pcard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(var(--v-theme-primary), 0.15), 0 4px 20px rgba(0, 0, 0, 0.12);
+    border-color: rgba(var(--v-theme-primary), 0.25);
 }
-.product-image {
-    height: 160px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-    transition: background 0.2s ease;
+
+/* Visual area */
+.pcard-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.06) 0%, rgba(var(--v-theme-secondary), 0.06) 100%);
+    text-decoration: none;
+    position: relative;
+    transition: background 0.3s ease;
 }
-.product-image-hover:hover {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+.pcard:hover .pcard-visual {
+    background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.12) 0%, rgba(var(--v-theme-secondary), 0.10) 100%);
 }
-.product-name:hover {
-    color: rgb(var(--v-theme-primary)) !important;
+
+.pcard-icon {
+    opacity: 0.45;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.pcard:hover .pcard-icon {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+
+.pcard-stock {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em;
+}
+
+/* Body */
+.pcard-body {
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pcard-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--v-theme-primary));
+    margin-bottom: 8px;
+}
+
+.pcard-name {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: rgb(var(--v-theme-on-surface));
+    margin-bottom: 16px;
+    flex: 1;
+    transition: color 0.2s;
+}
+.pcard:hover .pcard-name {
+    color: rgb(var(--v-theme-primary));
+}
+
+/* Footer */
+.pcard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.pcard-price {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: rgb(var(--v-theme-on-surface));
+}
+
+.pcard-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgb(var(--v-theme-primary));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s, opacity 0.2s;
+    flex-shrink: 0;
+}
+.pcard-add:hover { transform: scale(1.15); }
+.pcard-add:active { transform: scale(0.92); }
+.pcard-add:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 </style>

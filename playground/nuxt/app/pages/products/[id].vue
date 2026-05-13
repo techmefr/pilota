@@ -28,9 +28,7 @@ async function handleAddToCart(): Promise<void> {
     if (product.value === null) return
     await addItem(product.value)
     isAdded.value = true
-    setTimeout(() => {
-        isAdded.value = false
-    }, 2000)
+    setTimeout(() => { isAdded.value = false }, 2200)
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -48,100 +46,222 @@ const categoryIcon = computed(() => {
 </script>
 
 <template>
-    <v-container class="py-10" data-test-id="page-product" style="max-width: 960px;">
-        <v-btn
-            to="/"
-            variant="text"
-            prepend-icon="mdi-arrow-left"
-            size="small"
-            class="mb-8 text-medium-emphasis"
-        >
-            {{ t('Back to catalog') }}
-        </v-btn>
-
-        <div v-if="isLoading" class="text-center py-16">
-            <v-progress-circular indeterminate color="primary" size="48" />
-        </div>
-
-        <div v-else-if="error !== null" class="text-center py-16">
-            <v-icon size="64" color="error" class="mb-4">mdi-alert-circle-outline</v-icon>
-            <h2 class="text-h5 mb-6">{{ error }}</h2>
-            <v-btn to="/" color="primary" variant="tonal" prepend-icon="mdi-arrow-left">
+    <div data-test-id="page-product" class="product-page px-4 px-md-8" style="max-width: 1400px; margin: 0 auto;">
+        <div class="pt-10 pb-4">
+            <v-btn
+                to="/"
+                variant="text"
+                prepend-icon="mdi-arrow-left"
+                size="small"
+                class="back-btn"
+            >
                 {{ t('Back to catalog') }}
             </v-btn>
         </div>
 
-        <v-row v-else-if="product !== null" :data-test-id="`product-detail-${product.id}`">
-            <v-col cols="12" md="5">
-                <v-card class="d-flex align-center justify-center product-visual" height="360" variant="outlined">
-                    <div class="text-center pa-8">
-                        <v-icon :icon="categoryIcon" size="100" color="primary" class="mb-6 opacity-50" />
-                        <div>
-                            <v-chip
-                                :color="product.stock > 5 ? 'success' : product.stock > 0 ? 'warning' : 'error'"
-                                variant="tonal"
-                            >
-                                <v-icon start size="16">mdi-package-variant</v-icon>
-                                {{ product.stock > 0 ? t('{stock} in stock', { stock: product.stock }) : t('Out of stock') }}
-                            </v-chip>
-                        </div>
+        <!-- Loading -->
+        <div v-if="isLoading" class="text-center py-32">
+            <v-progress-circular indeterminate color="primary" size="40" width="2" />
+        </div>
+
+        <!-- Error -->
+        <div v-else-if="error !== null" class="text-center py-32">
+            <v-icon size="52" color="error" class="mb-6" style="opacity: 0.6;">mdi-alert-circle-outline</v-icon>
+            <h2 class="text-h5 font-weight-bold mb-8">{{ error }}</h2>
+            <v-btn to="/" color="primary" variant="flat" prepend-icon="mdi-arrow-left">
+                {{ t('Back to catalog') }}
+            </v-btn>
+        </div>
+
+        <!-- Product -->
+        <div
+            v-else-if="product !== null"
+            :data-test-id="`product-detail-${product.id}`"
+            class="product-layout pb-24"
+        >
+            <!-- Visual -->
+            <div class="product-visual">
+                <div class="product-visual-inner">
+                    <v-icon :icon="categoryIcon" size="120" color="primary" class="product-visual-icon" />
+                    <div class="product-visual-badge">
+                        <v-chip
+                            :color="product.stock > 5 ? 'success' : product.stock > 0 ? 'warning' : 'error'"
+                            variant="flat"
+                            size="small"
+                        >
+                            <v-icon start size="14">mdi-package-variant</v-icon>
+                            {{ product.stock > 0 ? t('{stock} in stock', { stock: product.stock }) : t('Out of stock') }}
+                        </v-chip>
                     </div>
-                </v-card>
-            </v-col>
+                </div>
+            </div>
 
-            <v-col cols="12" md="7" class="pl-md-8">
-                <v-chip color="primary" variant="tonal" size="small" class="mb-4">
-                    {{ product.category }}
-                </v-chip>
+            <!-- Info -->
+            <div class="product-info">
+                <p class="product-overline">{{ product.category }}</p>
+                <h1 class="product-title">{{ product.name }}</h1>
 
-                <h1 class="text-h4 font-weight-bold mb-4">{{ product.name }}</h1>
-
-                <p class="text-body-1 text-medium-emphasis mb-8" style="line-height: 1.7;">
+                <p class="product-desc">
                     {{ product.description || t('No description available.') }}
                 </p>
 
-                <div class="price-block mb-8">
-                    <span class="text-h3 font-weight-black text-primary">
+                <div class="product-price-row">
+                    <span class="product-price">
                         {{ product.price.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }) }}
                     </span>
                 </div>
 
-                <div class="d-flex flex-column gap-3">
-                    <v-btn
+                <div class="product-actions">
+                    <button
                         :data-test-id="`btn-add-to-cart-${product.id}`"
+                        class="btn-primary-action"
+                        :class="{ success: isAdded }"
                         :disabled="product.stock === 0"
-                        :color="isAdded ? 'success' : 'primary'"
-                        size="large"
-                        block
-                        :prepend-icon="isAdded ? 'mdi-check' : 'mdi-cart-plus'"
                         @click="handleAddToCart"
                     >
+                        <v-icon size="20" class="mr-2">{{ isAdded ? 'mdi-check' : 'mdi-cart-plus' }}</v-icon>
                         {{ isAdded ? t('Added to cart!') : t('Add to cart') }}
-                    </v-btn>
+                    </button>
 
                     <v-btn
                         to="/cart"
-                        variant="tonal"
-                        color="secondary"
+                        variant="outlined"
+                        color="primary"
                         size="large"
-                        block
+                        class="btn-secondary-action"
                         prepend-icon="mdi-cart-outline"
                     >
                         {{ t('View cart') }}
                     </v-btn>
                 </div>
-            </v-col>
-        </v-row>
-    </v-container>
+
+                <p class="product-secure">
+                    <v-icon size="14" class="mr-1">mdi-shield-check-outline</v-icon>
+                    {{ t('Secure payment') }}
+                </p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
-.product-visual {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%);
+.back-btn {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    opacity: 0.45;
+    transition: opacity 0.2s !important;
 }
-.price-block {
-    padding: 16px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.back-btn:hover { opacity: 1; }
+
+.product-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+}
+@media (min-width: 768px) {
+    .product-layout { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+}
+
+/* Visual */
+.product-visual {
+    background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.07) 0%, rgba(var(--v-theme-secondary), 0.07) 100%);
+    border-radius: 24px;
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    padding: 64px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    position: relative;
+}
+
+.product-visual-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.product-visual-icon { opacity: 0.5; }
+
+/* Info */
+.product-overline {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(var(--v-theme-primary));
+    margin-bottom: 14px;
+}
+
+.product-title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: rgb(var(--v-theme-on-background));
+    margin-bottom: 20px;
+}
+
+.product-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    opacity: 0.55;
+    margin-bottom: 36px;
+}
+
+.product-price-row {
+    padding: 24px 0;
+    border-top: 1px solid rgba(128, 128, 128, 0.12);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+    margin-bottom: 32px;
+}
+
+.product-price {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: rgb(var(--v-theme-primary));
+}
+
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.btn-primary-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    background: rgb(var(--v-theme-primary));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-primary-action:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.4); }
+.btn-primary-action:active { transform: translateY(0); }
+.btn-primary-action.success { background: rgb(var(--v-theme-success)); }
+.btn-primary-action:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary-action { width: 100%; }
+
+.product-secure {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    opacity: 0.35;
+    display: flex;
+    align-items: center;
 }
 </style>
