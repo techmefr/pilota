@@ -45,4 +45,12 @@ export default defineNuxtConfig({
     },
 
     ssr: false,
+
+    vite: {
+        viteNode: {
+            // Workaround: abstract Unix sockets (\0...) get truncated when
+            // stored in env vars on Linux — force tmpdir path instead
+            socketPath: `/tmp/nuxt-vite-node-${process.pid}.sock`,
+        } as object,
+    },
 })
