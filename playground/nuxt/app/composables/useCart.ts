@@ -3,7 +3,7 @@ import type { LomkitGetResult, LomkitMutateResult } from '@pilota/driver-lomkit'
 import { createNotify } from '@pilota/hooks'
 import { sdk } from '../utils/sdk'
 import type { Product } from './useProducts'
-import { createSnackAdapter, createLogAdapter } from './useNotify'
+import { createSnackAdapter } from './useNotify'
 
 export type CartItem = {
     id?: number
@@ -30,7 +30,7 @@ export function useCart() {
     async function loadCart(): Promise<void> {
         isLoading.value = true
         try {
-            const result = await cartItemsApi.get({}, createNotify(createLogAdapter()))
+            const result = await cartItemsApi.get({})
             items.value = result.data ?? []
         } catch {
             items.value = []

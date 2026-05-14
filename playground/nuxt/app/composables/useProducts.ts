@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 import type { NhostQueryResult } from '@pilota/driver-nhost'
 import { createNotify } from '@pilota/hooks'
 import { sdk } from '../utils/sdk'
-import { createSnackAdapter, createLogAdapter } from './useNotify'
+import { createSnackAdapter } from './useNotify'
 
 export type Product = {
     id: number
@@ -30,10 +30,7 @@ export function useProducts() {
         try {
             const result = await productsApi.query(
                 {},
-                createNotify({
-                    ...createLogAdapter(),
-                    ...createSnackAdapter({ error: 'Unable to load catalog' }),
-                }),
+                createNotify(createSnackAdapter({ error: 'Unable to load catalog' })),
             )
             products.value = result.data?.products ?? []
         } catch {
