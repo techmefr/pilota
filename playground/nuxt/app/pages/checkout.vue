@@ -8,9 +8,7 @@ const { t } = useTranslate()
 const isSuccess = ref(false)
 const isSubmitting = ref(false)
 
-const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(
-    orderResource as unknown as Parameters<typeof useResourceForm>[0],
-)
+const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(orderResource)
 
 const submit = handleSubmit(async () => {
     isSubmitting.value = true

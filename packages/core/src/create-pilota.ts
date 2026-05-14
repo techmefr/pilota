@@ -65,7 +65,7 @@ function createResourceProxy(
                         onEvent as PilotaEventHandler | undefined,
                     )
 
-                    return (method as Function).call(driver, resourceName, payload, handler, mock)
+                    return (method as (...args: unknown[]) => unknown).call(driver, resourceName, payload, handler, mock)
                 }
             },
         },
