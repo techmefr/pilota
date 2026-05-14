@@ -14,11 +14,15 @@ class MockDriver implements PilotaDriver {
 
     get(resource: string, payload: unknown, onEvent?: PilotaEventHandler, mock?: unknown): Promise<unknown> {
         this.calls.push({ resource, method: 'get', payload })
-        return Promise.resolve(mock ?? { id: 1, fromDriver: this.name })
+        const result = mock ?? { id: 1, fromDriver: this.name }
+        onEvent?.('request', { resource, payload })
+        onEvent?.('success', result)
+        return Promise.resolve(result)
     }
 
     subscribe(resource: string, payload: unknown, onEvent?: PilotaEventHandler): () => void {
         this.calls.push({ resource, method: 'subscribe', payload })
+        onEvent?.('connected', { resource })
         return () => {}
     }
 }
@@ -74,5 +78,34 @@ describe('createPilota', () => {
         expect(() => sdk.lomkit.users.nonExistentMethod()).toThrow(
             'Driver "lomkit" has no method "nonExistentMethod"',
         )
+    })
+
+    it('fires global notify on every call', async () => {
+        const lomkit = new MockDriver('lomkit')
+        const events: string[] = []
+        const sdk = createPilota({
+            drivers: { lomkit },
+            notify: event => events.push(event),
+        })
+
+        await sdk.lomkit.users.get({ id: 1 })
+
+        expect(events.length).toBeGreaterThan(0)
+    })
+
+    it('merges global and per-call handlers, both fire', async () => {
+        const lomkit = new MockDriver('lomkit')
+        const globalEvents: string[] = []
+        const localEvents: string[] = []
+        const sdk = createPilota({
+            drivers: { lomkit },
+            notify: event => globalEvents.push(event),
+        })
+
+        await sdk.lomkit.users.get({ id: 1 }, event => localEvents.push(event))
+
+        expect(globalEvents.length).toBeGreaterThan(0)
+        expect(localEvents.length).toBeGreaterThan(0)
+        expect(globalEvents).toEqual(localEvents)
     })
 })

@@ -1,19 +1,35 @@
-import type { PilotaConfig, PilotaDriver, PilotaSDK } from './types.ts'
+import type { PilotaConfig, PilotaDriver, PilotaEventHandler, PilotaSDK } from './types.ts'
 
 export function createPilota<TDrivers extends Record<string, PilotaDriver>>(
     config: PilotaConfig<TDrivers>,
 ): PilotaSDK<TDrivers> {
     const sdk = {} as PilotaSDK<TDrivers>
+    const globalHandler = config.notify
 
     for (const key in config.drivers) {
         const driver = config.drivers[key]
-        sdk[key] = createDriverProxy(driver) as PilotaSDK<TDrivers>[typeof key]
+        sdk[key] = createDriverProxy(driver, globalHandler) as PilotaSDK<TDrivers>[typeof key]
     }
 
     return sdk
 }
 
-function createDriverProxy<TDriver extends PilotaDriver>(driver: TDriver): TDriver {
+function mergeEventHandlers(
+    global: PilotaEventHandler | undefined,
+    local: PilotaEventHandler | undefined,
+): PilotaEventHandler | undefined {
+    if (global === undefined) return local
+    if (local === undefined) return global
+    return (event, data) => {
+        global(event, data)
+        local(event, data)
+    }
+}
+
+function createDriverProxy<TDriver extends PilotaDriver>(
+    driver: TDriver,
+    globalHandler?: PilotaEventHandler,
+): TDriver {
     return new Proxy(driver, {
         get(target, prop: string) {
             if (prop in target) {
@@ -21,12 +37,16 @@ function createDriverProxy<TDriver extends PilotaDriver>(driver: TDriver): TDriv
                 return typeof value === 'function' ? value.bind(target) : value
             }
 
-            return createResourceProxy(target, prop)
+            return createResourceProxy(target, prop, globalHandler)
         },
     })
 }
 
-function createResourceProxy(driver: PilotaDriver, resourceName: string): unknown {
+function createResourceProxy(
+    driver: PilotaDriver,
+    resourceName: string,
+    globalHandler?: PilotaEventHandler,
+): unknown {
     return new Proxy(
         {},
         {
@@ -40,7 +60,12 @@ function createResourceProxy(driver: PilotaDriver, resourceName: string): unknow
                         )
                     }
 
-                    return (method as Function).call(driver, resourceName, payload, onEvent, mock)
+                    const handler = mergeEventHandlers(
+                        globalHandler,
+                        onEvent as PilotaEventHandler | undefined,
+                    )
+
+                    return (method as Function).call(driver, resourceName, payload, handler, mock)
                 }
             },
         },

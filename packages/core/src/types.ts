@@ -41,6 +41,7 @@ export type DriverResourceProxy<TDriver extends PilotaDriver> =
 
 export type PilotaConfig<TDrivers extends Record<string, PilotaDriver>> = {
     drivers: TDrivers
+    notify?: PilotaEventHandler
 }
 
 export type ResourceProxy = Record<string, (...args: unknown[]) => unknown>
