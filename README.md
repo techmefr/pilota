@@ -126,17 +126,48 @@ const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(
 
 ---
 
+## Signature complète d'un appel SDK
+
+Chaque méthode driver accepte trois paramètres optionnels :
+
+```
+sdk.[driver].[resource].[method](payload?, notify?, mock?)
+                                    ↑         ↑       ↑
+                                 données   adapter   mock
+                                 / filtre  events   réseau
+```
+
+| Paramètre | Type | Rôle |
+|-----------|------|------|
+| `payload` | `object` | Données à envoyer : filtre de recherche, objet à créer, etc. |
+| `notify` | `PilotaEventHandler` | Callback d'événements — construit avec `createNotify(adapter)` |
+| `mock` | `unknown` | Données de remplacement — court-circuite l'appel réseau si fourni |
+
+```ts
+// payload seul
+await sdk.lomkit.cartItems.get({})
+
+// payload + notify (succès et erreur)
+await sdk.lomkit.cartItems.get(
+    { filter: { user_id: 1 } },
+    createNotify(createSnackAdapter({ success: 'Panier chargé', error: 'Erreur réseau' })),
+)
+
+// payload + notify + mock (pas d'appel réseau, données injectées)
+await sdk.lomkit.cartItems.get(
+    {},
+    createNotify(createSnackAdapter({ success: 'Mock OK' })),
+    [{ id: 1, product_id: 42, product_name: 'T-shirt', unit_price: 29, quantity: 2 }],
+)
+```
+
+---
+
 ## Moteur d'événements — `createNotify`
 
 ### Principe
 
-Chaque méthode driver accepte un `onEvent` en 2e argument — une callback brute `(event, data) => void`. `createNotify` est un adaptateur qui transforme un objet de handlers typés en cette callback.
-
-```
-sdk.[driver].[resource].[method](payload, onEvent)
-                                          ↑
-                              createNotify(adapter)
-```
+`createNotify(adapter)` transforme un objet de handlers typés en une callback brute `(event, data) => void` attendue par les drivers. On ne passe que les hooks qui nous intéressent — les autres sont ignorés.
 
 ### Événements émis
 
@@ -149,79 +180,84 @@ sdk.[driver].[resource].[method](payload, onEvent)
 | `'connected'` | WebSocket établi | `{ resource }` |
 | `'disconnected'` | WebSocket fermé | `{ resource }` |
 
-### Créer un adapter
+### Adapter minimal
 
 ```ts
 import { createNotify } from '@pilota/hooks'
 import type { PilotaNotifyAdapter } from '@pilota/hooks'
 
-// Un adapter = un objet avec les callbacks qui t'intéressent
 const myAdapter: PilotaNotifyAdapter = {
-    onRequest: ctx  => console.log(`→ ${ctx.resource}`),
-    onSuccess: data => console.log('✓', data),
+    onSuccess: data => console.log('OK', data),
     onError:   err  => alert(err.message),
 }
 
-// Usage sur n'importe quel appel SDK
 await sdk.nhost.products.query({}, createNotify(myAdapter))
-await sdk.lomkit.cartItems.mutate(item, createNotify(myAdapter))
 ```
 
 ### Adapters fournis dans le playground
 
+`playground/nuxt/app/composables/useNotify.ts`
+
 ```ts
-import { createNotify } from '@pilota/hooks'
 import { createSnackAdapter, createLogAdapter } from '~/composables/useNotify'
 
-// Log console (onRequest + onSuccess + onError)
+// Logs console uniquement en dev (onRequest + onSuccess + onError)
 createNotify(createLogAdapter())
 
-// Toast UI (onSuccess + onError → notification stack dans app.vue)
-createNotify(createSnackAdapter({ success: 'Chargé !', error: 'Erreur réseau' }))
+// Toast UI vers la notification stack de app.vue
+createNotify(createSnackAdapter({ success: 'Chargé', error: 'Erreur réseau' }))
 
-// Combiner les deux (spread — les keys non-définies ne s'écrasent pas)
+// Combiner les deux — spread, les keys non-définies ne s'écrasent pas
 createNotify({ ...createLogAdapter(), ...createSnackAdapter({ error: 'Erreur' }) })
 ```
 
-### Créer ton propre adapter
+### Global vs per-call
+
+Le handler global se configure une seule fois dans `createPilota` — il s'applique à **tous** les appels de tous les drivers. Le handler per-call se passe à l'appel — les deux sont mergés et **tirent chacun de leur côté**.
 
 ```ts
-// Exemple : Sentry + toast custom
-import * as Sentry from '@sentry/vue'
-
-const sentryAdapter: PilotaNotifyAdapter = {
-    onError: err => {
-        Sentry.captureMessage(err.message)
-        showToast(err.message, 'error')
-    },
-}
-
-await sdk.lomkit.cartItems.get({}, createNotify(sentryAdapter))
+// sdk.ts — configure une fois, actif partout
+export const sdk = createPilota({
+    drivers: { nhost, lomkit, supabase },
+    // logs console uniquement en dev, rien en prod
+    notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
+})
 ```
 
 ```ts
-// Exemple : état de chargement local
+// composable — ajoute un toast en plus du log global
+await sdk.lomkit.cartItems.mutate(
+    item,
+    createNotify(createSnackAdapter({ success: 'Ajouté au panier', error: 'Echec' })),
+)
+// résultat : le log global tire + le toast per-call tire
+```
+
+### Patterns courants
+
+```ts
+// État de chargement local
 const isLoading = ref(false)
 
-const loadingAdapter: PilotaNotifyAdapter = {
+await sdk.nhost.products.query({}, createNotify({
     onRequest: () => { isLoading.value = true },
     onSuccess: () => { isLoading.value = false },
     onError:   () => { isLoading.value = false },
-}
-
-await sdk.nhost.products.query({}, createNotify(loadingAdapter))
+}))
 ```
 
-### Désactiver les notifications
+```ts
+// Sentry en prod
+import * as Sentry from '@sentry/vue'
 
-Ne pas passer de `onEvent` — aucun adapter n'est actif par défaut.
+await sdk.lomkit.cartItems.get({}, createNotify({
+    onError: err => Sentry.captureMessage(err.message),
+}))
+```
 
 ```ts
-// Sans notify
+// Sans notify — aucun effet de bord
 await sdk.nhost.products.query({})
-
-// Avec notify sélectif
-await sdk.nhost.products.query({}, createNotify({ onError: err => console.error(err) }))
 ```
 
 ---
