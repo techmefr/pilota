@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue'
-import { useCart } from '../../layers/functional/composables/useCart'
+import { useCart } from '../composables/useCart'
 
 const { items, count, total, isLoading, loadCart, removeItem, updateQuantity } = useCart()
 const { t } = useTranslate()

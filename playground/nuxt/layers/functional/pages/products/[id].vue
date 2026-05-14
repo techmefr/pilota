@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue'
+import { useProducts } from '../../composables/useProducts'
+import { useCart } from '../../composables/useCart'
 
 const route = useRoute()
 const id = computed(() => parseInt(route.params.id as string))

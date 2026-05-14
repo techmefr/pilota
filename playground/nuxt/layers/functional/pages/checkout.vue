@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue'
 import { useResourceForm } from '@pilota/hooks'
-import { orderResource } from '../../layers/technical/sdk/resources'
-import { useCart } from '../../layers/functional/composables/useCart'
+import { orderResource } from '../../technical/sdk/resources'
+import { useCart } from '../composables/useCart'
 
 const { items, total, count } = useCart()
 const { t } = useTranslate()

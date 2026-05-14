@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslate } from '@tolgee/vue'
-import type { Product } from '../../layers/technical/sdk/resources'
+import type { Product } from '../../technical/sdk/resources'
 
 defineProps<{ product: Product }>()
 defineEmits<{ addToCart: [product: Product] }>()
