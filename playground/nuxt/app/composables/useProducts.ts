@@ -1,6 +1,8 @@
 import { computed, ref } from 'vue'
 import type { NhostQueryResult } from '@pilota/driver-nhost'
+import { createNotify } from '@pilota/hooks'
 import { sdk } from '../utils/sdk'
+import { createSnackAdapter, createLogAdapter } from './useNotify'
 
 export type Product = {
     id: number
@@ -16,7 +18,9 @@ const products = ref<Product[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
 
-type ProductsApi = { query: (p: object) => Promise<NhostQueryResult<{ products: Product[] }>> }
+type ProductsApi = {
+    query: (p: object, onEvent?: unknown) => Promise<NhostQueryResult<{ products: Product[] }>>
+}
 const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
 
 export function useProducts() {
@@ -24,7 +28,13 @@ export function useProducts() {
         isLoading.value = true
         error.value = null
         try {
-            const result = await productsApi.query({})
+            const result = await productsApi.query(
+                {},
+                createNotify({
+                    ...createLogAdapter(),
+                    ...createSnackAdapter({ error: 'Unable to load catalog' }),
+                }),
+            )
             products.value = result.data?.products ?? []
         } catch {
             error.value = 'Unable to load catalog'

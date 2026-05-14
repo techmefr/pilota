@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useTranslate, useTolgee } from '@tolgee/vue'
 import { useTheme } from 'vuetify'
+import { useNotify } from './composables/useNotify'
 
 const { count } = useCart()
 const { t } = useTranslate()
+const { queue, dismiss } = useNotify()
 const tolgee = useTolgee(['language'])
 const currentLang = computed(() => tolgee.value.getLanguage() ?? 'en')
 const theme = useTheme()
@@ -89,6 +91,24 @@ onMounted(() => {
         </footer>
 
         <ChatWidget />
+
+        <!-- Notification stack -->
+        <div class="notif-stack" aria-live="polite">
+            <TransitionGroup name="notif">
+                <div
+                    v-for="n in queue"
+                    :key="n.id"
+                    class="notif"
+                    :class="`notif-${n.type}`"
+                    @click="dismiss(n.id)"
+                >
+                    <v-icon size="16" class="notif-icon">
+                        {{ n.type === 'success' ? 'mdi-check-circle' : n.type === 'error' ? 'mdi-alert-circle' : 'mdi-information' }}
+                    </v-icon>
+                    <span class="notif-msg">{{ n.message }}</span>
+                </div>
+            </TransitionGroup>
+        </div>
     </v-app>
 </template>
 
@@ -228,4 +248,58 @@ onMounted(() => {
     letter-spacing: 0.04em;
     opacity: 0.35;
 }
+
+/* ─── Notification stack ─── */
+.notif-stack {
+    position: fixed;
+    bottom: 88px;
+    left: 24px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.notif {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: all;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+    max-width: 320px;
+}
+
+.notif-success {
+    background: rgba(var(--v-theme-success), 0.15);
+    border: 1px solid rgba(var(--v-theme-success), 0.3);
+    color: rgb(var(--v-theme-success));
+}
+
+.notif-error {
+    background: rgba(var(--v-theme-error), 0.15);
+    border: 1px solid rgba(var(--v-theme-error), 0.3);
+    color: rgb(var(--v-theme-error));
+}
+
+.notif-info {
+    background: rgba(var(--v-theme-primary), 0.12);
+    border: 1px solid rgba(var(--v-theme-primary), 0.25);
+    color: rgb(var(--v-theme-primary));
+}
+
+.notif-icon { flex-shrink: 0; }
+.notif-msg { line-height: 1.3; }
+
+.notif-enter-active { animation: notifIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.notif-leave-active { animation: notifOut 0.2s ease both; }
+@keyframes notifIn  { from { opacity: 0; transform: translateX(-16px) scale(0.95); } }
+@keyframes notifOut { to   { opacity: 0; transform: translateX(-8px) scale(0.97); } }
 </style>
