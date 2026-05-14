@@ -84,7 +84,13 @@ const categoryIcon = computed(() => {
             <!-- Visual -->
             <div class="product-visual">
                 <div class="product-visual-inner">
-                    <v-icon :icon="categoryIcon" size="120" color="primary" class="product-visual-icon" />
+                    <img
+                        v-if="product.image"
+                        :src="product.image"
+                        :alt="product.name"
+                        class="product-visual-img"
+                    />
+                    <v-icon v-else :icon="categoryIcon" size="120" color="primary" class="product-visual-icon" />
                     <div class="product-visual-badge">
                         <v-chip
                             :color="product.stock > 5 ? 'success' : product.stock > 0 ? 'warning' : 'error'"
@@ -176,6 +182,7 @@ const categoryIcon = computed(() => {
     justify-content: center;
     min-height: 360px;
     position: relative;
+    overflow: hidden;
 }
 
 .product-visual-inner {
@@ -183,6 +190,13 @@ const categoryIcon = computed(() => {
     flex-direction: column;
     align-items: center;
     gap: 24px;
+}
+
+.product-visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 24px;
 }
 
 .product-visual-icon { opacity: 0.5; }

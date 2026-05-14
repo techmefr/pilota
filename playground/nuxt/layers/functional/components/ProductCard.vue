@@ -19,7 +19,14 @@ const CATEGORY_ICONS: Record<string, string> = {
 <template>
     <article class="pcard" :data-test-id="`product-card-${product.id}`" data-test-class="product-card">
         <NuxtLink :to="`/products/${product.id}`" class="pcard-visual">
+            <img
+                v-if="product.image"
+                :src="product.image"
+                :alt="product.name"
+                class="pcard-img"
+            />
             <v-icon
+                v-else
                 :icon="CATEGORY_ICONS[product.category] ?? 'mdi-package-variant'"
                 size="56"
                 color="primary"
@@ -97,10 +104,19 @@ const CATEGORY_ICONS: Record<string, string> = {
     text-decoration: none;
     position: relative;
     transition: background 0.3s ease;
+    overflow: hidden;
 }
 .pcard:hover .pcard-visual {
     background: linear-gradient(135deg, rgba(var(--v-theme-primary), 0.12) 0%, rgba(var(--v-theme-secondary), 0.10) 100%);
 }
+
+.pcard-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pcard:hover .pcard-img { transform: scale(1.06); }
 
 .pcard-icon {
     opacity: 0.45;

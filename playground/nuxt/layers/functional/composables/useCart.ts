@@ -14,12 +14,12 @@ export function useCart() {
     const total = computed(() => items.value.reduce((acc, i) => acc + i.unit_price * i.quantity, 0))
 
     async function loadCart(): Promise<void> {
+        if (items.value.length > 0) return
         isLoading.value = true
         try {
             const result = await sdk.lomkit.cartItems.get({})
             items.value = result.data ?? []
         } catch {
-            items.value = []
         } finally {
             isLoading.value = false
         }
