@@ -30,7 +30,10 @@ export function useProducts() {
         try {
             const result = await productsApi.query(
                 {},
-                createNotify(createSnackAdapter({ error: 'Unable to load catalog' })),
+                createNotify(createSnackAdapter({
+                    success: 'Catalogue chargé',
+                    error: 'Unable to load catalog',
+                })),
             )
             products.value = result.data?.products ?? []
         } catch {

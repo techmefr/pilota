@@ -29,6 +29,6 @@ supabase.bindResource('messages', messageResource)
 
 export const sdk = createPilota({
     drivers: { nhost, lomkit, supabase },
-    notify: createNotify(createLogAdapter()),
+    notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
 })
 export { cartItemResource, messageResource, productResource }

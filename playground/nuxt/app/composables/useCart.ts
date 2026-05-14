@@ -45,7 +45,10 @@ export function useCart() {
             existing.quantity++
             await cartItemsApi.mutate(
                 { ...existing },
-                createNotify(createSnackAdapter({ error: 'Failed to update cart' })),
+                createNotify(createSnackAdapter({
+                    success: 'Quantité mise à jour',
+                    error: 'Failed to update cart',
+                })),
             ).catch(() => null)
         } else {
             const item: CartItem = {
@@ -57,7 +60,10 @@ export function useCart() {
             items.value.push({ ...item, id: Date.now() })
             await cartItemsApi.mutate(
                 item,
-                createNotify(createSnackAdapter({ error: 'Failed to add to cart' })),
+                createNotify(createSnackAdapter({
+                    success: `${product.name} ajouté au panier`,
+                    error: 'Failed to add to cart',
+                })),
             ).catch(() => null)
         }
     }
@@ -67,7 +73,10 @@ export function useCart() {
         if (item?.id !== undefined) {
             await cartItemsApi.delete(
                 { resources: [item.id] },
-                createNotify(createSnackAdapter({ error: 'Failed to remove item' })),
+                createNotify(createSnackAdapter({
+                    success: 'Article retiré',
+                    error: 'Failed to remove item',
+                })),
             ).catch(() => null)
         }
         items.value = items.value.filter(i => i.product_id !== productId)
