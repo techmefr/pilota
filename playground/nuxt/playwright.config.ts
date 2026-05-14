@@ -8,7 +8,7 @@ export default defineConfig({
     workers: 1,
     reporter: [['html', { open: 'never' }], ['list']],
     use: {
-        baseURL: 'http://localhost:4242',
+        baseURL: 'http://localhost:3000',
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
     },
@@ -19,8 +19,8 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'npx serve .output/public --listen 4242 --single',
-        url: 'http://localhost:4242',
+        command: 'node .output/server/index.mjs',
+        url: 'http://localhost:3000',
         reuseExistingServer: true,
         timeout: 15_000,
     },

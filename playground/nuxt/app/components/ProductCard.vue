@@ -36,7 +36,7 @@ const CATEGORY_ICONS: Record<string, string> = {
         </NuxtLink>
 
         <div class="pcard-body">
-            <p class="pcard-category">{{ product.category }}</p>
+            <p :data-test-id="`product-category-${product.id}`" class="pcard-category">{{ product.category }}</p>
 
             <NuxtLink :to="`/products/${product.id}`" class="text-decoration-none">
                 <h3

@@ -2,6 +2,7 @@
 import { useTranslate } from '@tolgee/vue'
 import { useResourceForm } from '@pilota/hooks'
 import { orderResource } from '../../layers/technical/sdk/resources'
+import { useCart } from '../../layers/functional/composables/useCart'
 
 const { items, total, count } = useCart()
 const { t } = useTranslate()

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useTranslate, useTolgee } from '@tolgee/vue'
 import { useTheme } from 'vuetify'
+import { useCart } from '../layers/functional/composables/useCart'
+import { useNotify } from '../layers/functional/composables/useNotify'
 
 const { count } = useCart()
 const { t } = useTranslate()

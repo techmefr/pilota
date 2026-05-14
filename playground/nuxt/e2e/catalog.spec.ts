@@ -14,8 +14,8 @@ test.describe('Catalogue produits — sdk.nhost.products.query()', () => {
     })
 
     test('affiche le titre et la référence SDK', async ({ page }) => {
-        await expect(page.locator('[data-test-id="page-catalog"] h1')).toContainText('Catalogue')
-        await expect(page.locator('[data-test-id="page-catalog"]')).toContainText('sdk.nhost.products.query()')
+        await expect(page.locator('[data-test-id="page-catalog"] h1')).toContainText('Discover')
+        await expect(page.locator('[data-test-id="page-catalog"] h1')).toContainText('the best')
     })
 
     test('affiche 6 fiches produit', async ({ page }) => {

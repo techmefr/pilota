@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { useTranslate } from '@tolgee/vue'
+import { useChat } from '../../layers/functional/composables/useChat'
 
 const open = ref(false)
 const input = ref('')
