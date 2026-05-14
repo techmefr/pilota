@@ -79,6 +79,9 @@ export default defineNuxtConfig({
     ssr: false,
 
     vite: {
+        server: {
+            allowedHosts: 'all',
+        },
         viteNode: {
             socketPath: `/tmp/nuxt-vite-node-${process.pid}.sock`,
         } as object,
