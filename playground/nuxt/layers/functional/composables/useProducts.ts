@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { createNotify } from '@pilota/hooks'
 import { sdk } from '../../technical/sdk'
+import { mockProducts } from '../../technical/sdk/mock'
 import { createSnackAdapter } from './useNotify'
 import type { Product } from '../../technical/sdk/resources'
 
@@ -22,9 +23,14 @@ export function useProducts() {
                     error: 'Unable to load catalog',
                 })),
             )
-            products.value = result.data?.products ?? []
-        } catch {
-            error.value = 'Unable to load catalog'
+            const fetched = result.data?.products ?? []
+            products.value = fetched.length > 0 ? fetched : mockProducts
+        } catch (err) {
+            if (err instanceof TypeError) {
+                products.value = mockProducts
+            } else {
+                error.value = 'Unable to load catalog'
+            }
         } finally {
             isLoading.value = false
         }
