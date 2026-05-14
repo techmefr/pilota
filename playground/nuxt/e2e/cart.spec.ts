@@ -13,7 +13,7 @@ test.describe('Panier — sdk.lomkit.cartItems.*', () => {
         await page.goto('/cart')
 
         await expect(page.locator('[data-test-id="cart-empty"]')).toBeVisible({ timeout: 8_000 })
-        await expect(page.locator('[data-test-id="cart-empty"]')).toContainText('Panier vide')
+        await expect(page.locator('[data-test-id="cart-empty"]')).toContainText('Empty cart')
     })
 
     test('panier avec articles affiche les lignes et le total', async ({ page }) => {

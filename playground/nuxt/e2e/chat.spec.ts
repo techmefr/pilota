@@ -24,12 +24,12 @@ test.describe('Chat SAV — sdk.supabase.messages.subscribe/insert()', () => {
 
     test('fenêtre de chat affiche le message de bienvenue', async ({ page }) => {
         await page.locator('[data-test-id="chat-fab"]').click()
-        await expect(page.locator('[data-test-id="chat-empty"]')).toContainText('Bonjour')
+        await expect(page.locator('[data-test-id="chat-empty"]')).toContainText('Hello! How can I help you?')
     })
 
     test('saisir et envoyer un message l\'affiche dans le chat', async ({ page }) => {
         await page.locator('[data-test-id="chat-fab"]').click()
-        await page.locator('[data-test-id="chat-input"] input').fill('Bonjour, j\'ai une question')
+        await page.locator('[data-test-id="chat-input"]').fill('Bonjour, j\'ai une question')
         await page.keyboard.press('Enter')
 
         await expect(page.locator('[data-test-class="chat-message"]').first()).toContainText('Bonjour')
