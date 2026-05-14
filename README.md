@@ -373,11 +373,48 @@ await cartItemsApi.delete({ resources: [item.id] })
 { "extends": "./.nuxt/tsconfig.json" }
 ```
 
-### 7. Vite Node IPC en mode dev
+### 7. Vite Node IPC en mode dev — socket Unix null byte
 
-**Contexte** : En développement, Nuxt fait communiquer Nitro (serveur) et Vite (bundler) via un socket Unix (`NUXT_VITE_NODE_OPTIONS.socketPath`). Si le processus est démarré en arrière-plan ou dans un environnement sandboxé, ce socket ne se crée pas et le serveur retourne 500 sur toutes les routes.
+**Contexte** : Sur Linux + Node ≥ 20, Nuxt génère un socket Unix abstrait dont le chemin commence par `\0`. Ce null byte est tronqué quand le chemin passe dans une variable d'environnement → `NUXT_VITE_NODE_OPTIONS.socketPath` vaut `undefined` → 500 sur toutes les routes.
 
-**Solution** : Lancer `pnpm dev` depuis un terminal interactif, pas en processus détaché.
+**Solution** : Forcer un chemin dans `/tmp` dans `nuxt.config.ts` :
+
+```ts
+vite: {
+    viteNode: {
+        socketPath: `/tmp/nuxt-vite-node-${process.pid}.sock`,
+    },
+}
+```
+
+### 8. Logs dev-only — `import.meta.dev`
+
+**Problème** : `createLogAdapter()` appelle `console.log` sur tous les environnements. En production, ça pollue la console utilisateur.
+
+**Solution** : Nuxt remplace `import.meta.dev` à la compilation — `true` en dev, éliminé (dead code) en prod build.
+
+```ts
+// sdk.ts
+export const sdk = createPilota({
+    drivers: { nhost, lomkit, supabase },
+    notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
+})
+```
+
+Zéro `console.log` dans le bundle de production sans aucune condition manuelle.
+
+### 9. Global notify + per-call — merge automatique
+
+**Problème** : On voulait un handler global (logs) sans perdre la capacité d'ajouter un handler per-call (toast UI).
+
+**Solution** : `mergeEventHandlers(global, local)` dans `create-pilota.ts` appelle les deux si les deux sont définis. Le per-call s'ajoute au global, ils ne se remplacent pas.
+
+```ts
+// global log → tire sur tout
+// per-call snack → s'ajoute uniquement sur cet appel
+await cartItemsApi.mutate(item, createNotify(createSnackAdapter({ success: 'Ajouté' })))
+// résultat : log console + toast UI, les deux tirent
+```
 
 ---
 
@@ -398,12 +435,23 @@ const result = await cartItemsApi.get({})
 const stop = messagesApi.subscribe({ room_id: 'sav' }, handler)
 ```
 
+### Les 3 paramètres d'un appel
+
+```ts
+sdk.[driver].[resource].[method](payload?, notify?, mock?)
+```
+
+- **payload** → filtre ou données à envoyer
+- **notify** → `createNotify(adapter)` — mergé avec le global si présent
+- **mock** → données injectées qui court-circuitent l'appel réseau — utile en test ou offline
+
 ### Ce que ça simplifie
 
 - **Pas de switch/if sur le backend** dans les composables
 - **Onboarding d'un nouveau backend** : créer un Driver + bindResource, rien à changer dans l'app
 - **Mock sans toucher l'app** : passer `mock` en 3e argument court-circuite l'appel réseau
 - **Formulaires validés** : `useResourceForm` + Zod, `isDirty` et `errors` en temps réel
+- **Notifications composables** : adapter global pour les logs, adapter per-call pour les toasts — les deux coexistent sans configuration supplémentaire
 
 ### Limites
 
@@ -417,7 +465,8 @@ const stop = messagesApi.subscribe({ room_id: 'sav' }, handler)
 - Plugin `@pilota/nuxt` pour injecter le SDK via `useNuxtApp()` (auto-import)
 - Typage générique strict sur les retours de chaque driver
 - Middleware d'authentification JWT dans les drivers
-- `onEvent` pour unifier les états loading/error côté UI
+- Adapter Sentry branché sur `onError` du global notify
+- RLS Supabase configuré avec le JWT de l'utilisateur connecté
 
 ---
 
