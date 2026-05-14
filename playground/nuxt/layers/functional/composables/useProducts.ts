@@ -1,32 +1,21 @@
 import { computed, ref } from 'vue'
-import type { NhostQueryResult } from '@pilota/driver-nhost'
 import { createNotify } from '@pilota/hooks'
+import { sdk } from '../../technical/sdk'
+import { createSnackAdapter } from './useNotify'
+import type { Product } from '../../technical/sdk/resources'
 
-export type Product = {
-    id: number
-    name: string
-    description: string
-    price: number
-    image: string
-    category: string
-    stock: number
-}
+export type { Product }
 
 const products = ref<Product[]>([])
 const isLoading = ref(false)
 const error = ref<string | null>(null)
-
-type ProductsApi = {
-    query: (p: object, onEvent?: unknown) => Promise<NhostQueryResult<{ products: Product[] }>>
-}
-const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
 
 export function useProducts() {
     async function fetchProducts(): Promise<void> {
         isLoading.value = true
         error.value = null
         try {
-            const result = await productsApi.query(
+            const result = await sdk.nhost.products.query(
                 {},
                 createNotify(createSnackAdapter({
                     success: 'Catalogue chargé',

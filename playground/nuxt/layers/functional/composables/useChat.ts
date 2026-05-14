@@ -1,12 +1,9 @@
 import { ref } from 'vue'
 import type { PilotaEventHandler } from '@pilota/core'
+import { sdk } from '../../technical/sdk'
+import type { Message } from '../../technical/sdk/resources'
 
-export type ChatMessage = {
-    id?: string
-    content: string
-    author: 'client' | 'bot'
-    created_at: string
-}
+export type ChatMessage = Message & { author: 'client' | 'bot' }
 
 const LOREM_REPLIES = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -23,15 +20,11 @@ const messages = ref<ChatMessage[]>([])
 const isConnected = ref(false)
 let cleanup: (() => void) | null = null
 
-type MessagesApi = {
-    subscribe: (p: object, handler: PilotaEventHandler) => () => void
-    insert: (p: object) => Promise<unknown>
-}
-const messagesApi = (sdk.supabase as unknown as { messages: MessagesApi }).messages
-
 function randomLoremReply(): ChatMessage {
     const index = Math.floor(Math.random() * LOREM_REPLIES.length)
     return {
+        id: crypto.randomUUID(),
+        room_id: 'sav',
         content: LOREM_REPLIES[index] ?? LOREM_REPLIES[0]!,
         author: 'bot',
         created_at: new Date().toISOString(),
@@ -42,19 +35,17 @@ export function useChat() {
     function connect(): void {
         if (cleanup !== null) return
         isConnected.value = true
-        cleanup = messagesApi.subscribe(
-            { room_id: 'sav' },
-            (event, data) => {
-                if (event === 'connected') isConnected.value = true
-                if (event === 'data' && data) {
-                    const payload = data as { eventType: string; new: ChatMessage }
-                    if (payload.eventType === 'INSERT' && payload.new.author !== 'client') {
-                        messages.value.push(payload.new)
-                    }
+        const handler: PilotaEventHandler = (event, data) => {
+            if (event === 'connected') isConnected.value = true
+            if (event === 'data' && data) {
+                const payload = data as { eventType: string; new: ChatMessage }
+                if (payload.eventType === 'INSERT' && payload.new.author !== 'client') {
+                    messages.value.push(payload.new)
                 }
-                if (event === 'disconnected') isConnected.value = false
-            },
-        )
+            }
+            if (event === 'disconnected') isConnected.value = false
+        }
+        cleanup = sdk.supabase.messages.subscribe({ room_id: 'sav' }, handler)
     }
 
     function disconnect(): void {
@@ -65,12 +56,14 @@ export function useChat() {
 
     async function send(content: string): Promise<void> {
         const msg: ChatMessage = {
+            id: crypto.randomUUID(),
+            room_id: 'sav',
             content,
             author: 'client',
             created_at: new Date().toISOString(),
         }
         messages.value.push(msg)
-        await messagesApi.insert({
+        await sdk.supabase.messages.insert({
             room_id: 'sav',
             content,
             author: 'client',

@@ -1,4 +1,6 @@
 export default defineNuxtConfig({
+    extends: ['./layers/technical', './layers/functional'],
+
     modules: ['vuetify-nuxt-module'],
 
     app: {

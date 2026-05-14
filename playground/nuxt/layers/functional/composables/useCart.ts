@@ -1,25 +1,13 @@
 import { computed, ref } from 'vue'
-import type { LomkitGetResult, LomkitMutateResult } from '@pilota/driver-lomkit'
 import { createNotify } from '@pilota/hooks'
-import type { Product } from './useProducts'
+import { sdk } from '../../technical/sdk'
+import { createSnackAdapter } from './useNotify'
+import type { CartItem, Product } from '../../technical/sdk/resources'
 
-export type CartItem = {
-    id?: number
-    product_id: number
-    product_name: string
-    unit_price: number
-    quantity: number
-}
+export type { CartItem }
 
 const items = ref<CartItem[]>([])
 const isLoading = ref(false)
-
-type CartItemsApi = {
-    get: (p: object, onEvent?: unknown) => Promise<LomkitGetResult<CartItem>>
-    mutate: (p: object, onEvent?: unknown) => Promise<LomkitMutateResult<CartItem>>
-    delete: (p: { resources: number[] }, onEvent?: unknown) => Promise<unknown>
-}
-const cartItemsApi = (sdk.lomkit as unknown as { cartItems: CartItemsApi }).cartItems
 
 export function useCart() {
     const count = computed(() => items.value.reduce((acc, i) => acc + i.quantity, 0))
@@ -28,7 +16,7 @@ export function useCart() {
     async function loadCart(): Promise<void> {
         isLoading.value = true
         try {
-            const result = await cartItemsApi.get({})
+            const result = await sdk.lomkit.cartItems.get({})
             items.value = result.data ?? []
         } catch {
             items.value = []
@@ -41,7 +29,7 @@ export function useCart() {
         const existing = items.value.find(i => i.product_id === product.id)
         if (existing !== undefined) {
             existing.quantity++
-            await cartItemsApi.mutate(
+            await sdk.lomkit.cartItems.mutate(
                 { ...existing },
                 createNotify(createSnackAdapter({
                     success: 'Quantité mise à jour',
@@ -56,7 +44,7 @@ export function useCart() {
                 quantity: 1,
             }
             items.value.push({ ...item, id: Date.now() })
-            await cartItemsApi.mutate(
+            await sdk.lomkit.cartItems.mutate(
                 item,
                 createNotify(createSnackAdapter({
                     success: `${product.name} ajouté au panier`,
@@ -69,7 +57,7 @@ export function useCart() {
     async function removeItem(productId: number): Promise<void> {
         const item = items.value.find(i => i.product_id === productId)
         if (item?.id !== undefined) {
-            await cartItemsApi.delete(
+            await sdk.lomkit.cartItems.delete(
                 { resources: [item.id] },
                 createNotify(createSnackAdapter({
                     success: 'Article retiré',
@@ -88,7 +76,7 @@ export function useCart() {
         const item = items.value.find(i => i.product_id === productId)
         if (item === undefined) return
         item.quantity = quantity
-        await cartItemsApi.mutate(
+        await sdk.lomkit.cartItems.mutate(
             { ...item },
             createNotify(createSnackAdapter({ error: 'Failed to update quantity' })),
         ).catch(() => null)

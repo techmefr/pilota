@@ -39,11 +39,3 @@ export function createSnackAdapter(opts: { success?: string; error?: string } = 
         onError: err => push(opts.error ?? err.message, 'error'),
     }
 }
-
-export function createLogAdapter(): PilotaNotifyAdapter {
-    return {
-        onRequest: ctx => console.log(`[pilota] → ${ctx.resource ?? '?'}`),
-        onSuccess: data => console.log('[pilota] ✓', data),
-        onError: err => console.error('[pilota] ✗', err.message),
-    }
-}

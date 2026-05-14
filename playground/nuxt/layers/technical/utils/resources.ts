@@ -1,5 +1,0 @@
-export { cartItemResource } from '../resources/cart-item.resource'
-export { messageResource } from '../resources/message.resource'
-export { orderResource } from '../resources/order.resource'
-export { productResource } from '../resources/product.resource'
-export { userResource } from '../resources/user.resource'
