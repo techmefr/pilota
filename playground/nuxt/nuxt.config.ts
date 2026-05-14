@@ -1,6 +1,8 @@
 export default defineNuxtConfig({
     extends: ['./layers/technical', './layers/functional'],
 
+    css: ['~/assets/grain.css'],
+
     modules: ['vuetify-nuxt-module'],
 
     app: {
