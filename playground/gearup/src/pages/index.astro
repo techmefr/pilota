@@ -1,4 +1,19 @@
 ---
+import { createGearupPilota } from '../lib/pilota'
+import type { Product } from '../lib/pilota'
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? 'http://host.docker.internal:54321'
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? 'pilota'
+
+let products: Product[] = []
+
+try {
+    const pilota = createGearupPilota(supabaseUrl, supabaseKey)
+    const result = await pilota.supabase.products.get()
+    products = (result.data as Product[]) ?? []
+} catch {
+    products = []
+}
 ---
 
 <html lang="en">
@@ -6,11 +21,71 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <title>Gearup</title>
+        <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+            :root {
+                --bg: #060608; --surface: #0e0e12; --border: #1e1e28;
+                --primary: #fb923c; --text: #f0f0f5; --muted: #6b6b80;
+                --green: #34d399; --red: #f87171;
+            }
+            body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+            main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+            header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+            h1 { font-size: 1.75rem; font-weight: 700; color: var(--primary); }
+            .subtitle { color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+            .back { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+            .badge-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+            .badge { font-size: 0.7rem; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 99px; background: #1a2a1a; color: var(--green); border: 1px solid #2a4a2a; }
+            .badge-label { font-size: 0.75rem; color: var(--muted); }
+            .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+            .card { background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; padding: 1.25rem; }
+            .cat { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+            .name { font-weight: 600; margin-bottom: 0.75rem; }
+            .card-footer { display: flex; justify-content: space-between; align-items: center; }
+            .price { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+            .stock-ok { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 99px; background: #1a2a1a; color: var(--green); }
+            .stock-ko { font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 99px; background: #2a1a1a; color: var(--red); }
+            .empty { padding: 3rem; background: var(--surface); border-radius: 1rem; border: 1px solid var(--border); text-align: center; color: var(--muted); }
+            .empty code { font-size: 0.75rem; display: block; margin-top: 0.5rem; }
+        </style>
     </head>
     <body>
         <main>
-            <h1>Gearup</h1>
-            <p>Gear catalog — à construire</p>
+            <header>
+                <div>
+                    <h1>Gearup</h1>
+                    <p class="subtitle">Pilota SDK · SupabaseDriver · Astro 5 · PostgREST :54321</p>
+                </div>
+                <a href="http://localhost:9999" class="back">← Hub</a>
+            </header>
+
+            <div class="badge-row">
+                <span class="badge">{products.length} produits chargés</span>
+                <span class="badge-label">via PostgREST</span>
+            </div>
+
+            {products.length === 0 ? (
+                <div class="empty">
+                    <p>Aucun produit — Supabase offline ?</p>
+                    <code>GET http://localhost:54321/rest/v1/products</code>
+                </div>
+            ) : (
+                <div class="grid">
+                    {products.map(p => (
+                        <div class="card">
+                            <div class="cat">{p.category}</div>
+                            <div class="name">{p.name}</div>
+                            <div class="card-footer">
+                                <span class="price">{p.price.toFixed(2)} €</span>
+                                {p.stock > 0
+                                    ? <span class="stock-ok">Stock: {p.stock}</span>
+                                    : <span class="stock-ko">Rupture</span>
+                                }
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </main>
     </body>
 </html>

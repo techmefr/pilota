@@ -1,10 +1,12 @@
 services:
   vota:
     build:
-      context: .
+      context: ../..
+      dockerfile: playground/vota/Dockerfile
     ports:
       - "3002:3002"
     environment:
+      NHOST_GRAPHQL_URL: http://host.docker.internal:8080/v1/graphql
       VITE_TOLGEE_API_URL: http://host.docker.internal:8085
       VITE_TOLGEE_API_KEY: ${VITE_TOLGEE_API_KEY:-}
     extra_hosts:

@@ -10,7 +10,10 @@
     },
     "dependencies": {
         "astro": "^5.7.0",
-        "@tolgee/web": "^5.0.0"
+        "@pilota/core": "workspace:*",
+        "@pilota/driver-supabase": "workspace:*",
+        "@tolgee/web": "^5.0.0",
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "typescript": "^5.0.0"

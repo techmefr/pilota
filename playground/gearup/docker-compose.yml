@@ -1,10 +1,13 @@
 services:
   gearup:
     build:
-      context: .
+      context: ../..
+      dockerfile: playground/gearup/Dockerfile
     ports:
       - "3003:3003"
     environment:
+      PUBLIC_SUPABASE_URL: http://host.docker.internal:54321
+      PUBLIC_SUPABASE_ANON_KEY: pilota
       PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
       PUBLIC_TOLGEE_API_KEY: ${PUBLIC_TOLGEE_API_KEY:-}
     extra_hosts:
