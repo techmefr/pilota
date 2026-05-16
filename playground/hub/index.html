@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Pilota — Dev Hub</title>
+        <style>
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+            :root {
+                --bg: #060608;
+                --surface: #0e0e12;
+                --border: #1e1e28;
+                --primary: #7c6af7;
+                --text: #f0f0f5;
+                --muted: #6b6b80;
+                --green: #34d399;
+                --yellow: #fb923c;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 3rem 1.5rem;
+            }
+
+            header {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                background: linear-gradient(135deg, #7c6af7, #a855f7);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            header p {
+                color: var(--muted);
+                margin-top: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1rem;
+                width: 100%;
+                max-width: 900px;
+            }
+
+            .section-label {
+                grid-column: 1 / -1;
+                font-size: 0.7rem;
+                font-weight: 600;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--muted);
+                padding: 1.5rem 0 0.5rem;
+                border-top: 1px solid var(--border);
+            }
+
+            .section-label:first-child {
+                padding-top: 0;
+                border-top: none;
+            }
+
+            a.card {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1.25rem 1.5rem;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 1rem;
+                text-decoration: none;
+                color: var(--text);
+                transition: border-color 0.15s, transform 0.15s;
+            }
+
+            a.card:hover {
+                border-color: var(--primary);
+                transform: translateY(-1px);
+            }
+
+            .card-icon {
+                font-size: 1.6rem;
+                flex-shrink: 0;
+                width: 2.5rem;
+                text-align: center;
+            }
+
+            .card-body { flex: 1; min-width: 0; }
+
+            .card-name {
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+            .card-desc {
+                color: var(--muted);
+                font-size: 0.8rem;
+                margin-top: 0.2rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .card-meta {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 0.3rem;
+                flex-shrink: 0;
+            }
+
+            .badge {
+                font-size: 0.65rem;
+                font-weight: 600;
+                padding: 0.2rem 0.5rem;
+                border-radius: 99px;
+                background: #1a1a28;
+                color: var(--muted);
+                letter-spacing: 0.05em;
+            }
+
+            .port {
+                font-size: 0.7rem;
+                font-family: monospace;
+                color: var(--primary);
+            }
+
+            footer {
+                margin-top: 3rem;
+                color: var(--muted);
+                font-size: 0.75rem;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Pilota POC</h1>
+            <p>Dev hub — all services at a glance</p>
+        </header>
+
+        <div class="grid">
+
+            <div class="section-label">Frontends</div>
+
+            <a class="card" href="http://localhost:3010" target="_blank">
+                <div class="card-icon">🛍</div>
+                <div class="card-body">
+                    <div class="card-name">Shoplab</div>
+                    <div class="card-desc">Nuxt 4 — SDK demo, Tolgee, Vuetify</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">Nuxt 4</span>
+                    <span class="port">:3010</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:3001" target="_blank">
+                <div class="card-icon">📊</div>
+                <div class="card-body">
+                    <div class="card-name">Pulse</div>
+                    <div class="card-desc">Next.js 15 — suivi dashboard</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">Next.js 15</span>
+                    <span class="port">:3001</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:3002" target="_blank">
+                <div class="card-icon">🗳</div>
+                <div class="card-body">
+                    <div class="card-name">Vota</div>
+                    <div class="card-desc">SvelteKit 2 — voting &amp; feedback</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">SvelteKit 2</span>
+                    <span class="port">:3002</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:3003" target="_blank">
+                <div class="card-icon">⚙</div>
+                <div class="card-body">
+                    <div class="card-name">Gearup</div>
+                    <div class="card-desc">Astro 5 — gear catalog</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">Astro 5</span>
+                    <span class="port">:3003</span>
+                </div>
+            </a>
+
+            <div class="section-label">Backends</div>
+
+            <a class="card" href="http://localhost:8000" target="_blank">
+                <div class="card-icon">🐘</div>
+                <div class="card-body">
+                    <div class="card-name">Laravel</div>
+                    <div class="card-desc">REST API — Laravel REST, OSDD</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">PHP 8.3</span>
+                    <span class="port">:8000</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:8080" target="_blank">
+                <div class="card-icon">🔷</div>
+                <div class="card-body">
+                    <div class="card-name">Nhost / Hasura</div>
+                    <div class="card-desc">GraphQL engine — Hasura console</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">GraphQL</span>
+                    <span class="port">:8080</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:54321" target="_blank">
+                <div class="card-icon">🟩</div>
+                <div class="card-body">
+                    <div class="card-name">Supabase</div>
+                    <div class="card-desc">PostgREST — REST over Postgres</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">PostgREST</span>
+                    <span class="port">:54321</span>
+                </div>
+            </a>
+
+            <div class="section-label">Tooling</div>
+
+            <a class="card" href="http://localhost:8085" target="_blank">
+                <div class="card-icon">🌐</div>
+                <div class="card-body">
+                    <div class="card-name">Tolgee</div>
+                    <div class="card-desc">i18n self-hosted — 4 projets</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">Self-hosted</span>
+                    <span class="port">:8085</span>
+                </div>
+            </a>
+
+            <a class="card" href="http://localhost:9000" target="_blank">
+                <div class="card-icon">🔍</div>
+                <div class="card-body">
+                    <div class="card-name">Sentry</div>
+                    <div class="card-desc">Error monitoring self-hosted</div>
+                </div>
+                <div class="card-meta">
+                    <span class="badge">Self-hosted</span>
+                    <span class="port">:9000</span>
+                </div>
+            </a>
+
+        </div>
+
+        <footer>Pilota POC — XEFI</footer>
+    </body>
+</html>
