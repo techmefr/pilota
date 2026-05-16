@@ -2,6 +2,7 @@
     "name": "vota",
     "version": "0.0.1",
     "private": true,
+    "type": "module",
     "scripts": {
         "dev": "vite dev --host --port 3002",
         "build": "vite build",

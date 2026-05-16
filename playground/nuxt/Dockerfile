@@ -1,7 +1,14 @@
 FROM node:22-alpine
+RUN npm install -g pnpm@8 --quiet
+
 WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
+
+COPY package.json pnpm-workspace.yaml ./
+COPY packages/ packages/
+COPY playground/nuxt/ playground/nuxt/
+
+RUN pnpm install
+
+WORKDIR /app/playground/nuxt
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]

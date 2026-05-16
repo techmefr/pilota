@@ -1,0 +1,9 @@
+**/node_modules
+**/.nuxt
+**/.output
+**/.svelte-kit
+**/.astro
+**/dist
+**/.next
+**/playwright-report
+**/test-results

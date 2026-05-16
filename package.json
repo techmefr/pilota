@@ -9,5 +9,12 @@
     },
     "devDependencies": {
         "typescript": "^5.5.0"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "@parcel/watcher",
+            "esbuild",
+            "vue-demi"
+        ]
     }
 }
