@@ -1,0 +1,11 @@
+services:
+  vota:
+    build:
+      context: .
+    ports:
+      - "3002:3002"
+    environment:
+      VITE_TOLGEE_API_URL: http://host.docker.internal:8085
+      VITE_TOLGEE_API_KEY: ${VITE_TOLGEE_API_KEY:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

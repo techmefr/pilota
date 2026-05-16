@@ -84,6 +84,11 @@ export default defineNuxtConfig({
         '/**': { ssr: false },
     },
 
+    devServer: {
+        host: '0.0.0.0',
+        port: 3000,
+    },
+
     vite: {
         server: {
             allowedHosts: 'all',

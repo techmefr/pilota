@@ -5,6 +5,8 @@ dist/
 *.env
 .nuxt/
 .output/
+.svelte-kit/
+.astro/
 .pnpm-store/
 pnpm-lock.yaml
 *.log

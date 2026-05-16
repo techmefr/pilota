@@ -1,0 +1,11 @@
+services:
+  pulse:
+    build:
+      context: .
+    ports:
+      - "3001:3001"
+    environment:
+      NEXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      NEXT_PUBLIC_TOLGEE_API_KEY: ${NEXT_PUBLIC_TOLGEE_API_KEY:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -1,0 +1,11 @@
+services:
+  shoplab:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      NUXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      NUXT_PUBLIC_TOLGEE_API_KEY: ${NUXT_PUBLIC_TOLGEE_API_KEY:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

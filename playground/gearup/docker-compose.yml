@@ -1,0 +1,11 @@
+services:
+  gearup:
+    build:
+      context: .
+    ports:
+      - "3003:3003"
+    environment:
+      PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      PUBLIC_TOLGEE_API_KEY: ${PUBLIC_TOLGEE_API_KEY:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
