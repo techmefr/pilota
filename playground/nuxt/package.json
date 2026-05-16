@@ -1,5 +1,5 @@
 {
-    "name": "playground-nuxt",
+    "name": "shoplab",
     "private": true,
     "scripts": {
         "dev": "nuxt dev",

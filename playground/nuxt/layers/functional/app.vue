@@ -15,7 +15,7 @@ const isDark = computed(() => theme.global.current.value.dark)
 function toggleTheme(): void {
     const next = isDark.value ? 'light' : 'dark'
     theme.global.name.value = next
-    localStorage.setItem('pilota-theme', next)
+    localStorage.setItem('shoplab-theme', next)
 }
 
 function setLanguage(lang: string): void {
@@ -23,7 +23,7 @@ function setLanguage(lang: string): void {
 }
 
 onMounted(() => {
-    const saved = localStorage.getItem('pilota-theme')
+    const saved = localStorage.getItem('shoplab-theme')
     if (saved === 'light' || saved === 'dark') {
         theme.global.name.value = saved
     } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
@@ -35,10 +35,10 @@ onMounted(() => {
 <template>
     <v-app>
         <div class="grain-overlay" aria-hidden="true" />
-        <v-app-bar :elevation="0" class="pilota-nav" height="60">
+        <v-app-bar :elevation="0" class="shoplab-nav" height="60">
             <v-container class="d-flex align-center h-100 px-4 px-md-8" style="max-width: 1400px; margin: 0 auto;">
                 <NuxtLink to="/" class="text-decoration-none d-flex align-center gap-3">
-                    <span class="nav-logo">PILOTA</span>
+                    <span class="nav-logo">SHOPLAB</span>
                     <span class="nav-sub">SHOP</span>
                 </NuxtLink>
 
@@ -72,21 +72,21 @@ onMounted(() => {
             </v-container>
         </v-app-bar>
 
-        <v-main class="pilota-main">
+        <v-main class="shoplab-main">
             <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
         </v-main>
 
-        <footer class="pilota-footer">
+        <footer class="shoplab-footer">
             <v-container style="max-width: 1400px; margin: 0 auto;">
                 <div class="d-flex align-center justify-space-between flex-wrap gap-4 py-10 px-4 px-md-8">
                     <div>
-                        <p class="nav-logo mb-2" style="font-size: 22px; letter-spacing: 0.16em;">PILOTA</p>
-                        <p class="footer-note">sdk.[driver].[resource].[method]() — GraphQL · REST · Realtime</p>
+                        <p class="nav-logo mb-2" style="font-size: 22px; letter-spacing: 0.16em;">SHOPLAB</p>
+                        <p class="footer-note">Tech products, curated for professionals</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <v-chip size="x-small" variant="tonal" color="primary" label>GraphQL</v-chip>
-                        <v-chip size="x-small" variant="tonal" color="secondary" label>REST</v-chip>
-                        <v-chip size="x-small" variant="tonal" color="success" label>WebSocket</v-chip>
+                        <v-chip size="x-small" variant="tonal" color="primary" label>Informatique</v-chip>
+                        <v-chip size="x-small" variant="tonal" color="secondary" label>Audio</v-chip>
+                        <v-chip size="x-small" variant="tonal" color="success" label>Smartphones</v-chip>
                     </div>
                 </div>
             </v-container>
@@ -148,7 +148,7 @@ onMounted(() => {
 </style>
 
 <style scoped>
-.pilota-nav {
+.shoplab-nav {
     background: rgba(var(--v-theme-background), 0.82) !important;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -236,11 +236,11 @@ onMounted(() => {
     color: rgb(var(--v-theme-primary));
 }
 
-.pilota-main {
+.shoplab-main {
     min-height: calc(100vh - 60px);
 }
 
-.pilota-footer {
+.shoplab-footer {
     border-top: 1px solid rgba(128, 128, 128, 0.1);
 }
 

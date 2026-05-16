@@ -1,7 +1,7 @@
 {
     "Discover our": "Découvrez notre",
     "catalog": "catalogue",
-    "The best tech, managed via a unified driver-based architecture.": "Les meilleures tech, gérées via une architecture driver-based unifiée.",
+    "The best tech, managed via a unified driver-based architecture.": "Les meilleurs produits tech, sélectionnés pour les professionnels.",
     "All ({count})": "Tous ({count})",
     "No products available": "Aucun produit disponible",
     "Product added to cart": "Produit ajouté au panier",
@@ -52,5 +52,5 @@
     "Connecting…": "Connexion…",
     "Hello! How can I help you?": "Bonjour ! Comment puis-je vous aider ?",
     "Your message…": "Votre message…",
-    "Pilota POC — sdk.[driver].[resource].[method]() unified over GraphQL, REST and WebSocket": "Pilota POC — sdk.[driver].[resource].[method]() unifié sur GraphQL, REST et WebSocket"
+    "Tech products, curated for professionals": "Produits tech, sélectionnés pour les professionnels"
 }
