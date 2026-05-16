@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Rest;
+namespace Functional\Cart\Rest;
 
-use App\Models\CartItem;
+use Functional\Cart\Models\CartItem;
 use Lomkit\Rest\Fields\Field;
 use Lomkit\Rest\Http\Requests\RestRequest;
 use Lomkit\Rest\Http\Resources\Resource;

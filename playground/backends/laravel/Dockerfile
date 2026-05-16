@@ -20,6 +20,16 @@ COPY config/ config/
 COPY app/ app/
 COPY database/ database/
 COPY routes/ routes/
+COPY functional/ functional/
+
+RUN php -r "
+\$json = json_decode(file_get_contents('composer.json'), true);
+\$json['autoload']['psr-4']['Functional\\\\Users\\\\'] = 'functional/Users/src/';
+\$json['autoload']['psr-4']['Functional\\\\Cart\\\\'] = 'functional/Cart/src/';
+\$json['autoload']['psr-4']['Functional\\\\Users\\\\Database\\\\Seeders\\\\'] = 'functional/Users/database/seeders/';
+\$json['autoload']['psr-4']['Functional\\\\Cart\\\\Database\\\\Seeders\\\\'] = 'functional/Cart/database/seeders/';
+file_put_contents('composer.json', json_encode(\$json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+" && composer dump-autoload --optimize
 
 RUN chmod -R 775 storage bootstrap/cache
 

@@ -20,7 +20,7 @@ export const productResource = defineResource({
 export type Product = z.infer<typeof productResource.schema>
 
 export const cartItemResource = defineResource({
-    name: 'cart_items',
+    name: 'cartItems',
     schema: z.object({
         id: z.number().optional(),
         product_id: z.number(),

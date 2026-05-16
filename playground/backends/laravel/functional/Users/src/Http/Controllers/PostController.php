@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Functional\Users\Http\Controllers;
 
-use App\Rest\PostResource;
+use Functional\Users\Rest\PostResource;
 use Lomkit\Rest\Http\Controllers\Controller;
 
 class PostController extends Controller

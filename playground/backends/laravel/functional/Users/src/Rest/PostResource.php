@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Rest;
+namespace Functional\Users\Rest;
 
-use App\Models\Post;
+use Functional\Users\Models\Post;
 use Lomkit\Rest\Fields\Field;
 use Lomkit\Rest\Http\Requests\RestRequest;
 use Lomkit\Rest\Http\Resources\Resource;

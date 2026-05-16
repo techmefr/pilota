@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Functional\Cart\Http\Controllers;
 
-use App\Rest\CartItemResource;
+use Functional\Cart\Rest\CartItemResource;
 use Lomkit\Rest\Http\Controllers\Controller;
 
 class CartItemController extends Controller

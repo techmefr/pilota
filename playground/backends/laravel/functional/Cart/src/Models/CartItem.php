@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Functional\Cart\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

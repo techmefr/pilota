@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Functional\Users\Http\Controllers;
 
-use App\Rest\UserResource;
+use Functional\Users\Rest\UserResource;
 use Lomkit\Rest\Http\Controllers\Controller;
 
 class UserController extends Controller
