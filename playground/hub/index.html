@@ -1,276 +1,708 @@
 <!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Pilota — Dev Hub</title>
-        <style>
-            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pilota — Dev Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@layer reset, tokens, layout, components;
 
-            :root {
-                --bg: #060608;
-                --surface: #0e0e12;
-                --border: #1e1e28;
-                --primary: #7c6af7;
-                --text: #f0f0f5;
-                --muted: #6b6b80;
-                --green: #34d399;
-                --yellow: #fb923c;
-            }
+@layer reset {
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  a { text-decoration: none; color: inherit; }
+  button { cursor: pointer; border: none; background: none; font: inherit; }
+}
 
-            body {
-                background: var(--bg);
-                color: var(--text);
-                font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 3rem 1.5rem;
-            }
+@layer tokens {
+  :root {
+    --red: #E30613;
+    --red-a10: color-mix(in oklch, var(--red) 10%, transparent);
+    --red-a18: color-mix(in oklch, var(--red) 18%, transparent);
+  }
 
-            header {
-                text-align: center;
-                margin-bottom: 3rem;
-            }
+  [data-theme="dark"] {
+    --bg: #0b0b0b;
+    --surface: #141414;
+    --surface-2: #1d1d1d;
+    --border: oklch(100% 0 0 / .08);
+    --border-hi: oklch(100% 0 0 / .15);
+    --text: #f0f0f0;
+    --text-2: #888;
+    --text-3: #454545;
+    --ok: #22c55e;
+    --ok-a15: color-mix(in oklch, #22c55e 15%, transparent);
+    --wip: #f59e0b;
+    color-scheme: dark;
+  }
 
-            header h1 {
-                font-size: 2rem;
-                font-weight: 700;
-                letter-spacing: -0.03em;
-                background: linear-gradient(135deg, #7c6af7, #a855f7);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
+  [data-theme="light"] {
+    --bg: #f1f1f2;
+    --surface: #fff;
+    --surface-2: #ebebed;
+    --border: oklch(0% 0 0 / .09);
+    --border-hi: oklch(0% 0 0 / .18);
+    --text: #111;
+    --text-2: #666;
+    --text-3: #aaa;
+    --ok: #16a34a;
+    --ok-a15: color-mix(in oklch, #16a34a 12%, transparent);
+    --wip: #d97706;
+    color-scheme: light;
+  }
+}
 
-            header p {
-                color: var(--muted);
-                margin-top: 0.5rem;
-                font-size: 0.9rem;
-            }
+@layer layout {
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
 
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 1rem;
-                width: 100%;
-                max-width: 900px;
-            }
+  .wrapper {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding: 5rem 2rem 7rem;
+  }
 
-            .section-label {
-                grid-column: 1 / -1;
-                font-size: 0.7rem;
-                font-weight: 600;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                color: var(--muted);
-                padding: 1.5rem 0 0.5rem;
-                border-top: 1px solid var(--border);
-            }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;
+    gap: .875rem;
+  }
 
-            .section-label:first-child {
-                padding-top: 0;
-                border-top: none;
-            }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: .875rem;
+  }
 
-            a.card {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1.25rem 1.5rem;
-                background: var(--surface);
-                border: 1px solid var(--border);
-                border-radius: 1rem;
-                text-decoration: none;
-                color: var(--text);
-                transition: border-color 0.15s, transform 0.15s;
-            }
+  @media (width <= 860px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  }
 
-            a.card:hover {
-                border-color: var(--primary);
-                transform: translateY(-1px);
-            }
+  @media (width <= 600px) {
+    :is(.grid-2, .grid-3) { grid-template-columns: 1fr; }
+  }
+}
 
-            .card-icon {
-                font-size: 1.6rem;
-                flex-shrink: 0;
-                width: 2.5rem;
-                text-align: center;
-            }
+@layer components {
+  .theme-toggle {
+    position: fixed;
+    inset-block-start: 1.25rem;
+    inset-inline-end: 1.25rem;
+    z-index: 50;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .15s, color .15s;
 
-            .card-body { flex: 1; min-width: 0; }
+    & svg { width: 14px; height: 14px; }
+    &:hover { border-color: var(--red); color: var(--red); }
+  }
 
-            .card-name {
-                font-weight: 600;
-                font-size: 0.95rem;
-            }
+  header {
+    margin-block-end: 4rem;
 
-            .card-desc {
-                color: var(--muted);
-                font-size: 0.8rem;
-                margin-top: 0.2rem;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      margin-block-end: 1.5rem;
+    }
 
-            .card-meta {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 0.3rem;
-                flex-shrink: 0;
-            }
+    .xefi-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+    }
 
-            .badge {
-                font-size: 0.65rem;
-                font-weight: 600;
-                padding: 0.2rem 0.5rem;
-                border-radius: 99px;
-                background: #1a1a28;
-                color: var(--muted);
-                letter-spacing: 0.05em;
-            }
+    .eyebrow-text {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
 
-            .port {
-                font-size: 0.7rem;
-                font-family: monospace;
-                color: var(--primary);
-            }
+    h1 {
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -.045em;
+      line-height: .95;
+      text-wrap: balance;
+      margin-block-end: 1.25rem;
 
-            footer {
-                margin-top: 3rem;
-                color: var(--muted);
-                font-size: 0.75rem;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Pilota POC</h1>
-            <p>Dev hub — all services at a glance</p>
-        </header>
+      em { font-style: normal; color: var(--red); }
+    }
 
-        <div class="grid">
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: .78rem;
+      color: var(--text-2);
+    }
 
-            <div class="section-label">Frontends</div>
+    .meta-sep { width: 1px; height: 11px; background: var(--border-hi); }
 
-            <a class="card" href="http://localhost:3010" target="_blank">
-                <div class="card-icon">🛍</div>
-                <div class="card-body">
-                    <div class="card-name">Shoplab</div>
-                    <div class="card-desc">Nuxt 4 — SDK demo, Tolgee, Vuetify</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">Nuxt 4</span>
-                    <span class="port">:3010</span>
-                </div>
-            </a>
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
 
-            <a class="card" href="http://localhost:3001" target="_blank">
-                <div class="card-icon">📊</div>
-                <div class="card-body">
-                    <div class="card-name">Pulse</div>
-                    <div class="card-desc">Next.js 15 — suivi dashboard</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">Next.js 15</span>
-                    <span class="port">:3001</span>
-                </div>
-            </a>
+    .meta-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
 
-            <a class="card" href="http://localhost:3002" target="_blank">
-                <div class="card-icon">🗳</div>
-                <div class="card-body">
-                    <div class="card-name">Vota</div>
-                    <div class="card-desc">SvelteKit 2 — voting &amp; feedback</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">SvelteKit 2</span>
-                    <span class="port">:3002</span>
-                </div>
-            </a>
+      &.ok  { background: var(--ok); }
+      &.wip { background: var(--wip); }
+      &.off { background: var(--text-3); }
+    }
+  }
 
-            <a class="card" href="http://localhost:3003" target="_blank">
-                <div class="card-icon">⚙</div>
-                <div class="card-body">
-                    <div class="card-name">Gearup</div>
-                    <div class="card-desc">Astro 5 — gear catalog</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">Astro 5</span>
-                    <span class="port">:3003</span>
-                </div>
-            </a>
+  section {
+    margin-block-end: 3.25rem;
 
-            <div class="section-label">Backends</div>
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-block-end: 1.25rem;
+      padding-block-end: .875rem;
+      border-bottom: 1px solid var(--border);
+    }
 
-            <a class="card" href="http://localhost:8000" target="_blank">
-                <div class="card-icon">🐘</div>
-                <div class="card-body">
-                    <div class="card-name">Laravel</div>
-                    <div class="card-desc">REST API — Laravel REST, OSDD</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">PHP 8.3</span>
-                    <span class="port">:8000</span>
-                </div>
-            </a>
+    .section-label {
+      font-size: .6rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
 
-            <a class="card" href="http://localhost:8080" target="_blank">
-                <div class="card-icon">🔷</div>
-                <div class="card-body">
-                    <div class="card-name">Nhost / Hasura</div>
-                    <div class="card-desc">GraphQL engine — Hasura console</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">GraphQL</span>
-                    <span class="port">:8080</span>
-                </div>
-            </a>
+    .section-count {
+      font-size: .6rem;
+      font-weight: 700;
+      padding: .15rem .45rem;
+      border-radius: .3rem;
+      background: var(--surface-2);
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+  }
 
-            <a class="card" href="http://localhost:54321" target="_blank">
-                <div class="card-icon">🟩</div>
-                <div class="card-body">
-                    <div class="card-name">Supabase</div>
-                    <div class="card-desc">PostgREST — REST over Postgres</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">PostgREST</span>
-                    <span class="port">:54321</span>
-                </div>
-            </a>
+  a.card {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 1.125rem;
+    padding: 1.375rem 1.375rem 1.375rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--text-3);
+    border-radius: .875rem;
+    transition: background .15s, border-color .15s, box-shadow .15s;
 
-            <div class="section-label">Tooling</div>
+    &.ok  { border-left-color: var(--ok); }
+    &.wip { border-left-color: var(--wip); }
 
-            <a class="card" href="http://localhost:8085" target="_blank">
-                <div class="card-icon">🌐</div>
-                <div class="card-body">
-                    <div class="card-name">Tolgee</div>
-                    <div class="card-desc">i18n self-hosted — 4 projets</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">Self-hosted</span>
-                    <span class="port">:8085</span>
-                </div>
-            </a>
+    &:hover {
+      background: var(--surface-2);
+      border-color: var(--border-hi);
+      box-shadow: 0 4px 24px oklch(0% 0 0 / .12);
 
-            <a class="card" href="http://localhost:9000" target="_blank">
-                <div class="card-icon">🔍</div>
-                <div class="card-body">
-                    <div class="card-name">Sentry</div>
-                    <div class="card-desc">Error monitoring self-hosted</div>
-                </div>
-                <div class="card-meta">
-                    <span class="badge">Self-hosted</span>
-                    <span class="port">:9000</span>
-                </div>
-            </a>
+      .card-icon { color: var(--text-2); border-color: var(--border-hi); }
+      .port { color: var(--red); border-color: var(--red-a18); background: var(--red-a10); }
+    }
 
+    &.disabled { opacity: .35; pointer-events: none; }
+    &:active { opacity: .75; transition-duration: .05s; }
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .card-icon {
+    width: 2.375rem;
+    height: 2.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .55rem;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-3);
+    flex-shrink: 0;
+    transition: color .15s, border-color .15s;
+
+    & svg { width: .95rem; height: .95rem; }
+  }
+
+  .port {
+    font-size: .68rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text-3);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: .18rem .5rem;
+    border-radius: .375rem;
+    transition: color .15s, border-color .15s, background .15s;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: .375rem;
+  }
+
+  .card-name {
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: -.025em;
+  }
+
+  .card-desc {
+    font-size: .775rem;
+    line-height: 1.65;
+    color: var(--text-2);
+    text-wrap: pretty;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+  }
+
+  .tag {
+    font-size: .6rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: .18rem .45rem;
+    border-radius: .3rem;
+    background: var(--surface-2);
+    color: var(--text-3);
+    border: 1px solid var(--border);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    flex-shrink: 0;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.ok  { background: var(--ok); }
+    &.wip { background: var(--wip); }
+    &.off { background: var(--text-3); }
+  }
+
+  .status-text {
+    font-size: .65rem;
+    font-weight: 600;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  footer {
+    margin-block-start: 5rem;
+    padding-block-start: 1.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .footer-brand {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--text-3);
+      letter-spacing: -.01em;
+
+      span { color: var(--red); }
+    }
+
+    .footer-note { font-size: .65rem; color: var(--text-3); }
+  }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeBtn" aria-label="Changer le thème">
+  <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+  <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
+<div class="wrapper">
+
+  <header>
+    <div class="eyebrow">
+      <div class="xefi-dot"></div>
+      <span class="eyebrow-text">XEFI — Internal</span>
+    </div>
+    <h1>Pilota <em>POC</em></h1>
+    <div class="header-meta">
+      <span class="meta-item"><span class="meta-dot ok"></span>6 en ligne</span>
+      <span class="meta-sep"></span>
+      <span class="meta-item"><span class="meta-dot wip"></span>1 en cours</span>
+      <span class="meta-sep"></span>
+      <span class="meta-item"><span class="meta-dot off"></span>2 à venir</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <span class="section-label">Frontends</span>
+      <span class="section-count">04</span>
+    </div>
+    <div class="grid-2">
+
+      <a class="card ok" href="http://localhost:3010" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+          </div>
+          <span class="port">:3010</span>
         </div>
+        <div class="card-body">
+          <p class="card-name">Shoplab</p>
+          <p class="card-desc">Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime. Démo des 3 drivers Pilota en simultané.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">Nuxt 4</span>
+            <span class="tag">Vuetify</span>
+            <span class="tag">Nhost</span>
+            <span class="tag">Lomkit</span>
+            <span class="tag">Supabase</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
 
-        <footer>Pilota POC — XEFI</footer>
-    </body>
+      <a class="card disabled" href="http://localhost:3001" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <span class="port">:3001</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Pulse</p>
+          <p class="card-desc">Dashboard produits Next.js 15. Driver Lomkit → Laravel REST via Pilota SDK. Rendu serveur avec App Router. Développement non démarré.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">Next.js 15</span>
+            <span class="tag">React 19</span>
+            <span class="tag">Lomkit</span>
+            <span class="tag">Laravel</span>
+          </div>
+          <div class="status">
+            <span class="status-dot off"></span>
+            <span class="status-text">À venir</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card ok" href="http://localhost:3002" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="11" height="15" rx="1.5"/>
+              <rect x="11" y="6" width="11" height="15" rx="1.5"/>
+              <line x1="5" y1="8" x2="9" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/>
+            </svg>
+          </div>
+          <span class="port">:3002</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Vota</p>
+          <p class="card-desc">Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV / JSON / Jira. Nhost/Hasura — GraphQL et subscriptions WebSocket.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">SvelteKit</span>
+            <span class="tag">Svelte 5</span>
+            <span class="tag">Nhost</span>
+            <span class="tag">GraphQL WS</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card wip" href="http://localhost:3003" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <span class="port">:3003</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Gearup</p>
+          <p class="card-desc">Configurateur postes HP XEFI par profil (dev, CDP, commercial). Généré au build via Lomkit → Laravel Interact. Remplace le PDF/Excel partagé par cycle d'achat.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">Astro 5</span>
+            <span class="tag">SSG</span>
+            <span class="tag">Lomkit</span>
+            <span class="tag">Laravel</span>
+          </div>
+          <div class="status">
+            <span class="status-dot wip"></span>
+            <span class="status-text">En cours</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-label">Backends</span>
+      <span class="section-count">03</span>
+    </div>
+    <div class="grid-3">
+
+      <a class="card ok" href="http://localhost:8000" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>
+              <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <span class="port">:8000</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Laravel</p>
+          <p class="card-desc">API REST avec Laravel Interact (Lomkit). Ressources produits, panier, profils HP. Utilisé par Shoplab, Pulse et Gearup via le driver Pilota.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">PHP 8.3</span>
+            <span class="tag">Laravel 11</span>
+            <span class="tag">Lomkit</span>
+            <span class="tag">Postgres</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card ok" href="http://localhost:8080" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+              <line x1="12" y1="7" x2="5.5" y2="17.2"/>
+              <line x1="12" y1="7" x2="18.5" y2="17.2"/>
+              <line x1="6.5" y1="19" x2="17.5" y2="19"/>
+            </svg>
+          </div>
+          <span class="port">:8080</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Nhost / Hasura</p>
+          <p class="card-desc">GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel, permissions par rôle. Utilisé par Shoplab et Vota.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">GraphQL</span>
+            <span class="tag">WebSocket</span>
+            <span class="tag">Hasura v2</span>
+            <span class="tag">Postgres</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card ok" href="http://localhost:54321" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <span class="port">:54321</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Supabase</p>
+          <p class="card-desc">PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota. Authentification JWT. Utilisé par Shoplab.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">PostgREST</span>
+            <span class="tag">Realtime</span>
+            <span class="tag">Postgres</span>
+            <span class="tag">JWT</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="section-label">Tooling</span>
+      <span class="section-count">02</span>
+    </div>
+    <div class="grid-2">
+
+      <a class="card ok" href="http://localhost:8085" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <span class="port">:8085</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Tolgee</p>
+          <p class="card-desc">Plateforme i18n self-hosted. 4 projets configurés (Shoplab, Vota, Pulse, Gearup). Traductions FR / EN / DE.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">i18n</span>
+            <span class="tag">Self-hosted</span>
+            <span class="tag">FR / EN / DE</span>
+          </div>
+          <div class="status">
+            <span class="status-dot ok"></span>
+            <span class="status-text">Prêt</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="card disabled" href="http://localhost:9000" target="_blank" rel="noopener">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <span class="port">:9000</span>
+        </div>
+        <div class="card-body">
+          <p class="card-name">Sentry</p>
+          <p class="card-desc">Monitoring d'erreurs self-hosted. Intégration prévue sur tous les frontends et l'API Laravel.</p>
+        </div>
+        <div class="card-foot">
+          <div class="tags">
+            <span class="tag">Error tracking</span>
+            <span class="tag">Self-hosted</span>
+          </div>
+          <div class="status">
+            <span class="status-dot off"></span>
+            <span class="status-text">À venir</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-brand">Pilota <span>POC</span> — XEFI</span>
+    <span class="footer-note">Internal dev tools · Not for production</span>
+  </footer>
+
+</div>
+
+<script>
+const html = document.documentElement
+const btn = document.getElementById('themeBtn')
+const sun = document.getElementById('sunIcon')
+const moon = document.getElementById('moonIcon')
+
+function apply(t) {
+  html.setAttribute('data-theme', t)
+  localStorage.setItem('pilota_theme', t)
+  sun.style.display = t === 'dark' ? 'block' : 'none'
+  moon.style.display = t === 'light' ? 'block' : 'none'
+}
+
+const saved = localStorage.getItem('pilota_theme')
+const preferred = window.matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark'
+apply(saved || preferred)
+btn.addEventListener('click', () => apply(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'))
+</script>
+
+</body>
 </html>
