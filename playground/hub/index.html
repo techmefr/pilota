@@ -78,9 +78,9 @@
     padding: 5rem 2.5rem 9rem;
   }
 
-  .grid-2 {
+  .grid-2,
+  .grid-3 {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     align-items: stretch;
     gap: 1px;
     background: var(--border);
@@ -89,9 +89,16 @@
     overflow: hidden;
   }
 
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  @media (width <= 860px) {
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  }
+
   @media (width <= 680px) {
     .wrapper { padding-inline: 1.25rem; }
-    .grid-2 { grid-template-columns: 1fr; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
   }
 }
 
@@ -331,82 +338,6 @@
     border: 1px solid var(--border);
   }
 
-  .service-list {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    overflow: hidden;
-  }
-
-  a.service-row {
-    display: grid;
-    grid-template-columns: 11rem 1fr auto;
-    align-items: center;
-    gap: 2rem;
-    padding: 1.25rem 1.75rem;
-    background: var(--surface);
-    color: var(--text);
-    border-bottom: 1px solid var(--border);
-    transition: background .15s;
-
-    &:last-child { border-bottom: none; }
-    &:hover { background: var(--surface-2); }
-    &.disabled { opacity: .3; pointer-events: none; }
-  }
-
-  a.service-row:hover .port {
-    color: var(--red);
-    background: var(--red-a8);
-    border-color: var(--red-a16);
-  }
-
-  .row-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-  }
-
-  .row-name {
-    font-size: var(--text-lg);
-    font-weight: 700;
-    letter-spacing: -.02em;
-  }
-
-  .row-sub {
-    font-size: var(--text-xs);
-    color: var(--text-2);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .row-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-  }
-
-  .row-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    flex-shrink: 0;
-  }
-
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-
-    &.ok  { background: var(--ok); }
-    &.wip { background: var(--wip); }
-    &.off { background: var(--text-3); }
-  }
-
   footer {
     padding-block-start: 2rem;
     border-top: 1px solid var(--border);
@@ -426,14 +357,6 @@
 
   .footer-note { font-size: var(--text-xs); color: var(--text-3); }
 
-  @media (width <= 860px) {
-    a.service-row { grid-template-columns: 9rem 1fr auto; gap: 1.25rem; }
-  }
-
-  @media (width <= 640px) {
-    a.service-row { grid-template-columns: 1fr; gap: 0.75rem; }
-    .row-sub { display: none; }
-  }
 }
 </style>
 </head>
@@ -554,56 +477,56 @@
       <span class="section-title">Backends</span>
       <span class="section-count">3 services</span>
     </div>
-    <div class="service-list">
+    <div class="grid-3">
 
-      <a class="service-row" href="http://localhost:8000" target="_blank" rel="noopener">
-        <div class="row-info">
-          <span class="row-name">Laravel</span>
-          <span class="row-sub">Utilisé par Shoplab, Pulse, Gearup</span>
+      <a class="card ok" href="http://localhost:8000" target="_blank" rel="noopener">
+        <div class="card-lead">
+          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
+          <span class="port">:8000</span>
         </div>
-        <div class="row-tags">
+        <div class="card-body">
+          <p class="card-name">Laravel</p>
+          <p class="card-desc">API REST avec Laravel Interact (Lomkit). Ressources produits, panier, profils HP. Utilisé par Shoplab, Pulse et Gearup.</p>
+        </div>
+        <div class="card-tags">
           <span class="tag">PHP 8.3</span>
           <span class="tag">Laravel 11</span>
           <span class="tag">Lomkit</span>
           <span class="tag">Postgres</span>
         </div>
-        <div class="row-meta">
-          <span class="port">:8000</span>
-          <span class="status-dot ok"></span>
-        </div>
       </a>
 
-      <a class="service-row" href="http://localhost:8080" target="_blank" rel="noopener">
-        <div class="row-info">
-          <span class="row-name">Nhost / Hasura</span>
-          <span class="row-sub">Utilisé par Shoplab, Vota</span>
+      <a class="card ok" href="http://localhost:8080" target="_blank" rel="noopener">
+        <div class="card-lead">
+          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
+          <span class="port">:8080</span>
         </div>
-        <div class="row-tags">
+        <div class="card-body">
+          <p class="card-name">Nhost / Hasura</p>
+          <p class="card-desc">GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel. Utilisé par Shoplab et Vota.</p>
+        </div>
+        <div class="card-tags">
           <span class="tag">GraphQL</span>
           <span class="tag">WebSocket</span>
           <span class="tag">Hasura v2</span>
           <span class="tag">Postgres</span>
         </div>
-        <div class="row-meta">
-          <span class="port">:8080</span>
-          <span class="status-dot ok"></span>
-        </div>
       </a>
 
-      <a class="service-row" href="http://localhost:54321" target="_blank" rel="noopener">
-        <div class="row-info">
-          <span class="row-name">Supabase</span>
-          <span class="row-sub">Utilisé par Shoplab</span>
+      <a class="card ok" href="http://localhost:54321" target="_blank" rel="noopener">
+        <div class="card-lead">
+          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
+          <span class="port">:54321</span>
         </div>
-        <div class="row-tags">
+        <div class="card-body">
+          <p class="card-name">Supabase</p>
+          <p class="card-desc">PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota. Utilisé par Shoplab.</p>
+        </div>
+        <div class="card-tags">
           <span class="tag">PostgREST</span>
           <span class="tag">Realtime</span>
           <span class="tag">Postgres</span>
           <span class="tag">JWT</span>
-        </div>
-        <div class="row-meta">
-          <span class="port">:54321</span>
-          <span class="status-dot ok"></span>
         </div>
       </a>
 
@@ -616,36 +539,36 @@
       <span class="section-title">Tooling</span>
       <span class="section-count">2 services</span>
     </div>
-    <div class="service-list">
+    <div class="grid-2">
 
-      <a class="service-row" href="http://localhost:8085" target="_blank" rel="noopener">
-        <div class="row-info">
-          <span class="row-name">Tolgee</span>
-          <span class="row-sub">4 projets : Shoplab, Vota, Pulse, Gearup</span>
+      <a class="card ok" href="http://localhost:8085" target="_blank" rel="noopener">
+        <div class="card-lead">
+          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
+          <span class="port">:8085</span>
         </div>
-        <div class="row-tags">
+        <div class="card-body">
+          <p class="card-name">Tolgee</p>
+          <p class="card-desc">Plateforme i18n self-hosted. 4 projets configurés (Shoplab, Vota, Pulse, Gearup). Traductions FR / EN / DE.</p>
+        </div>
+        <div class="card-tags">
           <span class="tag">i18n</span>
           <span class="tag">Self-hosted</span>
           <span class="tag">FR / EN / DE</span>
         </div>
-        <div class="row-meta">
-          <span class="port">:8085</span>
-          <span class="status-dot ok"></span>
-        </div>
       </a>
 
-      <a class="service-row disabled" href="http://localhost:9000" target="_blank" rel="noopener">
-        <div class="row-info">
-          <span class="row-name">Sentry</span>
-          <span class="row-sub">Monitoring erreurs, intégration prévue</span>
+      <a class="card disabled" href="http://localhost:9000" target="_blank" rel="noopener">
+        <div class="card-lead">
+          <span class="card-badge off"><span class="badge-dot"></span>À venir</span>
+          <span class="port">:9000</span>
         </div>
-        <div class="row-tags">
+        <div class="card-body">
+          <p class="card-name">Sentry</p>
+          <p class="card-desc">Monitoring d'erreurs self-hosted. Intégration prévue sur tous les frontends et l'API Laravel.</p>
+        </div>
+        <div class="card-tags">
           <span class="tag">Error tracking</span>
           <span class="tag">Self-hosted</span>
-        </div>
-        <div class="row-meta">
-          <span class="port">:9000</span>
-          <span class="status-dot off"></span>
         </div>
       </a>
 

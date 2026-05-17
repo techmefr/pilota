@@ -470,6 +470,158 @@ sdk.[driver].[resource].[method](payload?, notify?, mock?)
 
 ---
 
+---
+
+## Playground Vota — Planning Poker (Svelte 5 + SvelteKit)
+
+Second playground validant le SDK dans un contexte temps-réel. Vota est une app de planning poker avec sessions, tâches, participants et votes synchronisés via WebSocket.
+
+### Architecture OSDD dans Svelte 5
+
+Même règle que Nuxt : deux domaines obligatoires, rien en dehors.
+
+```
+src/lib/
+├── technical/          ← infrastructure pure, jamais de logique métier
+│   ├── sdk/
+│   │   ├── index.ts        createVotaPilota() + types NhostResult
+│   │   └── resources.ts    defineResource() pour les 4 entités (Zod schemas)
+│   ├── types.ts            interfaces TypeScript + constantes (SCALES, AVAILABLE_TAGS)
+│   ├── i18n.ts             store lang + store t (traductions fr/en/de)
+│   ├── theme.ts            store theme dark/light (localStorage)
+│   ├── layout.ts           store layoutBarVisible
+│   └── export.ts           toCSV, toJSON, toJiraText, downloadFile, printAsPDF
+└── functional/         ← logique métier uniquement, importe depuis technical/
+    └── useSession.svelte.ts   toute la logique planning poker (Svelte 5 composable)
+```
+
+**Règle stricte :**
+- Les pages n'appellent que `functional/`
+- `functional/` importe depuis `technical/`, jamais l'inverse
+- Les server actions (`+page.server.ts`) peuvent appeler le SDK directement (point d'entrée réseau)
+
+### Svelte 5 — Composables avec Runes
+
+Les composables Svelte 5 utilisent l'extension `.svelte.ts` (pas `.ts`) pour activer la syntaxe rune.
+
+```ts
+// src/lib/functional/useSession.svelte.ts
+import { onMount, onDestroy, untrack } from 'svelte'
+
+export function useSession(data: SessionData) {
+    let session = $state<Session>(untrack(() => ({ ...data.session })))
+    let tasks   = $state<Task[]>(untrack(() => [...data.tasks]))
+
+    $effect(() => {
+        // réagit aux changements de state
+    })
+
+    onMount(() => {
+        layoutBarVisible.set(false)
+        // 4 subscriptions temps-réel via SDK
+    })
+
+    onDestroy(() => {
+        unsubscribers.forEach(u => u())
+        layoutBarVisible.set(true)
+    })
+
+    // Pattern getter/setter — nécessaire pour bind:value={s.prop} dans le template
+    return {
+        get session() { return session },
+        get tasks()   { return tasks },
+        set tasks(v)  { tasks = v },
+        // méthodes métier
+        joinSession, vote, revealVotes, addTask, exportCSV, ...
+    }
+}
+```
+
+**Page consommatrice — script réduit à l'essentiel :**
+
+```svelte
+<script lang="ts">
+    import { useSession } from '$lib/functional/useSession.svelte.ts'
+    let { data } = $props()
+    const s = useSession(data)
+</script>
+
+<!-- template : tout passe par s. -->
+{#each s.tasks as task}
+    <button onclick={() => s.selectTask(task.id)}>{task.title}</button>
+{/each}
+```
+
+### SDK Pilota dans Svelte 5
+
+Syntaxe identique à Nuxt — le driver ne change pas :
+
+```ts
+// query
+sdk.nhost.planning_sessions.query({ where: { code: { _eq: code } } })
+
+// subscription temps-réel
+sdk.nhost.planning_votes.subscribe(
+    { where: { session_id: { _eq: id } } },
+    (event, data) => { /* mise à jour locale */ }
+)
+
+// mutation
+sdk.nhost.planning_votes.upsert({
+    data: { session_id, task_id, participant_id, value },
+    conflictConstraint: 'planning_votes_participant_task_key',
+    updateColumns: ['value', 'updated_at'],
+})
+```
+
+---
+
+## Ce qu'on a appris (problèmes rencontrés et solutions) — suite Svelte
+
+### 10. `$env/static/public` vs `$env/dynamic/public`
+
+**Problème** : `import { PUBLIC_NHOST_GRAPHQL_URL } from '$env/static/public'` fait échouer le build si la variable n'est pas définie dans `.env` — erreur Rollup "is not exported".
+
+**Solution** : Utiliser `$env/dynamic/public` qui tolère les variables absentes à la compilation :
+
+```ts
+// ❌ build error si PUBLIC_NHOST_GRAPHQL_URL absent du .env
+import { PUBLIC_NHOST_GRAPHQL_URL } from '$env/static/public'
+
+// ✅ fonctionne avec ou sans la variable
+import { env } from '$env/dynamic/public'
+const endpoint = env.PUBLIC_NHOST_GRAPHQL_URL ?? 'http://localhost:8080/v1/graphql'
+```
+
+### 11. Getter/setter pattern pour `bind:value` avec $state exporté
+
+**Problème** : Exposer un `$state` depuis un composable via un objet plain (`{ myProp: myState }`) casse la réactivité — Svelte copie la valeur, pas la référence réactive.
+
+**Solution** : Propriétés getter/setter sur l'objet retourné — Svelte maintient la liaison réactive :
+
+```ts
+// ❌ perd la réactivité
+return { nameInput }
+
+// ✅ conserve la réactivité, compatible avec bind:value={s.nameInput}
+return {
+    get nameInput() { return nameInput },
+    set nameInput(v) { nameInput = v },
+}
+```
+
+### 12. `untrack()` pour initialiser $state depuis props sans déclencher de réactivité
+
+**Problème** : Initialiser `$state` depuis les props SSR (`data.session`) dans un `$effect` peut créer des cycles de dépendance.
+
+**Solution** : `untrack()` isole la lecture initiale du graphe de dépendances :
+
+```ts
+let session = $state<Session>(untrack(() => ({ ...data.session })))
+```
+
+---
+
 ## Stack technique
 
 - **Nuxt 4** (compatibilityVersion: 4, SPA mode `ssr: false`)
@@ -479,3 +631,5 @@ sdk.[driver].[resource].[method](payload?, notify?, mock?)
 - **Playwright** tests E2E avec `page.route()` pour mocker les 3 APIs
 - **pnpm workspaces** + **unbuild** pour les packages
 - **Vitest** tests unitaires des drivers et hooks
+- **SvelteKit 2 + Svelte 5** — planning poker (Vota) avec runes + composables `.svelte.ts`
+- **Plus Jakarta Sans** — police recommandée pour SaaS productivity (Google Fonts)
