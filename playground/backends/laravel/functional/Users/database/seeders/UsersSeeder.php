@@ -10,6 +10,9 @@ class UsersSeeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\DB::table('posts')->truncate();
+        \Illuminate\Support\Facades\DB::table('users')->truncate();
+
         for ($i = 1; $i <= 10; $i++) {
             $user = User::create([
                 'name' => "User {$i}",

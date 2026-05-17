@@ -9,10 +9,6 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         apiPrefix: 'api',
     )
-    ->withMigrations([
-        __DIR__.'/../functional/Users/database/migrations',
-        __DIR__.'/../functional/Cart/database/migrations',
-    ])
     ->withMiddleware(function (Middleware $middleware) {
         //
     })

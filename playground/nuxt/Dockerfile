@@ -9,6 +9,8 @@ COPY playground/nuxt/ playground/nuxt/
 
 RUN pnpm install
 
+RUN pnpm --filter "@pilota/*" build
+
 WORKDIR /app/playground/nuxt
 EXPOSE 3000
 CMD ["pnpm", "run", "dev"]

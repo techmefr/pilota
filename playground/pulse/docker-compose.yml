@@ -6,7 +6,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      NEXT_PUBLIC_LARAVEL_URL: http://host.docker.internal:8000/api
+      LARAVEL_API_URL: http://host.docker.internal:8000/api
       NEXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
       NEXT_PUBLIC_TOLGEE_API_KEY: ${NEXT_PUBLIC_TOLGEE_API_KEY:-}
     extra_hosts:

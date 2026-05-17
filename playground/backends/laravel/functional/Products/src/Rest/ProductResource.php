@@ -1,21 +1,21 @@
 <?php
 
-namespace Functional\Users\Rest;
+namespace Functional\Products\Rest;
 
-use Functional\Users\Models\User;
+use Functional\Products\Models\Product;
 use Lomkit\Rest\Http\Requests\RestRequest;
 use Lomkit\Rest\Http\Resource;
 
-class UserResource extends Resource
+class ProductResource extends Resource
 {
-    public static $model = User::class;
+    public static $model = Product::class;
 
     public function isGatingEnabled(): bool { return false; }
     public function isAuthorizingEnabled(): bool { return false; }
 
     public function fields(RestRequest $request): array
     {
-        return ['id', 'name', 'email', 'created_at', 'updated_at'];
+        return ['id', 'name', 'description', 'price', 'image', 'category', 'stock', 'created_at', 'updated_at'];
     }
 
     public function relations(RestRequest $request): array

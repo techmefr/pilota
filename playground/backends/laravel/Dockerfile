@@ -1,6 +1,6 @@
 FROM php:8.3-cli-alpine
 
-WORKDIR /var/www
+WORKDIR /app
 
 RUN apk add --no-cache postgresql-dev curl unzip \
     && docker-php-ext-install pdo_pgsql bcmath
@@ -21,15 +21,13 @@ COPY app/ app/
 COPY database/ database/
 COPY routes/ routes/
 COPY functional/ functional/
+COPY setup-autoload.php setup-autoload.php
 
-RUN php -r "
-\$json = json_decode(file_get_contents('composer.json'), true);
-\$json['autoload']['psr-4']['Functional\\\\Users\\\\'] = 'functional/Users/src/';
-\$json['autoload']['psr-4']['Functional\\\\Cart\\\\'] = 'functional/Cart/src/';
-\$json['autoload']['psr-4']['Functional\\\\Users\\\\Database\\\\Seeders\\\\'] = 'functional/Users/database/seeders/';
-\$json['autoload']['psr-4']['Functional\\\\Cart\\\\Database\\\\Seeders\\\\'] = 'functional/Cart/database/seeders/';
-file_put_contents('composer.json', json_encode(\$json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-" && composer dump-autoload --optimize
+RUN cp functional/Users/database/migrations/*.php database/migrations/ \
+    && cp functional/Cart/database/migrations/*.php database/migrations/ \
+    && cp functional/Products/database/migrations/*.php database/migrations/ \
+    && cp functional/Gearup/database/migrations/*.php database/migrations/ \
+    && php setup-autoload.php && rm setup-autoload.php && composer dump-autoload --optimize
 
 RUN chmod -R 775 storage bootstrap/cache
 

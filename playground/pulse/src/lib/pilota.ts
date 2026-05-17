@@ -21,7 +21,7 @@ export const productResource = defineResource({
 export type Product = z.infer<typeof productResource.schema>
 
 const lomkit = new LomkitDriver({
-    baseUrl: process.env.NEXT_PUBLIC_LARAVEL_URL ?? 'http://localhost:8000/api',
+    baseUrl: process.env.LARAVEL_API_URL ?? 'http://localhost:8000/api',
 })
 lomkit.bindResource('products', productResource)
 

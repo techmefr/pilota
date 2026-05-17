@@ -3,24 +3,23 @@
 namespace Functional\Cart\Rest;
 
 use Functional\Cart\Models\CartItem;
-use Lomkit\Rest\Fields\Field;
 use Lomkit\Rest\Http\Requests\RestRequest;
-use Lomkit\Rest\Http\Resources\Resource;
+use Lomkit\Rest\Http\Resource;
 
 class CartItemResource extends Resource
 {
     public static $model = CartItem::class;
 
+    public function isGatingEnabled(): bool { return false; }
+    public function isAuthorizingEnabled(): bool { return false; }
+
     public function fields(RestRequest $request): array
     {
-        return [
-            Field::make('id'),
-            Field::make('product_id'),
-            Field::make('product_name'),
-            Field::make('unit_price'),
-            Field::make('quantity'),
-            Field::make('created_at'),
-            Field::make('updated_at'),
-        ];
+        return ['id', 'product_id', 'product_name', 'unit_price', 'quantity', 'created_at', 'updated_at'];
+    }
+
+    public function relations(RestRequest $request): array
+    {
+        return [];
     }
 }

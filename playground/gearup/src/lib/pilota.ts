@@ -1,27 +1,33 @@
 import { createPilota, defineResource } from '@pilota/core'
-import { SupabaseDriver } from '@pilota/driver-supabase'
+import { LomkitDriver } from '@pilota/driver-lomkit'
 import { z } from 'zod'
 
-export const productResource = defineResource({
-    name: 'products',
+export const pcProfileResource = defineResource({
+    name: 'pcProfiles',
     schema: z.object({
         id: z.number(),
-        name: z.string(),
-        description: z.string(),
-        price: z.number(),
-        image: z.string(),
-        category: z.string(),
+        role: z.string(),
+        model_tier: z.string(),
+        model_name: z.string(),
+        cpu: z.string(),
+        ram: z.string(),
+        storage: z.string(),
+        gpu: z.string(),
+        screens: z.number(),
+        screen_spec: z.string(),
+        profile_ram: z.string(),
+        total: z.number(),
         stock: z.number(),
     }),
     fragments: {
-        default: ['id', 'name', 'price', 'image', 'category', 'stock'],
+        default: ['id', 'role', 'model_tier', 'model_name', 'cpu', 'ram', 'storage', 'gpu', 'screens', 'screen_spec', 'profile_ram', 'total', 'stock'],
     },
 })
 
-export type Product = z.infer<typeof productResource.schema>
+export type PcProfile = z.infer<typeof pcProfileResource.schema>
 
-export function createGearupPilota(url: string, key: string) {
-    const supabase = new SupabaseDriver({ url, key })
-    supabase.bindResource('products', productResource)
-    return createPilota({ drivers: { supabase } })
+export function createGearupPilota(baseUrl: string) {
+    const lomkit = new LomkitDriver({ baseUrl })
+    lomkit.bindResource('pcProfiles', pcProfileResource)
+    return createPilota({ drivers: { lomkit } })
 }
