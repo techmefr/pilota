@@ -201,7 +201,7 @@
     .logo-sub {
         font-size: 0.9375rem;
         font-weight: 500;
-        color: var(--muted);
+        color: var(--text-secondary);
         letter-spacing: 0.01em;
         margin-top: 0.25rem;
     }
@@ -390,7 +390,7 @@
     .hub-link {
         text-align: center;
         font-size: 0.875rem;
-        color: var(--muted);
+        color: var(--text-secondary);
     }
 
     .hub-link:hover {

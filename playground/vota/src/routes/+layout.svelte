@@ -35,6 +35,9 @@
 
 <svelte:head>
     <title>Vota — Planning Poker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" />
 </svelte:head>
 
 {#if $layoutBarVisible}
@@ -124,6 +127,10 @@
         padding: 0;
     }
 
+    :global(html) {
+        font-size: 17px;
+    }
+
     :global(:root) {
         --navbar-height: 3rem;
 
@@ -142,7 +149,7 @@
 
         --text: #E8EAED;
         --text-secondary: #9AA0A6;
-        --muted: #5F6368;
+        --muted: #8F9397;
 
         --green: #81C995;
         --green-dim: rgba(129, 201, 149, 0.12);
@@ -175,7 +182,7 @@
 
         --text: #202124;
         --text-secondary: #5F6368;
-        --muted: #9AA0A6;
+        --muted: #636B70;
 
         --green: #188038;
         --green-dim: rgba(24, 128, 56, 0.1);
@@ -214,7 +221,7 @@
         background: var(--bg);
         color: var(--text);
         font-family: var(--font);
-        font-size: 17px;
+        font-size: 1rem;
         line-height: 1.5;
         font-weight: 400;
         -webkit-font-smoothing: antialiased;
@@ -333,7 +340,7 @@
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 0.75rem;
-        min-width: 160px;
+        min-width: 210px;
         box-shadow: var(--shadow);
         display: flex;
         flex-direction: column;
@@ -351,8 +358,8 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: var(--muted);
-        padding: 0 0.25rem;
+        color: var(--text-secondary);
+        padding: 0.25rem 0.25rem 0;
     }
 
     .theme-options {
@@ -388,28 +395,32 @@
     .fontsize-options {
         display: flex;
         gap: 0.25rem;
+        background: var(--surface-2);
+        border-radius: var(--radius-sm);
+        padding: 0.2rem;
     }
 
     .fontsize-opt {
         flex: 1;
-        padding: 0.35rem 0;
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border);
+        padding: 0.4rem 0.25rem;
+        border-radius: calc(var(--radius-sm) - 2px);
+        border: none;
         background: transparent;
         color: var(--text-secondary);
-        font-size: 0.8rem;
+        font-size: 0.8125rem;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.12s, color 0.12s, border-color 0.12s;
+        transition: background 0.12s, color 0.12s;
         text-align: center;
+        min-width: 0;
     }
 
-    .fontsize-opt:hover { background: var(--surface-2); color: var(--text); }
+    .fontsize-opt:hover { background: var(--surface-3); color: var(--text); }
 
     .fontsize-opt-active {
-        background: var(--primary-dim);
+        background: var(--surface);
         color: var(--primary);
-        border-color: transparent;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     }
 
     .profile-btn:active { transform: scale(0.93); }
