@@ -1,10 +1,10 @@
 # Pilota — Driver-Based SDK Architecture
 
-POC validant une approche unifiée pour gérer plusieurs backends dans une application Nuxt.
+POC validant une approche unifiée pour gérer plusieurs backends dans une application frontend.
 
 ## L'idée centrale
 
-Un frontend e-commerce parle à 3 backends différents (REST, GraphQL, WebSocket) avec **exactement la même syntaxe** :
+Un frontend parle à plusieurs backends différents (REST, GraphQL, WebSocket) avec **exactement la même syntaxe** :
 
 ```ts
 sdk.nhost.products.query({})               // GraphQL → catalogue produits
@@ -16,7 +16,7 @@ Peu importe ce qu'il y a derrière — Hasura, Laravel/Lomkit, Supabase Realtime
 
 ---
 
-## Architecture
+## Architecture SDK
 
 ```
 sdk.[driver].[resource].[method](payload?, onEvent?, mock?)
@@ -26,8 +26,8 @@ sdk.[driver].[resource].[method](payload?, onEvent?, mock?)
 
 | Driver | Backend | Protocole | Usage |
 |--------|---------|-----------|-------|
-| `nhost` | Hasura / PostgreSQL | GraphQL | Catalogue produits |
-| `lomkit` | Laravel + Lomkit REST API | REST | Panier, commandes |
+| `nhost` | Hasura / PostgreSQL | GraphQL | Catalogue produits, planning poker |
+| `lomkit` | Laravel + Lomkit REST API | REST | Panier, commandes, profils HP |
 | `supabase` | Supabase Realtime | WebSocket | Chat SAV |
 
 ### Packages
@@ -42,30 +42,42 @@ packages/
 └── hooks/         @pilota/hooks           — useResourceForm (Zod validation)
 ```
 
-### Playground e-commerce
+---
+
+## Architecture OSDD
+
+Tous les playgrounds suivent la même organisation en deux domaines racines. Rien ne vit dans un dossier générique.
 
 ```
-playground/nuxt/
-├── app/
-│   ├── pages/
-│   │   ├── index.vue           — Catalogue produits
-│   │   ├── products/[id].vue   — Fiche produit
-│   │   ├── cart.vue            — Panier
-│   │   └── checkout.vue        — Formulaire commande (useResourceForm)
-│   ├── components/
-│   │   ├── ProductCard.vue     — Carte produit avec ajout panier
-│   │   └── ChatWidget.vue      — FAB + chat SAV (WebSocket simulé)
-│   ├── composables/
-│   │   ├── useProducts.ts      ← sdk.nhost.products.query()
-│   │   ├── useCart.ts          ← sdk.lomkit.cartItems.get/mutate/delete()
-│   │   └── useChat.ts          ← sdk.supabase.messages.subscribe/insert()
-│   ├── resources/
-│   │   └── order.resource.ts   — Schema Zod + defineResource
-│   ├── plugins/
-│   │   └── tolgee.client.ts    — i18n (EN/FR/DE/ES/IT)
-│   └── utils/sdk.ts            — Configuration des 3 drivers
-└── e2e/                        — Tests Playwright (page.route() mock réseau)
+src/
+├── technical/    ← infrastructure partagée, aucun lien avec le métier
+│   ├── Sdk/      drivers, resources Zod, mock data
+│   ├── Layout/   layout principal, sidebar, topbar, settings panel
+│   ├── I18n/     traductions, store langue
+│   └── styles/   tokens CSS globaux
+└── functional/   ← logique métier, spécifique à l'application
+    └── [Domaine]/
+        ├── fetchXxx.ts       appels SDK avec fallback mock
+        ├── components/       composants propres au domaine
+        └── *.test.ts         tests unitaires
 ```
+
+**Règle** : `technical/` peut vivre dans un autre projet sans modification. `functional/` dépend de `technical/`, jamais l'inverse.
+
+---
+
+## Playgrounds
+
+Quatre frontends indépendants, chacun sur son port, tous lancés avec `make up` :
+
+| App | Port | Stack | Statut |
+|-----|------|-------|--------|
+| **Shoplab** | :3010 | Nuxt 4, Vuetify, 3 drivers simultanés | Prêt |
+| **Pulse** | :3001 | Next.js 15, App Router, Lomkit | Prêt |
+| **Vota** | :3002 | SvelteKit, Svelte 5, Nhost WebSocket | Prêt |
+| **Gearup** | :3003 | Astro 5, React, Lomkit, OSDD complet | Prêt |
+
+Hub de navigation → **http://localhost:9999**
 
 ---
 
@@ -74,7 +86,6 @@ playground/nuxt/
 ### `useProducts.ts` — GraphQL (Nhost/Hasura)
 
 ```ts
-// Charge la liste complète des produits
 const result = await productsApi.query({})
 products.value = result.data?.products ?? []
 //                          ↑ structure GraphQL brute : { products: Product[] }
@@ -97,38 +108,21 @@ await cartItemsApi.delete({ resources: [item.id] })
 ### `useChat.ts` — WebSocket (Supabase Realtime)
 
 ```ts
-// Abonnement postgres_changes
 cleanup = messagesApi.subscribe(
     { room_id: 'sav' },
     (event, data) => {
         // data = { eventType: 'INSERT', new: ChatMessage, old: ChatMessage }
-        // ↑ IMPORTANT : le payload n'est PAS ChatMessage directement
-        if (event === 'data' && data) {
-            const payload = data as { eventType: string; new: ChatMessage }
-            if (payload.eventType === 'INSERT') messages.value.push(payload.new)
-        }
+        const payload = data as { eventType: string; new: ChatMessage }
+        if (event === 'data' && payload.eventType === 'INSERT') messages.value.push(payload.new)
     },
 )
 
-// Insertion (déclenche le realtime côté serveur)
 await messagesApi.insert({ room_id: 'sav', content, author: 'client' })
-```
-
-### `checkout.vue` — Formulaire Zod (hooks)
-
-```ts
-// useResourceForm valide en temps réel avec le schema Zod du resource
-const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(
-    orderResource as unknown as Parameters<typeof useResourceForm>[0],
-    //              ↑ cast nécessaire — voir section "problèmes résolus"
-)
 ```
 
 ---
 
 ## Signature complète d'un appel SDK
-
-Chaque méthode driver accepte trois paramètres optionnels :
 
 ```
 sdk.[driver].[resource].[method](payload?, notify?, mock?)
@@ -144,15 +138,6 @@ sdk.[driver].[resource].[method](payload?, notify?, mock?)
 | `mock` | `unknown` | Données de remplacement — court-circuite l'appel réseau si fourni |
 
 ```ts
-// payload seul
-await sdk.lomkit.cartItems.get({})
-
-// payload + notify (succès et erreur)
-await sdk.lomkit.cartItems.get(
-    { filter: { user_id: 1 } },
-    createNotify(createSnackAdapter({ success: 'Panier chargé', error: 'Erreur réseau' })),
-)
-
 // payload + notify + mock (pas d'appel réseau, données injectées)
 await sdk.lomkit.cartItems.get(
     {},
@@ -165,9 +150,7 @@ await sdk.lomkit.cartItems.get(
 
 ## Moteur d'événements — `createNotify`
 
-### Principe
-
-`createNotify(adapter)` transforme un objet de handlers typés en une callback brute `(event, data) => void` attendue par les drivers. On ne passe que les hooks qui nous intéressent — les autres sont ignorés.
+`createNotify(adapter)` transforme un objet de handlers typés en une callback brute `(event, data) => void` attendue par les drivers.
 
 ### Événements émis
 
@@ -180,112 +163,58 @@ await sdk.lomkit.cartItems.get(
 | `'connected'` | WebSocket établi | `{ resource }` |
 | `'disconnected'` | WebSocket fermé | `{ resource }` |
 
-### Adapter minimal
+### Adapters disponibles
 
 ```ts
-import { createNotify } from '@pilota/hooks'
-import type { PilotaNotifyAdapter } from '@pilota/hooks'
-
-const myAdapter: PilotaNotifyAdapter = {
-    onSuccess: data => console.log('OK', data),
-    onError:   err  => alert(err.message),
-}
-
-await sdk.nhost.products.query({}, createNotify(myAdapter))
-```
-
-### Adapters fournis dans le playground
-
-`playground/nuxt/app/composables/useNotify.ts`
-
-```ts
-import { createSnackAdapter, createLogAdapter } from '~/composables/useNotify'
-
-// Logs console uniquement en dev (onRequest + onSuccess + onError)
+// Logs console uniquement (dev)
 createNotify(createLogAdapter())
 
-// Toast UI vers la notification stack de app.vue
+// Toast UI
 createNotify(createSnackAdapter({ success: 'Chargé', error: 'Erreur réseau' }))
 
-// Combiner les deux — spread, les keys non-définies ne s'écrasent pas
+// Les deux combinés — spread, les keys non-définies ne s'écrasent pas
 createNotify({ ...createLogAdapter(), ...createSnackAdapter({ error: 'Erreur' }) })
 ```
 
 ### Global vs per-call
 
-Le handler global se configure une seule fois dans `createPilota` — il s'applique à **tous** les appels de tous les drivers. Le handler per-call se passe à l'appel — les deux sont mergés et **tirent chacun de leur côté**.
-
 ```ts
-// sdk.ts — configure une fois, actif partout
+// sdk.ts — log global actif sur tous les appels, uniquement en dev
 export const sdk = createPilota({
     drivers: { nhost, lomkit, supabase },
-    // logs console uniquement en dev, rien en prod
     notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
 })
-```
 
-```ts
-// composable — ajoute un toast en plus du log global
+// composable — toast en plus du log global
 await sdk.lomkit.cartItems.mutate(
     item,
     createNotify(createSnackAdapter({ success: 'Ajouté au panier', error: 'Echec' })),
 )
-// résultat : le log global tire + le toast per-call tire
-```
-
-### Patterns courants
-
-```ts
-// État de chargement local
-const isLoading = ref(false)
-
-await sdk.nhost.products.query({}, createNotify({
-    onRequest: () => { isLoading.value = true },
-    onSuccess: () => { isLoading.value = false },
-    onError:   () => { isLoading.value = false },
-}))
-```
-
-```ts
-// Sentry en prod
-import * as Sentry from '@sentry/vue'
-
-await sdk.lomkit.cartItems.get({}, createNotify({
-    onError: err => Sentry.captureMessage(err.message),
-}))
-```
-
-```ts
-// Sans notify — aucun effet de bord
-await sdk.nhost.products.query({})
+// résultat : le log global + le toast per-call tirent tous les deux
 ```
 
 ---
 
 ## Démarrage rapide
 
-### Backends
-
 ```bash
-# Nhost/Hasura (GraphQL, port 1337)
-docker compose -f playground/backends/nhost/docker-compose.yml up -d
+# Tous les services (backends + frontends + tooling)
+make up
 
-# Laravel/Lomkit (REST, port 8000)
-docker compose -f playground/backends/laravel/docker-compose.yml up -d --build
-
-# Supabase (Realtime, port 54321)
-docker compose -f playground/backends/supabase/docker-compose.yml up -d
+# Ou service par service
+docker compose up -d
 ```
 
-### Frontend
+### Commandes utiles
 
 ```bash
-pnpm install
-cd playground/nuxt
-pnpm dev          # http://localhost:3000
+make up       # lance tout
+make down     # arrête tout
+make logs     # logs de tous les services
+make restart  # redémarre tout
 ```
 
-### Tests E2E
+### Tests E2E (Shoplab)
 
 ```bash
 cd playground/nuxt
@@ -294,11 +223,239 @@ pnpm test:e2e     # Playwright — mock réseau, pas besoin des backends
 
 ---
 
+## Playground Shoplab — E-commerce (Nuxt 4)
+
+Vitrine e-commerce validant les 3 drivers simultanément. Organisé en OSDD layers.
+
+```
+playground/nuxt/
+├── layers/
+│   ├── technical/
+│   │   ├── sdk/           createPilota() avec nhost + lomkit + supabase
+│   │   └── plugins/       tolgee.client.ts (i18n EN/FR)
+│   └── functional/
+│       ├── pages/         index, products/[id], cart, checkout
+│       ├── components/    ProductCard, ChatWidget
+│       └── composables/   useProducts, useCart, useChat, useNotify
+└── e2e/                   Tests Playwright (page.route() mock réseau)
+```
+
+### Calls SDK
+
+```ts
+// Catalogue — GraphQL (Nhost)
+const result = await sdk.nhost.products.query({})
+
+// Panier — REST (Lomkit)
+await sdk.lomkit.cartItems.get({})
+
+// Chat SAV — WebSocket (Supabase Realtime)
+sdk.supabase.messages.subscribe({ room_id: 'sav' }, handler)
+```
+
+---
+
+## Playground Vota — Planning Poker (SvelteKit + Svelte 5)
+
+App de planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV / JSON / Jira.
+
+### Architecture OSDD dans Svelte 5
+
+```
+src/lib/
+├── technical/
+│   ├── sdk/
+│   │   ├── index.ts        createVotaPilota() + types NhostResult
+│   │   └── resources.ts    defineResource() pour les 4 entités (Zod schemas)
+│   ├── types.ts            interfaces TypeScript + constantes (SCALES, AVAILABLE_TAGS)
+│   ├── i18n.ts             store lang + store t (fr/en/de)
+│   ├── theme.ts            store theme dark/light + store fontSize (localStorage)
+│   ├── layout.ts           store layoutBarVisible
+│   └── export.ts           toCSV, toJSON, toJiraText, downloadFile, printAsPDF
+└── functional/
+    └── useSession.svelte.ts   toute la logique planning poker (Svelte 5 composable)
+```
+
+### Svelte 5 — Composables avec Runes
+
+Les composables Svelte 5 utilisent l'extension `.svelte.ts` pour activer la syntaxe rune.
+
+```ts
+export function useSession(data: SessionData) {
+    let session = $state<Session>(untrack(() => ({ ...data.session })))
+    let tasks   = $state<Task[]>(untrack(() => [...data.tasks]))
+
+    $effect(() => { /* réagit aux changements */ })
+
+    onMount(() => {
+        layoutBarVisible.set(false)
+        // 4 subscriptions temps-réel via SDK
+    })
+
+    // Pattern getter/setter — nécessaire pour bind:value dans le template
+    return {
+        get session() { return session },
+        get tasks()   { return tasks },
+        set tasks(v)  { tasks = v },
+    }
+}
+```
+
+### SDK Pilota dans Svelte 5
+
+```ts
+// subscription temps-réel
+sdk.nhost.planning_votes.subscribe(
+    { where: { session_id: { _eq: id } } },
+    (event, data) => { /* mise à jour locale */ }
+)
+
+// upsert avec conflict
+sdk.nhost.planning_votes.upsert({
+    data: { session_id, task_id, participant_id, value },
+    conflictConstraint: 'planning_votes_participant_task_key',
+    updateColumns: ['value', 'updated_at'],
+})
+```
+
+---
+
+## Playground Gearup — Configurateur HP XEFI (Astro 5 + React)
+
+Configurateur de postes HP par profil (dev, CDP, commercial, technicien…) pour le cycle d'achat XEFI 2024–2027. Remplace le PDF/Excel partagé.
+
+### Architecture OSDD dans Astro
+
+```
+src/
+├── technical/
+│   ├── Sdk/
+│   │   ├── index.ts      createPilota() + LomkitDriver + types castés
+│   │   ├── resources.ts  defineResource() + Zod pour les 5 entités
+│   │   └── mock.ts       données de démo (profiles, repairs, orders, alerts)
+│   ├── Layout/
+│   │   ├── Layout.astro  shell (sidebar + topbar + slot)
+│   │   ├── Sidebar.tsx   navigation + cycle d'achat (React island)
+│   │   ├── Topbar.tsx    titre de page + bouton réglages
+│   │   └── SettingsPanel.tsx  drawer lang / thème / taille police
+│   ├── I18n/
+│   │   └── index.ts      getTranslations(lang) → objet de traductions (fr/en/de)
+│   └── styles/
+│       └── global.css    design system (OKLCH, Apple/macOS aesthetic)
+├── functional/
+│   └── Gearup/
+│       ├── components/   Dashboard, ProfilesPage, InventoryPage, RepairsPage, OrdersPage, PreventionPage
+│       ├── fetchPcProfiles.ts   sdk.lomkit.pcProfiles.get() avec fallback mock
+│       ├── fetchInventory.ts    sdk.lomkit.assignments.get()
+│       ├── fetchRepairs.ts      sdk.lomkit.repairs.get()
+│       ├── fetchOrders.ts       sdk.lomkit.orders.get()
+│       └── fetchAlerts.ts       sdk.lomkit.alerts.get()
+└── pages/
+    └── *.astro           SSR : fetch serveur → props vers React islands
+```
+
+### Astro + React islands
+
+```astro
+---
+// pages/repairs.astro — serveur
+import Layout from '../technical/Layout/Layout.astro'
+import RepairsPage from '../functional/Gearup/components/RepairsPage'
+import { fetchRepairs } from '../functional/Gearup/fetchRepairs'
+
+const repairs = await fetchRepairs()
+---
+
+<Layout title="Réparations" currentPath="/repairs">
+    <RepairsPage client:load repairs={repairs} />
+</Layout>
+```
+
+Les pages fetchent les données côté serveur, les composants React s'hydratent côté client via `client:load`.
+
+### Resources Zod
+
+Toutes les entités sont définies via `defineResource` — pas de types manuels :
+
+```ts
+export const repairResource = defineResource({
+    name: 'repairs',
+    schema: z.object({
+        id: z.number(),
+        ticket: z.string(),
+        status: z.enum(['open', 'in_progress', 'waiting_parts', 'closed']),
+        technician: z.string().nullable(),
+        parts: z.array(z.string()),
+        // ...
+    }),
+    fragments: { default: ['id', 'ticket', 'status', 'technician', 'parts', ...] },
+})
+
+export type Repair = z.infer<typeof repairResource.schema>
+```
+
+### Fetch avec fallback mock
+
+Pattern identique sur toutes les entités :
+
+```ts
+export async function fetchRepairs(): Promise<Repair[]> {
+    try {
+        const result = await sdk.lomkit.repairs.get()
+        return result.data ?? mockRepairs
+    } catch {
+        return mockRepairs       // Laravel offline → données de démo
+    }
+}
+```
+
+---
+
+## Playground Pulse — Dashboard produits (Next.js 15)
+
+Dashboard minimaliste validant le SDK dans un contexte Next.js App Router avec rendu serveur.
+
+```
+src/app/
+├── layout.tsx          RootLayout — CSS vars light/dark, init script theme/font-size
+├── page.tsx            Server Component — fetchProducts() côté serveur
+├── components/
+│   ├── SettingsButton.tsx   'use client' — bouton qui ouvre le panel
+│   └── SettingsPanel.tsx    'use client' — drawer lang / thème / taille
+└── lib/
+    └── pilota.ts       createPilota() + defineResource() + LomkitDriver
+```
+
+Fetch serveur → grille de cartes produits. Zéro état côté serveur, la page se régénère à chaque requête.
+
+---
+
+## Système de réglages — Transversal
+
+Chaque frontend expose un panneau de réglages persistant en localStorage :
+
+| Réglage | Clé localStorage | Portée |
+|---------|-----------------|--------|
+| Langue | `{app}-lang` | traductions UI (fr / en / de) |
+| Thème | `{app}-theme` | `dark` / `light`, attribut `data-theme` sur `<html>` |
+| Taille de police | `{app}-font-size` | 15 / 17 / 19 / 21 px sur `html.style.fontSize` |
+
+La taille de police cible `html.style.fontSize` — tous les `rem` du CSS s'adaptent automatiquement.
+
+| App | Accès aux réglages |
+|-----|--------------------|
+| **Gearup** | Bouton ⚙ dans la topbar → drawer latéral |
+| **Vota** | Icône profil dans la topbar → dropdown |
+| **Pulse** | Bouton ⚙ dans le header → drawer latéral |
+| **Shoplab** | Boutons lang + thème dans la navbar + boutons A−/A/A+/A++ |
+
+---
+
 ## Ce qu'on a appris (problèmes rencontrés et solutions)
 
 ### 1. `noUncheckedIndexedAccess` — index signature Nuxt
 
-**Problème** : Nuxt active `noUncheckedIndexedAccess` dans son tsconfig strict. Le SDK est typé comme `Record<string, DriverProxy>`, donc `sdk.nhost` retourne `DriverProxy | undefined`. Et `DriverProxy` est `Record<string, ResourceProxy>`, donc `sdk.nhost.products` retourne `ResourceProxy | undefined`.
+**Problème** : Nuxt active `noUncheckedIndexedAccess`. Le SDK est typé comme `Record<string, DriverProxy>`, donc `sdk.nhost` retourne `DriverProxy | undefined`.
 
 **Solution** : Pattern d'accesseur typé explicite avec double cast :
 
@@ -307,11 +464,9 @@ type ProductsApi = { query: (p: object) => Promise<NhostQueryResult<{ products: 
 const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
 ```
 
-On caste `sdk.nhost` vers un objet avec le type exact attendu. Le `as unknown` est nécessaire parce que les types ne sont pas compatibles structurellement.
-
 ### 2. `ZodObject<T>` est invariant sur T
 
-**Problème** : `ZodObject<{ full_name: ZodString, ... }>` n'est pas assignable à `ZodObject<any>` à cause d'une propriété interne `keyof()._cache` dont le type dépend de T. `Set<'full_name'|...>` n'est pas assignable à `Set<never>`.
+**Problème** : `ZodObject<{ full_name: ZodString }>` n'est pas assignable à `ZodObject<any>` à cause d'une propriété interne `keyof()._cache`.
 
 **Solution** : Cast double en entrée de `useResourceForm` :
 
@@ -321,29 +476,14 @@ useResourceForm(orderResource as unknown as Parameters<typeof useResourceForm>[0
 
 ### 3. `t()` de Tolgee est une Ref dans `<script setup>`
 
-**Problème** : `useTranslate()` retourne `{ t: Ref<TFnType> }`. Dans le script, `t('key')` essaie d'appeler une Ref comme fonction → erreur runtime.
+**Problème** : `useTranslate()` retourne `{ t: Ref<TFnType> }`. Dans le script, `t('key')` essaie d'appeler une Ref.
 
-**Solution** : Utiliser `t.value('key')` dans le script, mais `{{ t('key') }}` dans le template (Vue auto-unwrap les Refs).
-
-```ts
-// ❌ script setup
-error.value = t('Product not found')
-
-// ✅ script setup
-error.value = t.value('Product not found')
-
-// ✅ template (auto-unwrap)
-{{ t('Product not found') }}
-```
+**Solution** : `t.value('key')` dans le script, `{{ t('key') }}` dans le template (Vue auto-unwrap les Refs).
 
 ### 4. Payload Supabase Realtime — structure imbriquée
 
-**Problème** : Le handler `subscribe` reçoit `data` qui contient `{ eventType, new, old }`, pas directement l'objet inséré.
-
-**Solution** :
-
 ```ts
-// ❌ mauvais
+// ❌ mauvais — data n'est pas directement ChatMessage
 const msg = data as ChatMessage
 
 // ✅ correct
@@ -352,8 +492,6 @@ messages.value.push(payload.new)
 ```
 
 ### 5. Lomkit delete — format du payload
-
-**Problème** : L'endpoint destroy de Lomkit attend `{ resources: [id] }`, pas `{ id }`.
 
 ```ts
 // ❌ ignoré silencieusement
@@ -365,8 +503,6 @@ await cartItemsApi.delete({ resources: [item.id] })
 
 ### 6. `tsconfig.json` manquant pour vue-tsc
 
-**Problème** : Sans `tsconfig.json` à la racine du playground qui étend `.nuxt/tsconfig.json`, vue-tsc ne charge pas les déclarations d'auto-import Nuxt (`useCart`, `ref`, `computed`, etc. tous en erreur).
-
 **Solution** : Créer `playground/nuxt/tsconfig.json` :
 
 ```json
@@ -375,232 +511,36 @@ await cartItemsApi.delete({ resources: [item.id] })
 
 ### 7. Vite Node IPC en mode dev — socket Unix null byte
 
-**Contexte** : Sur Linux + Node ≥ 20, Nuxt génère un socket Unix abstrait dont le chemin commence par `\0`. Ce null byte est tronqué quand le chemin passe dans une variable d'environnement → `NUXT_VITE_NODE_OPTIONS.socketPath` vaut `undefined` → 500 sur toutes les routes.
+**Contexte** : Sur Linux + Node ≥ 20, Nuxt génère un socket Unix abstrait dont le chemin commence par `\0`. Ce null byte est tronqué → `socketPath` vaut `undefined` → 500 sur toutes les routes.
 
 **Solution** : Forcer un chemin dans `/tmp` dans `nuxt.config.ts` :
 
 ```ts
-vite: {
-    viteNode: {
-        socketPath: `/tmp/nuxt-vite-node-${process.pid}.sock`,
-    },
-}
+vite: { viteNode: { socketPath: `/tmp/nuxt-vite-node-${process.pid}.sock` } }
 ```
 
-### 8. Logs dev-only — `import.meta.dev`
+### 8. `import.meta.dev` — logs dev-only
 
-**Problème** : `createLogAdapter()` appelle `console.log` sur tous les environnements. En production, ça pollue la console utilisateur.
-
-**Solution** : Nuxt remplace `import.meta.dev` à la compilation — `true` en dev, éliminé (dead code) en prod build.
+Nuxt remplace `import.meta.dev` à la compilation — `true` en dev, éliminé (dead code) en prod.
 
 ```ts
-// sdk.ts
-export const sdk = createPilota({
-    drivers: { nhost, lomkit, supabase },
-    notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
-})
+notify: import.meta.dev ? createNotify(createLogAdapter()) : undefined,
 ```
-
-Zéro `console.log` dans le bundle de production sans aucune condition manuelle.
 
 ### 9. Global notify + per-call — merge automatique
 
-**Problème** : On voulait un handler global (logs) sans perdre la capacité d'ajouter un handler per-call (toast UI).
+`mergeEventHandlers(global, local)` appelle les deux si les deux sont définis. Le per-call s'ajoute au global, ils ne se remplacent pas.
 
-**Solution** : `mergeEventHandlers(global, local)` dans `create-pilota.ts` appelle les deux si les deux sont définis. Le per-call s'ajoute au global, ils ne se remplacent pas.
+### 10. `$env/static/public` vs `$env/dynamic/public` (SvelteKit)
 
-```ts
-// global log → tire sur tout
-// per-call snack → s'ajoute uniquement sur cet appel
-await cartItemsApi.mutate(item, createNotify(createSnackAdapter({ success: 'Ajouté' })))
-// résultat : log console + toast UI, les deux tirent
-```
+**Problème** : `$env/static/public` fait échouer le build si la variable est absente du `.env`.
 
----
+**Solution** : `$env/dynamic/public` tolère les variables absentes à la compilation.
 
-## Ce qu'on valide
-
-### Le pattern fonctionne
-
-Les composables ne voient aucune différence de syntaxe entre GraphQL, REST ou WebSocket :
+### 11. Getter/setter pattern pour `bind:value` avec `$state` exporté (Svelte 5)
 
 ```ts
-// GraphQL
-const result = await productsApi.query({})
-
-// REST
-const result = await cartItemsApi.get({})
-
-// WebSocket
-const stop = messagesApi.subscribe({ room_id: 'sav' }, handler)
-```
-
-### Les 3 paramètres d'un appel
-
-```ts
-sdk.[driver].[resource].[method](payload?, notify?, mock?)
-```
-
-- **payload** → filtre ou données à envoyer
-- **notify** → `createNotify(adapter)` — mergé avec le global si présent
-- **mock** → données injectées qui court-circuitent l'appel réseau — utile en test ou offline
-
-### Ce que ça simplifie
-
-- **Pas de switch/if sur le backend** dans les composables
-- **Onboarding d'un nouveau backend** : créer un Driver + bindResource, rien à changer dans l'app
-- **Mock sans toucher l'app** : passer `mock` en 3e argument court-circuite l'appel réseau
-- **Formulaires validés** : `useResourceForm` + Zod, `isDirty` et `errors` en temps réel
-- **Notifications composables** : adapter global pour les logs, adapter per-call pour les toasts — les deux coexistent sans configuration supplémentaire
-
-### Limites
-
-- **Noms de ressources couplés** : `cartItems` → `/api/cartItems/search`. Lomkit génère ses routes au même format — couplage implicite.
-- **`NhostQueryResult<T>`** : le `data` est `{ products: Product[] }`, pas `Product[]` directement. Moins ergonomique.
-- **Supabase sans RLS** : en dev RLS est désactivé. En prod il faut configurer les policies.
-- **Realtime bot simulé** : en l'absence d'un vrai agent SAV, le chat génère des phrases lorem ipsum localement après chaque envoi.
-
-### Ce qu'on ferait en production
-
-- Plugin `@pilota/nuxt` pour injecter le SDK via `useNuxtApp()` (auto-import)
-- Typage générique strict sur les retours de chaque driver
-- Middleware d'authentification JWT dans les drivers
-- Adapter Sentry branché sur `onError` du global notify
-- RLS Supabase configuré avec le JWT de l'utilisateur connecté
-
----
-
----
-
-## Playground Vota — Planning Poker (Svelte 5 + SvelteKit)
-
-Second playground validant le SDK dans un contexte temps-réel. Vota est une app de planning poker avec sessions, tâches, participants et votes synchronisés via WebSocket.
-
-### Architecture OSDD dans Svelte 5
-
-Même règle que Nuxt : deux domaines obligatoires, rien en dehors.
-
-```
-src/lib/
-├── technical/          ← infrastructure pure, jamais de logique métier
-│   ├── sdk/
-│   │   ├── index.ts        createVotaPilota() + types NhostResult
-│   │   └── resources.ts    defineResource() pour les 4 entités (Zod schemas)
-│   ├── types.ts            interfaces TypeScript + constantes (SCALES, AVAILABLE_TAGS)
-│   ├── i18n.ts             store lang + store t (traductions fr/en/de)
-│   ├── theme.ts            store theme dark/light (localStorage)
-│   ├── layout.ts           store layoutBarVisible
-│   └── export.ts           toCSV, toJSON, toJiraText, downloadFile, printAsPDF
-└── functional/         ← logique métier uniquement, importe depuis technical/
-    └── useSession.svelte.ts   toute la logique planning poker (Svelte 5 composable)
-```
-
-**Règle stricte :**
-- Les pages n'appellent que `functional/`
-- `functional/` importe depuis `technical/`, jamais l'inverse
-- Les server actions (`+page.server.ts`) peuvent appeler le SDK directement (point d'entrée réseau)
-
-### Svelte 5 — Composables avec Runes
-
-Les composables Svelte 5 utilisent l'extension `.svelte.ts` (pas `.ts`) pour activer la syntaxe rune.
-
-```ts
-// src/lib/functional/useSession.svelte.ts
-import { onMount, onDestroy, untrack } from 'svelte'
-
-export function useSession(data: SessionData) {
-    let session = $state<Session>(untrack(() => ({ ...data.session })))
-    let tasks   = $state<Task[]>(untrack(() => [...data.tasks]))
-
-    $effect(() => {
-        // réagit aux changements de state
-    })
-
-    onMount(() => {
-        layoutBarVisible.set(false)
-        // 4 subscriptions temps-réel via SDK
-    })
-
-    onDestroy(() => {
-        unsubscribers.forEach(u => u())
-        layoutBarVisible.set(true)
-    })
-
-    // Pattern getter/setter — nécessaire pour bind:value={s.prop} dans le template
-    return {
-        get session() { return session },
-        get tasks()   { return tasks },
-        set tasks(v)  { tasks = v },
-        // méthodes métier
-        joinSession, vote, revealVotes, addTask, exportCSV, ...
-    }
-}
-```
-
-**Page consommatrice — script réduit à l'essentiel :**
-
-```svelte
-<script lang="ts">
-    import { useSession } from '$lib/functional/useSession.svelte.ts'
-    let { data } = $props()
-    const s = useSession(data)
-</script>
-
-<!-- template : tout passe par s. -->
-{#each s.tasks as task}
-    <button onclick={() => s.selectTask(task.id)}>{task.title}</button>
-{/each}
-```
-
-### SDK Pilota dans Svelte 5
-
-Syntaxe identique à Nuxt — le driver ne change pas :
-
-```ts
-// query
-sdk.nhost.planning_sessions.query({ where: { code: { _eq: code } } })
-
-// subscription temps-réel
-sdk.nhost.planning_votes.subscribe(
-    { where: { session_id: { _eq: id } } },
-    (event, data) => { /* mise à jour locale */ }
-)
-
-// mutation
-sdk.nhost.planning_votes.upsert({
-    data: { session_id, task_id, participant_id, value },
-    conflictConstraint: 'planning_votes_participant_task_key',
-    updateColumns: ['value', 'updated_at'],
-})
-```
-
----
-
-## Ce qu'on a appris (problèmes rencontrés et solutions) — suite Svelte
-
-### 10. `$env/static/public` vs `$env/dynamic/public`
-
-**Problème** : `import { PUBLIC_NHOST_GRAPHQL_URL } from '$env/static/public'` fait échouer le build si la variable n'est pas définie dans `.env` — erreur Rollup "is not exported".
-
-**Solution** : Utiliser `$env/dynamic/public` qui tolère les variables absentes à la compilation :
-
-```ts
-// ❌ build error si PUBLIC_NHOST_GRAPHQL_URL absent du .env
-import { PUBLIC_NHOST_GRAPHQL_URL } from '$env/static/public'
-
-// ✅ fonctionne avec ou sans la variable
-import { env } from '$env/dynamic/public'
-const endpoint = env.PUBLIC_NHOST_GRAPHQL_URL ?? 'http://localhost:8080/v1/graphql'
-```
-
-### 11. Getter/setter pattern pour `bind:value` avec $state exporté
-
-**Problème** : Exposer un `$state` depuis un composable via un objet plain (`{ myProp: myState }`) casse la réactivité — Svelte copie la valeur, pas la référence réactive.
-
-**Solution** : Propriétés getter/setter sur l'objet retourné — Svelte maintient la liaison réactive :
-
-```ts
-// ❌ perd la réactivité
+// ❌ perd la réactivité — Svelte copie la valeur
 return { nameInput }
 
 // ✅ conserve la réactivité, compatible avec bind:value={s.nameInput}
@@ -610,26 +550,77 @@ return {
 }
 ```
 
-### 12. `untrack()` pour initialiser $state depuis props sans déclencher de réactivité
-
-**Problème** : Initialiser `$state` depuis les props SSR (`data.session`) dans un `$effect` peut créer des cycles de dépendance.
-
-**Solution** : `untrack()` isole la lecture initiale du graphe de dépendances :
+### 12. `untrack()` pour initialiser `$state` depuis props (Svelte 5)
 
 ```ts
 let session = $state<Session>(untrack(() => ({ ...data.session })))
+```
+
+### 13. Docker hot-reload — volume mount obligatoire
+
+**Problème** : Docker copie les fichiers au `build`. Les modifications sur le host ne sont pas reflétées dans le conteneur.
+
+**Solution** : Monter le répertoire source en volume dans `docker-compose.yml` :
+
+```yaml
+volumes:
+    - ./src:/app/playground/gearup/src
+```
+
+Le serveur Astro dev surveille les fichiers montés et rechauffe le HMR.
+
+### 14. Next.js 15 RSC + Client Components — init thème sans flash
+
+**Problème** : `layout.tsx` est un Server Component. Les paramètres localStorage (thème, taille) ne sont pas accessibles côté serveur → flash au chargement.
+
+**Solution** : Inline script dans `<head>` exécuté avant le rendu du body :
+
+```tsx
+<script dangerouslySetInnerHTML={{ __html: `
+(function(){
+    var t = localStorage.getItem('pulse-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', t);
+    var s = localStorage.getItem('pulse-font-size');
+    if (s) document.documentElement.style.fontSize = s + 'px';
+})();
+`}} />
+```
+
+### 15. WCAG AA — couleurs `--muted` insuffisantes
+
+**Problème** : `--muted: #5F6368` sur fond sombre `#202124` donnait 2.78:1 (requis 4.5:1). `--muted: #9AA0A6` sur fond clair `#F8F9FA` donnait 2.39:1.
+
+**Solution** : Ajuster par thème pour passer le seuil.
+
+```css
+/* dark */  --muted: #8F9397;   /* 5.2:1 sur #202124 */
+/* light */ --muted: #636B70;   /* 5.0:1 sur #F8F9FA */
+```
+
+### 16. `body { font-size: px }` bloque le scaling de taille
+
+**Problème** : Changer `html.style.fontSize` ne change rien si `body { font-size: 17px }` est en pixels fixes.
+
+**Solution** : Utiliser `1rem` sur body et déclarer la valeur par défaut sur `html` :
+
+```css
+:global(html) { font-size: 17px; }
+:global(body) { font-size: 1rem; } /* hérite et scale avec html */
 ```
 
 ---
 
 ## Stack technique
 
-- **Nuxt 4** (compatibilityVersion: 4, SPA mode `ssr: false`)
-- **Vuetify 3** dark theme indigo/violet
-- **Tolgee** i18n (EN/FR/DE/ES/IT) — JSON statique offline-first
-- **Zod** validation schemas des resources
-- **Playwright** tests E2E avec `page.route()` pour mocker les 3 APIs
-- **pnpm workspaces** + **unbuild** pour les packages
-- **Vitest** tests unitaires des drivers et hooks
-- **SvelteKit 2 + Svelte 5** — planning poker (Vota) avec runes + composables `.svelte.ts`
-- **Plus Jakarta Sans** — police recommandée pour SaaS productivity (Google Fonts)
+| Couche | Technologie |
+|--------|------------|
+| **SDK** | TypeScript strict, Zod schemas, pnpm workspaces, unbuild |
+| **Shoplab** | Nuxt 4, Vuetify 3, OSDD layers, Tolgee i18n (EN/FR/DE) |
+| **Vota** | SvelteKit 2, Svelte 5 runes, `.svelte.ts` composables |
+| **Gearup** | Astro 5, React islands (`client:load`), OSDD complet |
+| **Pulse** | Next.js 15, App Router, React Server Components |
+| **Backends** | Laravel 11 (Lomkit REST), Hasura v2 (GraphQL + WS), Supabase (Realtime) |
+| **Tests** | Playwright E2E (mock réseau), Vitest (drivers + hooks) |
+| **CSS** | OKLCH, CSS custom properties, `data-theme`, font-size scaling via rem |
+| **i18n** | Tolgee self-hosted, getTranslations() statique en fallback |
+| **Fonts** | Inter (Shoplab), Plus Jakarta Sans (Vota), SF Pro / system (Gearup, Pulse) |
