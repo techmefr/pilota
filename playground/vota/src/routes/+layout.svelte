@@ -175,9 +175,9 @@
         --border: #DADCE0;
         --border-strong: #BDC1C6;
 
-        --primary: #1A73E8;
-        --primary-dim: rgba(26, 115, 232, 0.1);
-        --primary-hover: rgba(26, 115, 232, 0.18);
+        --primary: #1558B0;
+        --primary-dim: rgba(21, 88, 176, 0.1);
+        --primary-hover: rgba(21, 88, 176, 0.18);
         --on-primary: #FFFFFF;
 
         --text: #202124;
