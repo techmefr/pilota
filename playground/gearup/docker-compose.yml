@@ -5,6 +5,8 @@ services:
       dockerfile: playground/gearup/Dockerfile
     ports:
       - "3003:3003"
+    volumes:
+      - ./src:/app/playground/gearup/src
     environment:
       PUBLIC_SUPABASE_URL: http://host.docker.internal:54321
       PUBLIC_SUPABASE_ANON_KEY: pilota

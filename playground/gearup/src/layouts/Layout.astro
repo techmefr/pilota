@@ -25,6 +25,8 @@ const CYCLE = '2024 – 2027'
             const theme = localStorage.getItem('gearup-theme') ||
                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
             document.documentElement.setAttribute('data-theme', theme)
+            const fontSize = localStorage.getItem('gearup-font-size')
+            if (fontSize) document.documentElement.style.fontSize = fontSize + 'px'
         })()
     </script>
 </head>
