@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro'
+import RepairsPage from '../components/RepairsPage'
+import { fetchRepairs } from '../functional/Gearup/fetchRepairs'
+
+const repairs = await fetchRepairs()
+---
+
+<Layout title="Réparations" currentPath="/repairs">
+    <RepairsPage client:load repairs={repairs} />
+</Layout>

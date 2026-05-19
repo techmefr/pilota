@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro'
+import ProfilesPage from '../components/ProfilesPage'
+import { fetchPcProfiles } from '../functional/Gearup/fetchPcProfiles'
+
+const CYCLE = '2024 – 2027'
+const profiles = await fetchPcProfiles().catch(() => [])
+---
+
+<Layout title="Configurateur" currentPath="/profiles">
+    <ProfilesPage client:load profiles={profiles} cycle={CYCLE} />
+</Layout>

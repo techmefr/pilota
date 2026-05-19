@@ -1,6 +1,9 @@
 <?php
 
 use Functional\Cart\Http\Controllers\CartItemController;
+use Functional\Gearup\Http\Controllers\AlertController;
+use Functional\Gearup\Http\Controllers\AssignmentController;
+use Functional\Gearup\Http\Controllers\OrderController;
 use Functional\Gearup\Http\Controllers\PcProfileController;
 use Functional\Products\Http\Controllers\ProductController;
 use Functional\Users\Http\Controllers\PostController;
@@ -12,3 +15,6 @@ Rest::resource('posts', PostController::class);
 Rest::resource('cartItems', CartItemController::class);
 Rest::resource('products', ProductController::class);
 Rest::resource('pcProfiles', PcProfileController::class);
+Rest::resource('assignments', AssignmentController::class);
+Rest::resource('orders', OrderController::class);
+Rest::resource('alerts', AlertController::class);

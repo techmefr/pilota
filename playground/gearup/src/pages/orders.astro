@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro'
+import OrdersPage from '../components/OrdersPage'
+import { fetchOrders } from '../functional/Gearup/fetchOrders'
+
+const orders = await fetchOrders()
+---
+
+<Layout title="Commandes" currentPath="/orders">
+    <OrdersPage client:load orders={orders} />
+</Layout>

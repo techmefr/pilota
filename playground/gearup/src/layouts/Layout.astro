@@ -1,0 +1,44 @@
+---
+import '../styles/global.css'
+import Sidebar from '../components/Sidebar'
+import Topbar from '../components/Topbar'
+
+interface Props {
+    title: string
+    currentPath: string
+}
+
+const { title, currentPath } = Astro.props
+const CYCLE = '2024 – 2027'
+---
+
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Gearup XEFI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+    <script is:inline>
+        (function () {
+            const theme = localStorage.getItem('gearup-theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            document.documentElement.setAttribute('data-theme', theme)
+        })()
+    </script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <Sidebar client:load currentPath={currentPath} cycle={CYCLE} />
+        </aside>
+        <header class="app-topbar">
+            <Topbar client:load title={title} />
+        </header>
+        <main class="app-main">
+            <slot />
+        </main>
+    </div>
+</body>
+</html>

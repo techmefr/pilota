@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro'
+import InventoryPage from '../components/InventoryPage'
+import { fetchInventory } from '../functional/Gearup/fetchInventory'
+
+const inventory = await fetchInventory()
+---
+
+<Layout title="Inventaire" currentPath="/inventory">
+    <InventoryPage client:load inventory={inventory} />
+</Layout>

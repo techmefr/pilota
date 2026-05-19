@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro'
+import PreventionPage from '../components/PreventionPage'
+import { fetchAlerts } from '../functional/Gearup/fetchAlerts'
+
+const alerts = await fetchAlerts()
+---
+
+<Layout title="Prévention" currentPath="/prevention">
+    <PreventionPage client:load alerts={alerts} />
+</Layout>

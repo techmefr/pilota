@@ -6,16 +6,24 @@
         "dev": "astro dev --host --port 3003",
         "build": "astro build",
         "preview": "astro preview",
-        "astro": "astro"
+        "astro": "astro",
+        "test": "vitest run"
     },
     "dependencies": {
-        "astro": "^5.7.0",
+        "@astrojs/react": "^5.0.5",
         "@pilota/core": "workspace:*",
         "@pilota/driver-lomkit": "workspace:*",
         "@tolgee/web": "^5.0.0",
+        "astro": "^5.7.0",
+        "lucide-react": "^1.16.0",
+        "react": "^19.2.6",
+        "react-dom": "^19.2.6",
         "zod": "^3.23.8"
     },
     "devDependencies": {
-        "typescript": "^5.0.0"
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "typescript": "^5.0.0",
+        "vitest": "^3.0.0"
     }
 }
