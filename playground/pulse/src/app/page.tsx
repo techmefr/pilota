@@ -1,5 +1,6 @@
 import { pilota } from '@/lib/pilota'
 import type { Product } from '@/lib/pilota'
+import SettingsButton from './components/SettingsButton'
 
 async function getProducts(): Promise<Product[]> {
     try {
@@ -22,7 +23,10 @@ export default async function Home() {
                         Pilota SDK · LomkitDriver · Next.js 15 · Laravel :8000
                     </p>
                 </div>
-                <a href="http://localhost:9999" style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>← Hub</a>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <a href="http://localhost:9999" style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>← Hub</a>
+                    <SettingsButton />
+                </div>
             </header>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>

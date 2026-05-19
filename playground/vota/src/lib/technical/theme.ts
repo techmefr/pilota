@@ -15,3 +15,16 @@ if (browser) {
         document.documentElement.setAttribute('data-theme', t)
     })
 }
+
+const VALID_SIZES = [15, 17, 19, 21]
+const storedSize = browser ? parseInt(localStorage.getItem('vota_font_size') ?? '') : NaN
+const initialSize = VALID_SIZES.includes(storedSize) ? storedSize : 17
+
+export const fontSize = writable<number>(initialSize)
+
+if (browser) {
+    fontSize.subscribe(s => {
+        localStorage.setItem('vota_font_size', String(s))
+        document.documentElement.style.fontSize = `${s}px`
+    })
+}

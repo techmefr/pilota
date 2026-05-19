@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte'
-    import { theme } from '$lib/technical/theme'
+    import { theme, fontSize } from '$lib/technical/theme'
     import { lang, langLabels, type Lang } from '$lib/technical/i18n'
     import { layoutBarVisible } from '$lib/technical/layout'
 
@@ -24,6 +24,13 @@
     })
 
     const langs = Object.entries(langLabels) as [Lang, string][]
+
+    const FONT_SIZE_OPTIONS = [
+        { label: 'A−', value: 15 },
+        { label: 'A',  value: 17 },
+        { label: 'A+', value: 19 },
+        { label: 'A++', value: 21 },
+    ]
 </script>
 
 <svelte:head>
@@ -87,6 +94,20 @@
                             <option value={code}>{label}</option>
                         {/each}
                     </select>
+                    <div class="menu-divider"></div>
+                    <p class="profile-menu-label">Taille du texte</p>
+                    <div class="fontsize-options">
+                        {#each FONT_SIZE_OPTIONS as opt}
+                            <button
+                                class="fontsize-opt"
+                                class:fontsize-opt-active={$fontSize === opt.value}
+                                onclick={() => fontSize.set(opt.value)}
+                                role="menuitem"
+                            >
+                                {opt.label}
+                            </button>
+                        {/each}
+                    </div>
                 </div>
             {/if}
         </div>
@@ -364,8 +385,36 @@
         font-weight: 600;
     }
 
+    .fontsize-options {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    .fontsize-opt {
+        flex: 1;
+        padding: 0.35rem 0;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.12s, color 0.12s, border-color 0.12s;
+        text-align: center;
+    }
+
+    .fontsize-opt:hover { background: var(--surface-2); color: var(--text); }
+
+    .fontsize-opt-active {
+        background: var(--primary-dim);
+        color: var(--primary);
+        border-color: transparent;
+    }
+
     .profile-btn:active { transform: scale(0.93); }
     .theme-opt:active { transform: scale(0.96); }
+    .fontsize-opt:active { transform: scale(0.94); }
     .lang-select:active { border-color: var(--primary); }
 
     @media (prefers-reduced-motion: reduce) {

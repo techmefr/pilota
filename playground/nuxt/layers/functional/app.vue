@@ -12,6 +12,14 @@ const currentLang = computed(() => tolgee.value.getLanguage() ?? 'en')
 const theme = useTheme()
 const isDark = computed(() => theme.global.current.value.dark)
 
+const FONT_SIZES = [
+    { label: 'A−', value: 15 },
+    { label: 'A',  value: 17 },
+    { label: 'A+', value: 19 },
+    { label: 'A++', value: 21 },
+]
+const fontSize = ref(17)
+
 function toggleTheme(): void {
     const next = isDark.value ? 'light' : 'dark'
     theme.global.name.value = next
@@ -22,12 +30,24 @@ function setLanguage(lang: string): void {
     tolgee.value.changeLanguage(lang)
 }
 
+function applyFontSize(size: number): void {
+    fontSize.value = size
+    localStorage.setItem('shoplab-font-size', String(size))
+    document.documentElement.style.fontSize = `${size}px`
+}
+
 onMounted(() => {
     const saved = localStorage.getItem('shoplab-theme')
     if (saved === 'light' || saved === 'dark') {
         theme.global.name.value = saved
     } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
         theme.global.name.value = 'light'
+    }
+
+    const savedSize = parseInt(localStorage.getItem('shoplab-font-size') ?? '')
+    if ([15, 17, 19, 21].includes(savedSize)) {
+        fontSize.value = savedSize
+        document.documentElement.style.fontSize = `${savedSize}px`
     }
 })
 </script>
@@ -51,6 +71,17 @@ onMounted(() => {
                 <v-spacer />
 
                 <div class="d-flex align-center gap-3">
+                    <div class="fontsize-switcher">
+                        <button
+                            v-for="opt in FONT_SIZES"
+                            :key="opt.value"
+                            class="fontsize-btn"
+                            :class="{ active: fontSize === opt.value }"
+                            :title="`${opt.value}px`"
+                            @click="applyFontSize(opt.value)"
+                        >{{ opt.label }}</button>
+                    </div>
+
                     <div class="lang-switcher">
                         <button class="lang-btn" :class="{ active: currentLang === 'en' }" @click="setLanguage('en')">EN</button>
                         <button class="lang-btn" :class="{ active: currentLang === 'fr' }" @click="setLanguage('fr')">FR</button>
@@ -211,6 +242,29 @@ onMounted(() => {
     transition: opacity 0.2s;
 }
 .cart-btn:hover { opacity: 0.6; }
+
+.fontsize-switcher {
+    display: flex;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.fontsize-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: rgb(var(--v-theme-on-background));
+    opacity: 0.45;
+    transition: opacity 0.15s, background 0.15s;
+}
+.fontsize-btn.active {
+    opacity: 1;
+    background: rgba(var(--v-theme-primary), 0.18);
+    color: rgb(var(--v-theme-primary));
+}
 
 .lang-switcher {
     display: flex;
