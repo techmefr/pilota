@@ -77,22 +77,29 @@ export const alertResource = defineResource({
     },
 })
 
+export const repairResource = defineResource({
+    name: 'repairs',
+    schema: z.object({
+        id: z.number(),
+        ticket: z.string(),
+        employee: z.string(),
+        team: z.string(),
+        device: z.string(),
+        serial: z.string(),
+        issue: z.string(),
+        status: z.enum(['open', 'in_progress', 'waiting_parts', 'closed']),
+        technician: z.string().nullable(),
+        opened_at: z.string(),
+        closed_at: z.string().nullable(),
+        parts: z.array(z.string()),
+    }),
+    fragments: {
+        default: ['id', 'ticket', 'employee', 'team', 'device', 'serial', 'issue', 'status', 'technician', 'opened_at', 'closed_at', 'parts'],
+    },
+})
+
 export type PcProfile = z.infer<typeof pcProfileResource.schema>
 export type Assignment = z.infer<typeof assignmentResource.schema>
 export type Order = z.infer<typeof orderResource.schema>
 export type Alert = z.infer<typeof alertResource.schema>
-
-export type Repair = {
-    id: number
-    ticket: string
-    employee: string
-    team: string
-    device: string
-    serial: string
-    issue: string
-    status: 'open' | 'in_progress' | 'waiting_parts' | 'closed'
-    technician: string | null
-    opened_at: string
-    closed_at: string | null
-    parts: string[]
-}
+export type Repair = z.infer<typeof repairResource.schema>

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { AlertTriangle, Wrench, ShoppingCart, Package } from 'lucide-react'
-import { getTranslations } from '../lib/i18n'
-import type { Lang, Translations } from '../lib/i18n'
-import type { PcProfile, Assignment, Repair, Order, Alert } from '../technical/Sdk/resources'
+import { getTranslations } from '../../../technical/I18n'
+import type { Lang, Translations } from '../../../technical/I18n'
+import type { PcProfile, Assignment, Repair, Order, Alert } from '../../../technical/Sdk/resources'
 
 interface IProps {
     profiles: PcProfile[]

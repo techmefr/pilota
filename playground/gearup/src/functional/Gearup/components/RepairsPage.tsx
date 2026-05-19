@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
-import { getTranslations } from '../lib/i18n'
-import type { Lang } from '../lib/i18n'
-import type { Repair } from '../technical/Sdk/resources'
+import { getTranslations } from '../../../technical/I18n'
+import type { Lang } from '../../../technical/I18n'
+import type { Repair } from '../../../technical/Sdk/resources'
 
 interface IProps {
     repairs: Repair[]

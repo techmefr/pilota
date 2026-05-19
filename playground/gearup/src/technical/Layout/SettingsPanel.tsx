@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Sun, Moon } from 'lucide-react'
-import type { Lang } from '../lib/i18n'
+import type { Lang } from '../I18n'
 
 const LABELS = {
     fr: { title: 'Réglages', lang: 'Langue', theme: 'Thème', fontSize: 'Taille du texte', light: 'Clair', dark: 'Sombre' },

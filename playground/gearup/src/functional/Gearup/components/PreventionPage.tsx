@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { ShieldAlert, Clock, Zap, Lock, Check } from 'lucide-react'
-import { getTranslations } from '../lib/i18n'
-import type { Lang } from '../lib/i18n'
-import type { Alert } from '../technical/Sdk/resources'
+import { getTranslations } from '../../../technical/I18n'
+import type { Lang } from '../../../technical/I18n'
+import type { Alert } from '../../../technical/Sdk/resources'
 
 interface IProps {
     alerts: Alert[]

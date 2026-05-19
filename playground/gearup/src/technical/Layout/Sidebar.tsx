@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { LayoutDashboard, Cpu, Package, Wrench, ShoppingCart, ShieldAlert } from 'lucide-react'
-import { getTranslations } from '../lib/i18n'
-import type { Lang } from '../lib/i18n'
+import { getTranslations } from '../I18n'
+import type { Lang } from '../I18n'
 
 interface IProps {
     currentPath: string
