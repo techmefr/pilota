@@ -11,7 +11,7 @@ import {
     Info,
     TrendingUp,
     Trophy,
-    LayoutKanban,
+    Columns,
     ChevronRight,
 } from 'lucide-react'
 import { clsx } from 'clsx'
@@ -25,7 +25,7 @@ const NAV = [
     { label: 'Infos semaine',    href: '/week',        icon: Info },
     { label: 'Money Maker',      href: '/revenue',     icon: TrendingUp },
     { label: 'Contrats',         href: '/contracts',   icon: Trophy },
-    { label: 'Missions',         href: '/missions',    icon: LayoutKanban },
+    { label: 'Missions',         href: '/missions',    icon: Columns },
 ]
 
 export default function Sidebar() {

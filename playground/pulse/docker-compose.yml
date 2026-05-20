@@ -5,6 +5,8 @@ services:
       dockerfile: playground/pulse/Dockerfile
     ports:
       - "3001:3001"
+    volumes:
+      - ./src:/app/playground/pulse/src
     environment:
       LARAVEL_API_URL: http://host.docker.internal:8000/api
       NEXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085

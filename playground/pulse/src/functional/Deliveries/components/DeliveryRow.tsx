@@ -1,4 +1,4 @@
-import { Rocket, Ticket } from 'lucide-react'
+import { Rocket } from 'lucide-react'
 import type { Delivery } from '../fetchDeliveries'
 
 interface IProps {
