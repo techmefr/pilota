@@ -79,6 +79,36 @@ export const mockObjectives: Objective[] = [
         blockers: ['Accès prod en attente'],
         wins: [],
     },
+    {
+        id: 4,
+        person: 'Gaetan',
+        avatar: null,
+        week: 20,
+        year: 2026,
+        focus: 'OSDD compliance sur Gearup + intégration Sentry',
+        blockers: [],
+        wins: ['Structure OSDD validée', 'Widget Sentry déployé sur 4 frontends'],
+    },
+    {
+        id: 5,
+        person: 'Alice',
+        avatar: null,
+        week: 20,
+        year: 2026,
+        focus: 'Migration base de données Grosdata',
+        blockers: ['Downtime prévu — coordination DevOps'],
+        wins: ['Script de migration rédigé et reviewé'],
+    },
+    {
+        id: 6,
+        person: 'Bob',
+        avatar: null,
+        week: 20,
+        year: 2026,
+        focus: 'Mise à jour dépendances Nexeren',
+        blockers: [],
+        wins: ['0 breaking change après mise à jour', 'Tests e2e au vert'],
+    },
 ]
 
 export const mockDeliveries: Delivery[] = [
