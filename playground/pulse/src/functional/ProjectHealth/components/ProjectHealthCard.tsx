@@ -1,4 +1,4 @@
-import { Bug, Rocket, Circle } from 'lucide-react'
+import { Bug, Rocket, Circle, AlertOctagon, ExternalLink } from 'lucide-react'
 import { clsx } from 'clsx'
 import type { Project } from '../fetchProjects'
 
@@ -23,7 +23,14 @@ export default function ProjectHealthCard({ project }: IProps) {
             style={{ '--status-color': cfg.color, '--status-dim': cfg.dim } as React.CSSProperties}
         >
             <div className="phc-header">
-                <div className="phc-name">{project.name}</div>
+                {project.url ? (
+                    <a href={project.url} target="_blank" rel="noopener noreferrer" className="phc-name phc-name-link">
+                        {project.name}
+                        <ExternalLink size={11} className="phc-name-icon" />
+                    </a>
+                ) : (
+                    <div className="phc-name">{project.name}</div>
+                )}
                 <span className="phc-badge">
                     <Circle size={6} fill="currentColor" strokeWidth={0} />
                     {cfg.label}
@@ -38,8 +45,19 @@ export default function ProjectHealthCard({ project }: IProps) {
                     <span className={clsx('phc-metric-value', project.open_bugs > 5 && 'phc-metric-danger')}>
                         {project.open_bugs}
                     </span>
-                    <span className="phc-metric-label">bugs ouverts</span>
+                    <span className="phc-metric-label">bugs</span>
                 </div>
+                {project.sentry_issues > 0 && (
+                    <div className="phc-metric">
+                        <AlertOctagon size={13} />
+                        <span className={clsx('phc-metric-value', project.sentry_criticals > 0 && 'phc-metric-danger')}>
+                            {project.sentry_issues}
+                        </span>
+                        <span className="phc-metric-label">
+                            Sentry{project.sentry_criticals > 0 ? ` · ${project.sentry_criticals} crit.` : ''}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {project.deployments.length > 0 && (
@@ -78,6 +96,21 @@ export default function ProjectHealthCard({ project }: IProps) {
                     font-size: 0.9375rem;
                     font-weight: 700;
                     color: var(--text);
+                }
+                .phc-name-link {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.3rem;
+                    text-decoration: none;
+                    color: var(--text);
+                    transition: color 0.1s;
+                }
+                .phc-name-link:hover {
+                    color: var(--primary);
+                }
+                .phc-name-icon {
+                    opacity: 0.5;
+                    flex-shrink: 0;
                 }
                 .phc-badge {
                     display: flex;
