@@ -411,22 +411,51 @@ export async function fetchRepairs(): Promise<Repair[]> {
 
 ---
 
-## Playground Pulse — Dashboard produits (Next.js 15)
+## Playground Pulse — Dashboard hebdomadaire équipe (Next.js 15)
 
-Dashboard minimaliste validant le SDK dans un contexte Next.js App Router avec rendu serveur.
+Pulse remplace les slides Canva créées manuellement chaque semaine (18 à 35 slides, copier-coller, saisie répétitive). C'est une application web vivante, alimentée automatiquement depuis les sources de données réelles de l'équipe.
+
+### Ce qu'on voit dans Pulse
+
+| Section | Source | Description |
+|---------|--------|-------------|
+| **Santé des projets** | Laravel + Sentry | Bugs ouverts et MEP en cours par projet |
+| **Objectifs semaine** | Laravel | Par personne : focus, blocages, victoires |
+| **Objectifs N-1** | Laravel | Semaine précédente pour comparaison |
+| **Congés / Présence** | Supabase Realtime | Qui est absent quel jour, en temps réel |
+| **Livraisons** | Laravel | Releases prévues + compteur tickets résolus/total |
+| **Besoins DevOps** | Laravel | Sujets en cours, incidents récurrents |
+| **Infos semaine** | Laravel | Events, DevTalk, scores |
+| **Money Maker** | Laravel | CA du mois, cumul annuel |
+| **Quête des contrats** | Laravel | Progression franchise vs propre |
+| **Missions** | Laravel | Kanban par statut (OPCO, conformité, chefferie, features) |
+
+### Intégrations
+
+- **Sentry** → remonte les bugs automatiquement dans "Santé des projets"
+- **Supabase Realtime** → présence équipe en temps réel dans "Congés / Présence"
+- **Vota** → un ticket dans Pulse ouvre directement une session de planning poker
+
+### Architecture cible
 
 ```
-src/app/
-├── layout.tsx          RootLayout — CSS vars light/dark, init script theme/font-size
-├── page.tsx            Server Component — fetchProducts() côté serveur
-├── components/
-│   ├── SettingsButton.tsx   'use client' — bouton qui ouvre le panel
-│   └── SettingsPanel.tsx    'use client' — drawer lang / thème / taille
-└── lib/
-    └── pilota.ts       createPilota() + defineResource() + LomkitDriver
+src/
+├── technical/
+│   ├── Sdk/          createPilota() + LomkitDriver + SupabaseDriver
+│   └── Layout/       shell, navigation par section
+└── functional/
+    ├── ProjectHealth/    fetchIssues() — Laravel + Sentry API
+    ├── Objectives/       fetchObjectives() — semaine courante et N-1
+    ├── Absences/         subscribePresence() — Supabase Realtime
+    ├── Deliveries/       fetchDeliveries() — releases + tickets
+    ├── DevOps/           fetchDevOpsNeeds()
+    ├── WeekInfo/         fetchWeekInfo()
+    ├── MoneyMaker/       fetchRevenue()
+    ├── Contracts/        fetchContractProgress()
+    └── Missions/         fetchMissions() — kanban
 ```
 
-Fetch serveur → grille de cartes produits. Zéro état côté serveur, la page se régénère à chaque requête.
+**Stack cible** : Next.js 15 App Router, Shadcn UI, Pilota SDK, Tolgee namespace `pulse`.
 
 ---
 
@@ -597,6 +626,27 @@ Le serveur Astro dev surveille les fichiers montés et rechauffe le HMR.
 /* light */ --muted: #636B70;   /* 5.0:1 sur #F8F9FA */
 ```
 
+### 17. Sentry — intégration opt-in avec graceful degradation
+
+Chaque frontend intègre Sentry SDK + `feedbackIntegration()` (widget flottant, labels FR). Sentry ne s'initialise que si le DSN est fourni — aucun crash si la variable est absente :
+
+```ts
+// pattern identique sur tous les frameworks
+const dsn = import.meta.env.PUBLIC_SENTRY_DSN
+if (dsn) {
+    Sentry.init({ dsn, integrations: [Sentry.feedbackIntegration({ ... })] })
+}
+```
+
+| Framework | Package | Config client | DSN env var |
+|-----------|---------|---------------|-------------|
+| Astro | `@sentry/astro` | `sentry.client.config.ts` | `PUBLIC_SENTRY_DSN` |
+| Next.js | `@sentry/nextjs` | `sentry.client.config.ts` | `NEXT_PUBLIC_SENTRY_DSN` |
+| SvelteKit | `@sentry/sveltekit` | `src/hooks.client.ts` | `PUBLIC_SENTRY_DSN` |
+| Nuxt | `@sentry/nuxt` | `sentry.client.config.ts` | `NUXT_PUBLIC_SENTRY_DSN` |
+
+Les DSNs sont transmis via les `docker-compose.yml` de chaque playground avec `${VAR:-}` (vide par défaut).
+
 ### 16. `body { font-size: px }` bloque le scaling de taille
 
 **Problème** : Changer `html.style.fontSize` ne change rien si `body { font-size: 17px }` est en pixels fixes.
@@ -618,7 +668,7 @@ Le serveur Astro dev surveille les fichiers montés et rechauffe le HMR.
 | **Shoplab** | Nuxt 4, Vuetify 3, OSDD layers, Tolgee i18n (EN/FR/DE) |
 | **Vota** | SvelteKit 2, Svelte 5 runes, `.svelte.ts` composables |
 | **Gearup** | Astro 5, React islands (`client:load`), OSDD complet |
-| **Pulse** | Next.js 15, App Router, React Server Components |
+| **Pulse** | Next.js 15, App Router, Shadcn UI, dashboard hebdomadaire équipe |
 | **Backends** | Laravel 11 (Lomkit REST), Hasura v2 (GraphQL + WS), Supabase (Realtime) |
 | **Tests** | Playwright E2E (mock réseau), Vitest (drivers + hooks) |
 | **CSS** | OKLCH, CSS custom properties, `data-theme`, font-size scaling via rem |

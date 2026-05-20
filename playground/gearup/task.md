@@ -58,24 +58,81 @@
 - [ ] Créer un **Auth Token** Sentry (Settings → Auth Tokens) pour l'API Pulse
 - [ ] Rebuild containers (`make down && make up`) et vérifier le widget feedback sur chaque app
 
-## Pulse — Dashboard Sentry
+## Pulse — Dashboard hebdomadaire équipe (Next.js 15 + Shadcn UI)
 
-Pulse est le tableau de bord qui agrège les remontées Sentry (erreurs + feedbacks utilisateurs).
+Remplace les slides Canva manuelles (18–35 slides/semaine). Dix sections alimentées automatiquement depuis Laravel, Sentry, et Supabase.
 
-### SDK / data fetching
+### Infrastructure
 
-- [ ] `src/technical/Sdk/` — créer un client Sentry API (`SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`)
-- [ ] `src/functional/Issues/fetchIssues.ts` — GET `/api/0/projects/{org}/{project}/issues/`
-- [ ] `src/functional/Feedback/fetchFeedback.ts` — GET `/api/0/projects/{org}/{project}/user-feedback/`
+- [ ] Installer Shadcn UI (`npx shadcn@latest init`)
+- [ ] OSDD : créer `src/technical/Sdk/` (createPilota + LomkitDriver + SupabaseDriver)
+- [ ] OSDD : créer `src/technical/Layout/` (shell, navigation latérale entre sections)
+- [ ] Supprimer `src/lib/pilota.ts` (remplacé par `src/technical/Sdk/`)
+- [ ] Définir les resources Zod pour toutes les entités métier
 
-### Pages
+### Section 1 — Santé des projets
 
-- [ ] `/issues` — liste des erreurs Sentry (titre, niveau, occurrences, date)
-- [ ] `/feedback` — liste des feedbacks utilisateurs (nom, email, message, app source, date)
+- [ ] `src/functional/ProjectHealth/fetchProjects.ts` — projets + nb bugs ouverts (Laravel)
+- [ ] `src/functional/ProjectHealth/fetchSentryIssues.ts` — bugs Sentry par projet (Auth Token)
+- [ ] Composant `ProjectHealthCard` — nom projet, badge MEP, compteur bugs, couleur par seuil
+- [ ] Page `/` ou `/health`
 
-### UI
+### Section 2 — Objectifs de la semaine
 
-- [ ] Composant `IssueRow` — badge niveau (error/warning/info), titre, compteur
-- [ ] Composant `FeedbackRow` — avatar initiales, message, app badge, date relative
-- [ ] États vides + états d'erreur (token manquant, Sentry injoignable)
-- [ ] Lien vers l'issue/feedback dans Sentry (http://localhost:9000)
+- [ ] `src/functional/Objectives/fetchObjectives.ts` — par personne (Laravel)
+- [ ] Composant `ObjectiveRow` — avatar, focus, blocages (🔴), victoires (🟢)
+- [ ] Page `/objectives`
+
+### Section 3 — Objectifs N-1
+
+- [ ] `src/functional/Objectives/fetchPreviousObjectives.ts` — semaine passée
+- [ ] Réutiliser `ObjectiveRow`, filtre semaine N-1
+
+### Section 4 — Congés / Présence équipe
+
+- [ ] `src/functional/Absences/subscribePresence.ts` — Supabase Realtime (`'use client'`)
+- [ ] Composant `TeamCalendar` — vue semaine, qui est absent quel jour
+- [ ] Page `/team`
+
+### Section 5 — Livraisons
+
+- [ ] `src/functional/Deliveries/fetchDeliveries.ts` — releases prévues (Laravel)
+- [ ] Composant `DeliveryRow` — projet, version, date, barre `tickets résolus / total`
+- [ ] Page `/deliveries`
+
+### Section 6 — Besoins DevOps
+
+- [ ] `src/functional/DevOps/fetchDevOpsNeeds.ts` — sujets + incidents (Laravel)
+- [ ] Composant `DevOpsItem` — titre, statut, responsable
+- [ ] Page `/devops`
+
+### Section 7 — Infos semaine
+
+- [ ] `src/functional/WeekInfo/fetchWeekInfo.ts` — events, DevTalk, scores (Laravel)
+- [ ] Composant `WeekInfoCard`
+- [ ] Page `/week`
+
+### Section 8 — Money Maker
+
+- [ ] `src/functional/Revenue/fetchRevenue.ts` — CA mois + cumul annuel (Laravel)
+- [ ] Composant `RevenueBoard` — gros chiffres, progression vs objectif
+- [ ] Page `/revenue`
+
+### Section 9 — Quête des contrats
+
+- [ ] `src/functional/Contracts/fetchContractProgress.ts` — franchise vs propre (Laravel)
+- [ ] Composant `ContractQuestBar` — barre de progression visuelle
+- [ ] Page `/contracts`
+
+### Section 10 — Missions
+
+- [ ] `src/functional/Missions/fetchMissions.ts` — kanban par statut (Laravel)
+- [ ] Composant `MissionKanban` — colonnes OPCO / conformité / chefferie / features
+- [ ] Page `/missions`
+
+### Intégrations transversales
+
+- [ ] Lien Vota : clic sur un ticket → ouvre session planning poker (http://localhost:3002)
+- [ ] Sentry Auth Token en env var `SENTRY_AUTH_TOKEN` + `SENTRY_ORG` pour fetchSentryIssues
+- [ ] Navigation latérale entre les 10 sections
+- [ ] Refresh automatique toutes les X minutes (configurable)
