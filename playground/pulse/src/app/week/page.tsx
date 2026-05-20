@@ -1,12 +1,13 @@
 import Shell from '@/technical/Layout/Shell'
 import { fetchWeekInfo } from '@/functional/WeekInfo/fetchWeekInfo'
+import { getCurrentWeek } from '@/functional/Objectives/fetchObjectives'
 import { Calendar, Mic2, Star, Newspaper } from 'lucide-react'
 
 const TYPE_CONFIG = {
-    event:   { label: 'Event',   icon: Calendar, color: 'var(--primary)' },
-    devtalk: { label: 'DevTalk', icon: Mic2,      color: 'var(--green)' },
-    score:   { label: 'Score',   icon: Star,      color: 'var(--yellow)' },
-    news:    { label: 'News',    icon: Newspaper,  color: 'var(--orange)' },
+    event:   { label: 'Event',   icon: Calendar,   color: 'var(--primary)' },
+    devtalk: { label: 'DevTalk', icon: Mic2,        color: 'var(--green)' },
+    score:   { label: 'Score',   icon: Star,        color: 'var(--yellow)' },
+    news:    { label: 'News',    icon: Newspaper,   color: 'var(--orange)' },
 }
 
 function formatDate(iso: string) {
@@ -14,12 +15,13 @@ function formatDate(iso: string) {
 }
 
 export default async function WeekPage() {
+    const { week } = getCurrentWeek()
     const items = await fetchWeekInfo()
     const events = items.filter(i => i.type === 'event' || i.type === 'devtalk')
     const highlights = items.filter(i => i.type === 'score' || i.type === 'news')
 
     return (
-        <Shell title="Infos semaine" subtitle="Semaine 21 — events, DevTalk, scores">
+        <Shell title="Infos semaine" subtitle={`Semaine ${week} — events, DevTalk, scores`}>
             <div className="wk-layout">
                 <section>
                     <h2 className="wk-section-title">Agenda & DevTalks</h2>
