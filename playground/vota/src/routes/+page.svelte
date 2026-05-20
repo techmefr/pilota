@@ -148,26 +148,27 @@
 
 <style>
     .page {
-        min-height: calc(100vh - var(--navbar-height));
+        min-height: calc(100dvh - var(--navbar-height));
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
         background: var(--bg);
-        padding: 2rem;
+        padding: 1.5rem 1rem;
     }
 
     .card {
         width: 100%;
-        max-width: 460px;
+        max-width: 440px;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 2.75rem;
+        padding: 2rem;
         display: flex;
         flex-direction: column;
-        gap: 1.75rem;
+        gap: 1.25rem;
         box-shadow: var(--shadow);
         animation: cardIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+        margin: auto;
     }
 
     @keyframes cardIn {
@@ -180,18 +181,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.375rem;
     }
 
     .logo-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.125rem;
     }
 
     .logo-text {
-        font-size: 3.5rem;
+        font-size: 2.75rem;
         font-weight: 900;
         color: var(--text);
         letter-spacing: -0.06em;
@@ -199,11 +200,10 @@
     }
 
     .logo-sub {
-        font-size: 0.9375rem;
+        font-size: 0.875rem;
         font-weight: 500;
         color: var(--text-secondary);
         letter-spacing: 0.01em;
-        margin-top: 0.25rem;
     }
 
     .error-banner {
@@ -322,13 +322,14 @@
     .actions {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.625rem;
     }
 
     .form-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.875rem;
         align-items: center;
+        padding-top: 0.25rem;
     }
 
     .btn-primary {

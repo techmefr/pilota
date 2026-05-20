@@ -13,6 +13,7 @@
         "@astrojs/react": "^5.0.5",
         "@pilota/core": "workspace:*",
         "@pilota/driver-lomkit": "workspace:*",
+        "@sentry/astro": "^8.0.0",
         "@tolgee/web": "^5.0.0",
         "astro": "^5.7.0",
         "lucide-react": "^1.16.0",

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { useSession } from '$lib/functional/useSession.svelte.ts'
     import { t, lang, langLabels, type Lang } from '$lib/technical/i18n'
-    import { theme } from '$lib/technical/theme'
+    import { theme, fontSize } from '$lib/technical/theme'
     import { AVAILABLE_TAGS } from '$lib/technical/types'
     import type { PageData } from './$types'
 
@@ -9,6 +9,13 @@
 
     const s = useSession(data)
     const langs = Object.entries(langLabels) as [Lang, string][]
+
+    const FONT_SIZE_OPTIONS = [
+        { label: 'A−', value: 15 },
+        { label: 'A',  value: 17 },
+        { label: 'A+', value: 19 },
+        { label: 'A++', value: 21 },
+    ]
 </script>
 
 <!-- Overlay: join prompt -->
@@ -195,13 +202,7 @@
                                 onclick={() => { theme.set('light'); s.profileOpen = false }}
                                 role="menuitem"
                             >
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="5"/>
-                                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                                </svg>
+                                <span class="theme-swatch theme-swatch-light"></span>
                                 Clair
                             </button>
                             <button
@@ -210,19 +211,39 @@
                                 onclick={() => { theme.set('dark'); s.profileOpen = false }}
                                 role="menuitem"
                             >
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                                </svg>
+                                <span class="theme-swatch theme-swatch-dark"></span>
                                 Sombre
                             </button>
                         </div>
                         <div class="menu-divider"></div>
                         <p class="profile-menu-label">Langue</p>
-                        <select class="menu-lang-select" bind:value={$lang} aria-label="Language">
+                        <div class="lang-options" role="group">
                             {#each langs as [code, label]}
-                                <option value={code}>{label}</option>
+                                <button
+                                    class="lang-opt"
+                                    class:lang-opt-active={$lang === code}
+                                    onclick={() => lang.set(code)}
+                                    title={label}
+                                    role="menuitem"
+                                >
+                                    {code.toUpperCase()}
+                                </button>
                             {/each}
-                        </select>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <p class="profile-menu-label">Taille du texte</p>
+                        <div class="fontsize-options">
+                            {#each FONT_SIZE_OPTIONS as opt}
+                                <button
+                                    class="fontsize-opt"
+                                    class:fontsize-opt-active={$fontSize === opt.value}
+                                    onclick={() => fontSize.set(opt.value)}
+                                    role="menuitem"
+                                >
+                                    {opt.label}
+                                </button>
+                            {/each}
+                        </div>
                     </div>
                 {/if}
             </div>
@@ -642,7 +663,7 @@
         border: 1px solid var(--border);
         border-radius: var(--radius);
         padding: 0.75rem;
-        min-width: 175px;
+        min-width: 200px;
         box-shadow: var(--shadow);
         display: flex;
         flex-direction: column;
@@ -698,25 +719,79 @@
     .menu-divider {
         height: 1px;
         background: var(--border);
-        margin: 0.25rem 0;
+        margin: 0.125rem 0;
     }
 
-    .menu-lang-select {
-        appearance: none;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        color: var(--text);
-        font-size: 0.875rem;
-        font-weight: 500;
-        padding: 0.35rem 0.625rem;
+    /* ── Language picker ─────────────────────────── */
+    .lang-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.25rem;
+    }
+
+    .lang-opt {
+        padding: 0.4rem 0.25rem;
+        border-radius: calc(var(--radius-sm) - 2px);
+        border: 1.5px solid var(--border);
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
         cursor: pointer;
-        outline: none;
-        width: 100%;
-        transition: border-color 0.15s;
+        transition: background 0.12s, color 0.12s, border-color 0.12s;
+        text-align: center;
     }
 
-    .menu-lang-select:focus { border-color: var(--primary); }
+    .lang-opt:hover:not(.lang-opt-active) { background: var(--surface-2); color: var(--text); }
+
+    .lang-opt-active {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-dim);
+    }
+
+    /* ── Theme swatches ──────────────────────────── */
+    .theme-swatch {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .theme-swatch-light { background: #F8F9FA; border: 1.5px solid #DADCE0; }
+    .theme-swatch-dark  { background: #202124; border: 1.5px solid #5F6368; }
+
+    /* ── Font size picker ────────────────────────── */
+    .fontsize-options {
+        display: flex;
+        gap: 0.25rem;
+        background: var(--surface-2);
+        border-radius: var(--radius-sm);
+        padding: 0.2rem;
+    }
+
+    .fontsize-opt {
+        flex: 1;
+        padding: 0.4rem 0.25rem;
+        border-radius: calc(var(--radius-sm) - 2px);
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.12s, color 0.12s;
+        text-align: center;
+        min-width: 0;
+    }
+
+    .fontsize-opt:hover { background: var(--surface-3); color: var(--text); }
+
+    .fontsize-opt-active {
+        background: var(--surface);
+        color: var(--primary);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
 
     .participants-bar {
         display: flex;
@@ -1394,6 +1469,9 @@
     .export-btn:active { transform: scale(0.95); }
     .poker-card:active:not(:disabled) { transform: scale(0.95) !important; }
     .task-card:active { transform: scale(0.99) !important; }
+    .lang-opt:active { transform: scale(0.94); }
+    .fontsize-opt:active { transform: scale(0.94); }
+    .theme-opt:active { transform: scale(0.96); }
 
     /* ── Reduced motion ───────────────────────────── */
     @media (prefers-reduced-motion: reduce) {

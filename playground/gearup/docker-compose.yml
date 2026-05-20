@@ -12,5 +12,6 @@ services:
       PUBLIC_SUPABASE_ANON_KEY: pilota
       PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
       PUBLIC_TOLGEE_API_KEY: ${PUBLIC_TOLGEE_API_KEY:-}
+      PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

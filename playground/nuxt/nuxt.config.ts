@@ -3,7 +3,11 @@ export default defineNuxtConfig({
 
     css: ['~/assets/grain.css'],
 
-    modules: ['vuetify-nuxt-module'],
+    modules: ['vuetify-nuxt-module', '@sentry/nuxt/module'],
+
+    sentry: {
+        sourceMapsUploadOptions: { disable: true },
+    },
 
     app: {
         head: {
@@ -73,6 +77,7 @@ export default defineNuxtConfig({
         public: {
             tolgeeApiUrl: '',
             tolgeeApiKey: '',
+            sentryDsn: '',
         },
     },
 

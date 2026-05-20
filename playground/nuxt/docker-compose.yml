@@ -8,5 +8,6 @@ services:
     environment:
       NUXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
       NUXT_PUBLIC_TOLGEE_API_KEY: ${NUXT_PUBLIC_TOLGEE_API_KEY:-}
+      NUXT_PUBLIC_SENTRY_DSN: ${NUXT_PUBLIC_SENTRY_DSN:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

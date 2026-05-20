@@ -8,5 +8,6 @@ services:
     environment:
       NHOST_GRAPHQL_URL: http://host.docker.internal:8080/v1/graphql
       PUBLIC_NHOST_GRAPHQL_URL: http://localhost:8080/v1/graphql
+      PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

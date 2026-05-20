@@ -21,6 +21,7 @@
     "dependencies": {
         "@pilota/core": "workspace:*",
         "@pilota/driver-nhost": "workspace:*",
+        "@sentry/sveltekit": "^8.0.0",
         "@tolgee/svelte": "^5.0.0",
         "zod": "^3.23.8"
     }
