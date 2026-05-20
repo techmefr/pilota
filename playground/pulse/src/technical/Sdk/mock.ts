@@ -1,0 +1,120 @@
+import type { Project, Objective, Delivery, Mission } from './resources'
+
+export const mockProjects: Project[] = [
+    {
+        id: 1,
+        name: 'Grosdata',
+        status: 'warning',
+        open_bugs: 4,
+        deployments: ['v2.4.1 — mercredi'],
+        team: 'Backend',
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 2,
+        name: 'Nexeren',
+        status: 'ok',
+        open_bugs: 0,
+        deployments: [],
+        team: 'Frontend',
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 3,
+        name: 'Skera',
+        status: 'critical',
+        open_bugs: 9,
+        deployments: ['v1.9.0 — ce soir 🚨'],
+        team: 'Fullstack',
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 4,
+        name: 'Nota',
+        status: 'ok',
+        open_bugs: 1,
+        deployments: ['v3.2.0'],
+        team: 'Mobile',
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 5,
+        name: 'Horizon',
+        status: 'inactive',
+        open_bugs: 0,
+        deployments: [],
+        team: 'Backend',
+        updated_at: new Date().toISOString(),
+    },
+]
+
+export const mockObjectives: Objective[] = [
+    {
+        id: 1,
+        person: 'Gaetan',
+        avatar: null,
+        week: 21,
+        year: 2026,
+        focus: 'Finaliser l\'intégration Pilota SDK sur Pulse',
+        blockers: ['API Laravel pas encore dispo en prod'],
+        wins: ['OSDD validé sur Gearup', 'Sentry intégré sur les 4 frontends'],
+    },
+    {
+        id: 2,
+        person: 'Alice',
+        avatar: null,
+        week: 21,
+        year: 2026,
+        focus: 'Refonte module commandes Grosdata',
+        blockers: [],
+        wins: ['Migration BDD terminée'],
+    },
+    {
+        id: 3,
+        person: 'Bob',
+        avatar: null,
+        week: 21,
+        year: 2026,
+        focus: 'Audit sécurité Nexeren',
+        blockers: ['Accès prod en attente'],
+        wins: [],
+    },
+]
+
+export const mockDeliveries: Delivery[] = [
+    {
+        id: 1,
+        project: 'Grosdata',
+        version: 'v2.4.1',
+        date: '2026-05-22',
+        tickets_resolved: 8,
+        tickets_total: 11,
+        notes: 'Refonte module rapports',
+    },
+    {
+        id: 2,
+        project: 'Nota',
+        version: 'v3.2.0',
+        date: '2026-05-21',
+        tickets_resolved: 12,
+        tickets_total: 12,
+        notes: null,
+    },
+    {
+        id: 3,
+        project: 'Skera',
+        version: 'v1.9.0',
+        date: '2026-05-20',
+        tickets_resolved: 3,
+        tickets_total: 9,
+        notes: 'Hotfix critique — déploiement d\'urgence',
+    },
+]
+
+export const mockMissions: Mission[] = [
+    { id: 1, title: 'Formation OPCO React', status: 'in_progress', category: 'opco', owner: 'Alice', due_date: '2026-06-01' },
+    { id: 2, title: 'Audit RGPD Grosdata', status: 'todo', category: 'compliance', owner: 'Bob', due_date: '2026-05-30' },
+    { id: 3, title: 'Chefferie Skera v2', status: 'in_progress', category: 'project_management', owner: 'Gaetan', due_date: null },
+    { id: 4, title: 'Module export CSV', status: 'done', category: 'features', owner: 'Alice', due_date: '2026-05-15' },
+    { id: 5, title: 'SSO interne', status: 'blocked', category: 'features', owner: null, due_date: null },
+]

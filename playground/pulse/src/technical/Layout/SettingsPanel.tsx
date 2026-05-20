@@ -5,12 +5,6 @@ import { useState, useEffect } from 'react'
 type Lang = 'fr' | 'en' | 'de'
 type Theme = 'light' | 'dark'
 
-const LABELS = {
-    fr: { title: 'Réglages', lang: 'Langue', theme: 'Thème', fontSize: 'Taille du texte', light: 'Clair', dark: 'Sombre', close: 'Fermer' },
-    en: { title: 'Settings', lang: 'Language', theme: 'Theme', fontSize: 'Text size', light: 'Light', dark: 'Dark', close: 'Close' },
-    de: { title: 'Einstellungen', lang: 'Sprache', theme: 'Thema', fontSize: 'Schriftgröße', light: 'Hell', dark: 'Dunkel', close: 'Schließen' },
-}
-
 const FONT_SIZES = [
     { label: 'A−', value: 15 },
     { label: 'A',  value: 17 },
@@ -59,19 +53,17 @@ export default function SettingsPanel({ onClose }: IProps) {
         localStorage.setItem('pulse-lang', l)
     }
 
-    const lbl = LABELS[lang]
-
     return (
         <>
             <div className="settings-overlay" onClick={onClose} />
-            <div className="settings-panel" role="dialog" aria-label={lbl.title}>
+            <div className="settings-panel" role="dialog" aria-label="Réglages">
                 <div className="settings-header">
-                    <span className="settings-title">{lbl.title}</span>
-                    <button className="settings-close" onClick={onClose} aria-label={lbl.close}>✕</button>
+                    <span className="settings-title">Réglages</span>
+                    <button className="settings-close" onClick={onClose} aria-label="Fermer">✕</button>
                 </div>
 
                 <div className="settings-section">
-                    <div className="settings-label">{lbl.lang}</div>
+                    <div className="settings-label">Langue</div>
                     <div className="settings-seg">
                         {LANG_OPTIONS.map(({ code, label }) => (
                             <button
@@ -86,25 +78,27 @@ export default function SettingsPanel({ onClose }: IProps) {
                 </div>
 
                 <div className="settings-section">
-                    <div className="settings-label">{lbl.theme}</div>
+                    <div className="settings-label">Thème</div>
                     <div className="settings-seg">
                         <button
                             className={`settings-seg-btn${theme === 'light' ? ' active' : ''}`}
                             onClick={() => applyTheme('light')}
                         >
-                            ☀ {lbl.light}
+                            <span className="theme-swatch theme-swatch-light" />
+                            Clair
                         </button>
                         <button
                             className={`settings-seg-btn${theme === 'dark' ? ' active' : ''}`}
                             onClick={() => applyTheme('dark')}
                         >
-                            ☾ {lbl.dark}
+                            <span className="theme-swatch theme-swatch-dark" />
+                            Sombre
                         </button>
                     </div>
                 </div>
 
                 <div className="settings-section">
-                    <div className="settings-label">{lbl.fontSize}</div>
+                    <div className="settings-label">Taille du texte</div>
                     <div className="settings-seg">
                         {FONT_SIZES.map(({ label, value }) => (
                             <button
