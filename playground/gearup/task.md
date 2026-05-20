@@ -47,3 +47,35 @@
 
 - [ ] Vérifier build / dev server
 - [ ] Identifier pourquoi les pages ne s'affichent pas
+
+---
+
+## Sentry self-hosted — Setup
+
+- [ ] `git clone https://github.com/getsentry/self-hosted` + `./install.sh`
+- [ ] Créer 4 projets Sentry (Gearup, Pulse, Vota, Shoplab)
+- [ ] Récupérer les 4 DSNs et les ajouter dans `.env` à la racine
+- [ ] Créer un **Auth Token** Sentry (Settings → Auth Tokens) pour l'API Pulse
+- [ ] Rebuild containers (`make down && make up`) et vérifier le widget feedback sur chaque app
+
+## Pulse — Dashboard Sentry
+
+Pulse est le tableau de bord qui agrège les remontées Sentry (erreurs + feedbacks utilisateurs).
+
+### SDK / data fetching
+
+- [ ] `src/technical/Sdk/` — créer un client Sentry API (`SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`)
+- [ ] `src/functional/Issues/fetchIssues.ts` — GET `/api/0/projects/{org}/{project}/issues/`
+- [ ] `src/functional/Feedback/fetchFeedback.ts` — GET `/api/0/projects/{org}/{project}/user-feedback/`
+
+### Pages
+
+- [ ] `/issues` — liste des erreurs Sentry (titre, niveau, occurrences, date)
+- [ ] `/feedback` — liste des feedbacks utilisateurs (nom, email, message, app source, date)
+
+### UI
+
+- [ ] Composant `IssueRow` — badge niveau (error/warning/info), titre, compteur
+- [ ] Composant `FeedbackRow` — avatar initiales, message, app badge, date relative
+- [ ] États vides + états d'erreur (token manquant, Sentry injoignable)
+- [ ] Lien vers l'issue/feedback dans Sentry (http://localhost:9000)
