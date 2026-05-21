@@ -119,6 +119,42 @@ export const mockProjects: Project[] = [
         sentry_criticals: 0,
         updated_at: new Date().toISOString(),
     },
+    {
+        id: 9,
+        name: 'Aelios',
+        status: 'warning',
+        open_bugs: 3,
+        deployments: ['v2.1.0 — mercredi'],
+        team: 'Fullstack',
+        url: null,
+        sentry_issues: 9,
+        sentry_criticals: 0,
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 10,
+        name: 'Verano',
+        status: 'ok',
+        open_bugs: 0,
+        deployments: ['v1.3.2 — vendredi'],
+        team: 'Frontend',
+        url: null,
+        sentry_issues: 1,
+        sentry_criticals: 0,
+        updated_at: new Date().toISOString(),
+    },
+    {
+        id: 11,
+        name: 'Krato',
+        status: 'warning',
+        open_bugs: 6,
+        deployments: ['v0.9.0 — jeudi (bêta)'],
+        team: 'Backend',
+        url: null,
+        sentry_issues: 18,
+        sentry_criticals: 2,
+        updated_at: new Date().toISOString(),
+    },
 ]
 
 export const mockObjectives: Objective[] = [
@@ -270,6 +306,33 @@ export const mockDeliveries: Delivery[] = [
         tickets_total: 5,
         notes: 'Patch sécurité + mise à jour dépendances',
     },
+    {
+        id: 6,
+        project: 'Aelios',
+        version: 'v2.1.0',
+        date: _wd(2),
+        tickets_resolved: 7,
+        tickets_total: 10,
+        notes: 'Refonte portail client + nouveau module facturation',
+    },
+    {
+        id: 7,
+        project: 'Verano',
+        version: 'v1.3.2',
+        date: _wd(4),
+        tickets_resolved: 4,
+        tickets_total: 4,
+        notes: null,
+    },
+    {
+        id: 8,
+        project: 'Krato',
+        version: 'v0.9.0',
+        date: _wd(3),
+        tickets_resolved: 2,
+        tickets_total: 8,
+        notes: 'Première release bêta — MVP authentification + tableau de bord',
+    },
 ]
 
 export const mockMissions: Mission[] = [
@@ -287,6 +350,11 @@ export const mockMissions: Mission[] = [
     { id: 12, title: 'Dashboard Pulse — v1',                        status: 'in_progress', category: 'features',           owner: 'Gaetan', due_date: _wd(11)  },
     { id: 13, title: 'API unifiée Pilota SDK',                      status: 'done',        category: 'features',           owner: 'Gaetan', due_date: _wd(0)   },
     { id: 14, title: 'Notifications push Nota',                     status: 'todo',        category: 'features',           owner: 'Damien', due_date: _wd(25)  },
+    { id: 15, title: 'Portail client Aelios — v2 module facturation', status: 'in_progress', category: 'features',           owner: 'Alice',  due_date: _wd(11)  },
+    { id: 16, title: 'Chefferie Aelios — roadmap Q3/Q4',            status: 'in_progress', category: 'project_management', owner: 'Gaetan', due_date: null      },
+    { id: 17, title: 'Krato MVP — specs techniques v1.0',           status: 'todo',        category: 'project_management', owner: 'Bob',    due_date: _wd(18)  },
+    { id: 18, title: 'Krato — audit sécurité avant prod',           status: 'todo',        category: 'compliance',         owner: 'Bob',    due_date: _wd(32)  },
+    { id: 19, title: 'Verano — intégration API partenaire',         status: 'done',        category: 'features',           owner: 'Clara',  due_date: _wd(-2)  },
 ]
 
 export const mockAbsences: Absence[] = [

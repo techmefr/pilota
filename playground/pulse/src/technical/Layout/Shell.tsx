@@ -1,5 +1,6 @@
 import Sidebar from './Sidebar'
 import SettingsButton from './SettingsButton'
+import PresentationControls from './PresentationControls'
 
 interface IProps {
     children: React.ReactNode
@@ -17,7 +18,10 @@ export default function Shell({ children, title, subtitle }: IProps) {
                         <h1 className="shell-title">{title}</h1>
                         {subtitle && <p className="shell-subtitle">{subtitle}</p>}
                     </div>
-                    <SettingsButton />
+                    <div className="shell-header-actions">
+                        <PresentationControls />
+                        <SettingsButton />
+                    </div>
                 </header>
                 <main className="shell-main">{children}</main>
             </div>
@@ -59,6 +63,11 @@ export default function Shell({ children, title, subtitle }: IProps) {
                     color: var(--muted);
                     margin-top: 0.2rem;
                     letter-spacing: 0.01em;
+                }
+                .shell-header-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
                 }
                 .shell-main {
                     flex: 1;
