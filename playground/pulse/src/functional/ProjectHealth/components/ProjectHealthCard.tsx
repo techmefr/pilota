@@ -16,10 +16,11 @@ interface IProps {
 export default function ProjectHealthCard({ project }: IProps) {
     const cfg = STATUS_CONFIG[project.status]
     const isCritical = project.status === 'critical'
+    const isWarning = project.status === 'warning'
 
     return (
         <article
-            className={clsx('phc', isCritical && 'phc-critical')}
+            className={clsx('phc', isCritical && 'phc-critical', isWarning && 'phc-warning')}
             style={{ '--status-color': cfg.color, '--status-dim': cfg.dim } as React.CSSProperties}
         >
             <div className="phc-header">
@@ -81,10 +82,13 @@ export default function ProjectHealthCard({ project }: IProps) {
                     flex-direction: column;
                     gap: 0.625rem;
                     transition: border-color 0.15s;
-                    border-left: 3px solid var(--status-color);
+                }
+                .phc-warning {
+                    border-color: color-mix(in srgb, var(--orange) 35%, var(--border));
                 }
                 .phc-critical {
-                    background: color-mix(in srgb, var(--red) 5%, var(--surface));
+                    border-color: color-mix(in srgb, var(--red) 55%, var(--border));
+                    background: color-mix(in srgb, var(--red) 4%, var(--surface));
                 }
                 .phc-header {
                     display: flex;

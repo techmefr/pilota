@@ -12,7 +12,6 @@ import {
     TrendingUp,
     Trophy,
     Columns,
-    ChevronRight,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 
@@ -52,7 +51,6 @@ export default function Sidebar() {
                         >
                             <Icon size={15} strokeWidth={isActive ? 2.5 : 2} />
                             <span>{label}</span>
-                            {isActive && <ChevronRight size={12} className="ml-auto opacity-50" />}
                         </Link>
                     )
                 })}
@@ -87,8 +85,10 @@ export default function Sidebar() {
                     display: flex;
                     align-items: center;
                     gap: 0.625rem;
-                    padding: 1.25rem 1rem;
+                    height: var(--chrome-height);
+                    padding: 0 1rem;
                     border-bottom: 1px solid var(--border);
+                    flex-shrink: 0;
                 }
                 .sidebar-logo-mark {
                     width: 2rem;

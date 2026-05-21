@@ -38,23 +38,27 @@ export default function Shell({ children, title, subtitle }: IProps) {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    padding: 1.25rem 1.75rem;
+                    height: var(--chrome-height);
+                    padding: 0 1.75rem;
                     border-bottom: 1px solid var(--border);
                     background: var(--surface);
                     position: sticky;
                     top: 0;
                     z-index: 40;
+                    flex-shrink: 0;
                 }
                 .shell-title {
-                    font-size: 1.0625rem;
+                    font-size: 1.125rem;
                     font-weight: 700;
+                    letter-spacing: -0.01em;
                     color: var(--text);
                     line-height: 1.2;
                 }
                 .shell-subtitle {
-                    font-size: 0.75rem;
+                    font-size: 0.6875rem;
                     color: var(--muted);
-                    margin-top: 0.125rem;
+                    margin-top: 0.2rem;
+                    letter-spacing: 0.01em;
                 }
                 .shell-main {
                     flex: 1;
