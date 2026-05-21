@@ -97,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     .theme-swatch-light { background: #f5f5f7; border: 1.5px solid #d1d1d6; }
                     .theme-swatch-dark  { background: #060608; border: 1.5px solid #3a3a4a; }
                 `}</style>
-                <TolgeeClientProvider lang="fr">{children}</TolgeeClientProvider>
+                <TolgeeClientProvider>{children}</TolgeeClientProvider>
             </body>
         </html>
     )
