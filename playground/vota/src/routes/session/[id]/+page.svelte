@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
     import { useSession } from '$lib/functional/useSession.svelte.ts'
-    import { t, lang, langLabels, type Lang } from '$lib/technical/i18n'
+    import { getTranslate } from '@tolgee/svelte'
+    import { tolgee, LANG_LABELS, type Lang } from '$lib/technical/i18n'
     import { theme, fontSize } from '$lib/technical/theme'
     import { AVAILABLE_TAGS } from '$lib/technical/types'
     import type { PageData } from './$types'
@@ -8,7 +10,19 @@
     let { data }: { data: PageData } = $props()
 
     const s = useSession(data)
-    const langs = Object.entries(langLabels) as [Lang, string][]
+    const { t } = getTranslate()
+    const langs = Object.entries(LANG_LABELS) as [Lang, string][]
+
+    let currentLang = $state<Lang>('fr')
+
+    onMount(() => {
+        currentLang = (tolgee.getLanguage() ?? 'fr') as Lang
+    })
+
+    function setLang(l: Lang) {
+        tolgee.changeLanguage(l)
+        currentLang = l
+    }
 
     const FONT_SIZE_OPTIONS = [
         { label: 'A−', value: 15 },
@@ -221,8 +235,8 @@
                             {#each langs as [code, label]}
                                 <button
                                     class="lang-opt"
-                                    class:lang-opt-active={$lang === code}
-                                    onclick={() => lang.set(code)}
+                                    class:lang-opt-active={currentLang === code}
+                                    onclick={() => setLang(code)}
                                     title={label}
                                     role="menuitem"
                                 >

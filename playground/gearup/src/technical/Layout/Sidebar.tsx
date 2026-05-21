@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { LayoutDashboard, Cpu, Package, Wrench, ShoppingCart, ShieldAlert } from 'lucide-react'
-import { getTranslations } from '../I18n'
-import type { Lang } from '../I18n'
+import { useTranslate } from '../Tolgee/useTranslate'
 
 interface IProps {
     currentPath: string
@@ -18,17 +17,7 @@ const NAV_ITEMS = [
 ]
 
 export default function Sidebar({ currentPath, cycle }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
-
-    useEffect(() => {
-        const savedLang = localStorage.getItem('gearup-lang') as Lang | null
-        if (savedLang) setLang(savedLang)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
+    const t = useTranslate()
 
     return (
         <div style={{ display: 'contents' }}>

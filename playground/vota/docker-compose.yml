@@ -9,5 +9,7 @@ services:
       NHOST_GRAPHQL_URL: http://host.docker.internal:8080/v1/graphql
       PUBLIC_NHOST_GRAPHQL_URL: http://localhost:8080/v1/graphql
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
+      VITE_TOLGEE_API_URL: http://host.docker.internal:8085
+      VITE_TOLGEE_API_KEY: ${VITE_TOLGEE_API_KEY:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

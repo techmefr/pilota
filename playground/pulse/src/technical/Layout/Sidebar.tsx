@@ -14,21 +14,23 @@ import {
     Columns,
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { useTranslate } from '@tolgee/react'
 
-const NAV = [
-    { label: 'Santé projets',    href: '/health',     icon: Activity },
-    { label: 'Objectifs',        href: '/objectives',  icon: Target },
-    { label: 'Congés / Équipe',  href: '/team',        icon: CalendarDays },
-    { label: 'Livraisons',       href: '/deliveries',  icon: Package },
-    { label: 'DevOps',           href: '/devops',      icon: Server },
-    { label: 'Infos semaine',    href: '/week',        icon: Info },
-    { label: 'Money Maker',      href: '/revenue',     icon: TrendingUp },
-    { label: 'Contrats',         href: '/contracts',   icon: Trophy },
-    { label: 'Missions',         href: '/missions',    icon: Columns },
+const NAV_ITEMS = [
+    { key: 'nav_health',     href: '/health',      icon: Activity },
+    { key: 'nav_objectives', href: '/objectives',  icon: Target },
+    { key: 'nav_team',       href: '/team',        icon: CalendarDays },
+    { key: 'nav_deliveries', href: '/deliveries',  icon: Package },
+    { key: 'nav_devops',     href: '/devops',      icon: Server },
+    { key: 'nav_week',       href: '/week',        icon: Info },
+    { key: 'nav_revenue',    href: '/revenue',     icon: TrendingUp },
+    { key: 'nav_contracts',  href: '/contracts',   icon: Trophy },
+    { key: 'nav_missions',   href: '/missions',    icon: Columns },
 ]
 
 export default function Sidebar() {
     const pathname = usePathname()
+    const { t } = useTranslate()
 
     return (
         <aside className="sidebar">
@@ -36,12 +38,12 @@ export default function Sidebar() {
                 <span className="sidebar-logo-mark">P</span>
                 <div>
                     <p className="sidebar-name">Pulse</p>
-                    <p className="sidebar-sub">Dashboard équipe</p>
+                    <p className="sidebar-sub">{t('brand_sub')}</p>
                 </div>
             </div>
 
             <nav className="sidebar-nav">
-                {NAV.map(({ label, href, icon: Icon }) => {
+                {NAV_ITEMS.map(({ key, href, icon: Icon }) => {
                     const isActive = pathname === href
                     return (
                         <Link
@@ -50,7 +52,7 @@ export default function Sidebar() {
                             className={clsx('sidebar-link', isActive && 'sidebar-link-active')}
                         >
                             <Icon size={15} strokeWidth={isActive ? 2.5 : 2} />
-                            <span>{label}</span>
+                            <span>{t(key)}</span>
                         </Link>
                     )
                 })}
@@ -63,7 +65,7 @@ export default function Sidebar() {
                     target="_blank"
                     rel="noopener"
                 >
-                    ← Hub
+                    {t('nav_hub')}
                 </a>
             </div>
 

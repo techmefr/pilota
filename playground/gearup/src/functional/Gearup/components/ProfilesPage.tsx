@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
+import type { Translations } from '../../../technical/I18n'
 import type { PcProfile } from '../../../technical/Sdk/resources'
 
 interface IProps {
@@ -8,7 +8,7 @@ interface IProps {
     cycle: string
 }
 
-function tierBadge(tier: string, t: ReturnType<typeof getTranslations>) {
+function tierBadge(tier: string, t: Translations) {
     if (tier === 'performance') return <span className="badge tier-perf">{t.perf}</span>
     if (tier === 'apple') return <span className="badge" style={{ background: 'var(--surface-2)', color: 'var(--text-2)', border: '1px solid var(--border)' }}>{t.apple}</span>
     return <span className="badge tier-std">{t.std}</span>
@@ -25,19 +25,9 @@ function toOrder(p: PcProfile) {
 }
 
 export default function ProfilesPage({ profiles, cycle }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
+    const t = useTranslate()
     const [search, setSearch] = useState('')
     const [tierFilter, setTierFilter] = useState<string | null>(null)
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
 
     const filtered = profiles.filter(p => {
         const matchSearch = search === '' || p.role.toLowerCase().includes(search.toLowerCase()) || p.model_name.toLowerCase().includes(search.toLowerCase())

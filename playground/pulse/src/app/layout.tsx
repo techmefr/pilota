@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import TolgeeClientProvider from '../technical/Tolgee/TolgeeClientProvider'
 
 export const metadata: Metadata = {
     title: 'Pulse — Dashboard équipe',
@@ -96,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     .theme-swatch-light { background: #f5f5f7; border: 1.5px solid #d1d1d6; }
                     .theme-swatch-dark  { background: #060608; border: 1.5px solid #3a3a4a; }
                 `}</style>
-                {children}
+                <TolgeeClientProvider lang="fr">{children}</TolgeeClientProvider>
             </body>
         </html>
     )

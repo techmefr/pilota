@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ShieldAlert, Clock, Zap, Lock, Check } from 'lucide-react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
+import type { Translations } from '../../../technical/I18n'
 import type { Alert } from '../../../technical/Sdk/resources'
 
 interface IProps {
@@ -15,7 +15,7 @@ function typeIcon(type: Alert['type']) {
     return <ShieldAlert size={14} />
 }
 
-function severityBadge(severity: Alert['severity'], t: ReturnType<typeof getTranslations>) {
+function severityBadge(severity: Alert['severity'], _t: Translations) {
     if (severity === 'critical') return <span className="badge badge-critical">Critique</span>
     if (severity === 'warning') return <span className="badge badge-warning">Avertissement</span>
     return <span className="badge badge-info">Info</span>
@@ -39,21 +39,11 @@ function formatDate(d: string) {
 }
 
 export default function PreventionPage({ alerts: initialAlerts }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
+    const t = useTranslate()
     const [alerts, setAlerts] = useState<Alert[]>(initialAlerts)
     const [severityFilter, setSeverityFilter] = useState<string | null>(null)
     const [typeFilter, setTypeFilter] = useState<string | null>(null)
     const [showResolved, setShowResolved] = useState(false)
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
 
     const filtered = alerts
         .filter(a => showResolved || a.status !== 'resolved')

@@ -4,6 +4,15 @@
         <meta charset="utf-8" />
         <link rel="icon" href="%sveltekit.assets%/favicon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script>
+            try {
+                const t = localStorage.getItem('vota_theme')
+                    ?? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+                if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+                const s = parseInt(localStorage.getItem('vota_font_size') ?? '');
+                if ([15, 17, 19, 21].includes(s)) document.documentElement.style.fontSize = s + 'px';
+            } catch (_e) {}
+        </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />

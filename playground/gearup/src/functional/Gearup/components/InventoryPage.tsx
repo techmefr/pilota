@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
+import type { Translations } from '../../../technical/I18n'
 import type { Assignment } from '../../../technical/Sdk/resources'
 
 interface IProps {
     inventory: Assignment[]
 }
 
-function statusBadge(status: Assignment['status'], t: ReturnType<typeof getTranslations>) {
+function statusBadge(status: Assignment['status'], t: Translations) {
     if (status === 'active') return <span className="badge badge-ok">{t.status_active}</span>
     if (status === 'repair') return <span className="badge badge-warning">{t.status_repair}</span>
     return <span className="badge badge-neutral">{t.status_returned}</span>
@@ -18,20 +18,10 @@ function formatDate(d: string) {
 }
 
 export default function InventoryPage({ inventory }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
+    const t = useTranslate()
     const [search, setSearch] = useState('')
     const [teamFilter, setTeamFilter] = useState<string | null>(null)
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
     const teams = [...new Set(inventory.map(a => a.team))].sort()
 
     const filtered = inventory.filter(a => {

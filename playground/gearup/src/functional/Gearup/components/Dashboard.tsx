@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react'
 import { AlertTriangle, Wrench, ShoppingCart, Package } from 'lucide-react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang, Translations } from '../../../technical/I18n'
+import type { Translations } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
 import type { PcProfile, Assignment, Repair, Order, Alert } from '../../../technical/Sdk/resources'
 
 interface IProps {
@@ -41,17 +40,7 @@ function severityLabel(severity: Alert['severity'], t: Translations) {
 }
 
 export default function Dashboard({ profiles, inventory, repairs, orders, alerts }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
+    const t = useTranslate()
 
     const totalDevices = inventory.length
     const activeRepairs = repairs.filter(r => r.status !== 'closed').length

@@ -1,7 +1,9 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    import { t, lang } from '$lib/technical/i18n'
+    import { getTranslate } from '@tolgee/svelte'
     import { SCALE_LABELS } from '$lib/technical/types'
+
+    const { t } = getTranslate()
 
     let { form } = $props()
 

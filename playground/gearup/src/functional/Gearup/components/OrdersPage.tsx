@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
+import type { Translations } from '../../../technical/I18n'
 import type { Order } from '../../../technical/Sdk/resources'
 
 interface IProps {
     orders: Order[]
 }
 
-function statusBadge(status: Order['status'], t: ReturnType<typeof getTranslations>) {
+function statusBadge(status: Order['status'], t: Translations) {
     if (status === 'pending') return <span className="badge badge-neutral">{t.status_pending}</span>
     if (status === 'approved') return <span className="badge badge-info">{t.status_approved}</span>
     if (status === 'ordered') return <span className="badge badge-warning">{t.status_ordered}</span>
     return <span className="badge badge-ok">{t.status_delivered}</span>
 }
 
-function typeBadge(type: Order['type'], t: ReturnType<typeof getTranslations>) {
+function typeBadge(type: Order['type'], t: Translations) {
     if (type === 'hardware') return <span className="badge badge-info">{t.order_type_hardware}</span>
     if (type === 'parts') return <span className="badge badge-warning">{t.order_type_parts}</span>
     return <span className="badge badge-neutral">{t.order_type_consumable}</span>
@@ -36,22 +36,12 @@ type NewOrderForm = {
 const EMPTY_FORM: NewOrderForm = { item: '', type: 'hardware', quantity: '1', reason: '', requested_by: '' }
 
 export default function OrdersPage({ orders: initialOrders }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
+    const t = useTranslate()
     const [orders, setOrders] = useState<Order[]>(initialOrders)
     const [search, setSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form, setForm] = useState<NewOrderForm>(EMPTY_FORM)
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
 
     const filtered = orders.filter(o => {
         const q = search.toLowerCase()

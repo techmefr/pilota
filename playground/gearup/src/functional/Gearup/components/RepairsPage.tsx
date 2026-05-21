@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Plus, X } from 'lucide-react'
-import { getTranslations } from '../../../technical/I18n'
-import type { Lang } from '../../../technical/I18n'
+import { useTranslate } from '../../../technical/Tolgee/useTranslate'
+import type { Translations } from '../../../technical/I18n'
 import type { Repair } from '../../../technical/Sdk/resources'
 
 interface IProps {
     repairs: Repair[]
 }
 
-function statusBadge(status: Repair['status'], t: ReturnType<typeof getTranslations>) {
+function statusBadge(status: Repair['status'], t: Translations) {
     if (status === 'open') return <span className="badge badge-critical">{t.status_open}</span>
     if (status === 'in_progress') return <span className="badge badge-warning">{t.status_in_progress}</span>
     if (status === 'waiting_parts') return <span className="badge badge-info">{t.status_waiting_parts}</span>
@@ -30,22 +30,12 @@ type NewRepairForm = {
 const EMPTY_FORM: NewRepairForm = { device: '', employee: '', issue: '', technician: '' }
 
 export default function RepairsPage({ repairs: initialRepairs }: IProps) {
-    const [lang, setLang] = useState<Lang>('fr')
+    const t = useTranslate()
     const [repairs, setRepairs] = useState<Repair[]>(initialRepairs)
     const [search, setSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [form, setForm] = useState<NewRepairForm>(EMPTY_FORM)
-
-    useEffect(() => {
-        const saved = localStorage.getItem('gearup-lang') as Lang | null
-        if (saved) setLang(saved)
-        const handler = (e: Event) => setLang((e as CustomEvent<Lang>).detail)
-        window.addEventListener('gearup-lang-change', handler)
-        return () => window.removeEventListener('gearup-lang-change', handler)
-    }, [])
-
-    const t = getTranslations(lang)
 
     const filtered = repairs.filter(r => {
         const q = search.toLowerCase()

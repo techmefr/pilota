@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte'
+    import { TolgeeProvider } from '@tolgee/svelte'
     import { theme, fontSize } from '$lib/technical/theme'
-    import { lang, langLabels, type Lang } from '$lib/technical/i18n'
+    import { tolgee, LANG_LABELS, type Lang } from '$lib/technical/i18n'
     import { layoutBarVisible } from '$lib/technical/layout'
 
     let { children } = $props()
@@ -9,10 +10,12 @@
     let mounted = $state(false)
     let profileOpen = $state(false)
     let profileRef = $state<HTMLDivElement | null>(null)
+    let currentLang = $state<Lang>('fr')
 
     onMount(() => {
         mounted = true
         document.documentElement.setAttribute('data-theme', $theme)
+        currentLang = (tolgee.getLanguage() ?? 'fr') as Lang
 
         function handleClick(e: MouseEvent) {
             if (profileRef && !profileRef.contains(e.target as Node)) {
@@ -23,7 +26,12 @@
         return () => document.removeEventListener('mousedown', handleClick)
     })
 
-    const langs = Object.entries(langLabels) as [Lang, string][]
+    function setLang(l: Lang) {
+        tolgee.changeLanguage(l)
+        currentLang = l
+    }
+
+    const langs = Object.entries(LANG_LABELS) as [Lang, string][]
 
     const FONT_SIZE_OPTIONS = [
         { label: 'A−', value: 15 },
@@ -40,6 +48,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" />
 </svelte:head>
 
+<TolgeeProvider tolgee={tolgee}>
 {#if $layoutBarVisible}
 <nav class="topbar" class:mounted>
     <a class="brand" href="/">Vota</a>
@@ -88,8 +97,8 @@
                         {#each langs as [code, label]}
                             <button
                                 class="lang-opt"
-                                class:lang-opt-active={$lang === code}
-                                onclick={() => lang.set(code)}
+                                class:lang-opt-active={currentLang === code}
+                                onclick={() => setLang(code)}
                                 title={label}
                                 role="menuitem"
                             >
@@ -119,6 +128,7 @@
 {/if}
 
 {@render children()}
+</TolgeeProvider>
 
 <style>
     :global(*, *::before, *::after) {

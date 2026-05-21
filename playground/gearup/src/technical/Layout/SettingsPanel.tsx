@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Sun, Moon } from 'lucide-react'
-import type { Lang } from '../I18n'
+import { tolgee, type Lang } from '../Tolgee/index'
 
 const LABELS = {
     fr: { title: 'Réglages', lang: 'Langue', theme: 'Thème', fontSize: 'Taille du texte', light: 'Clair', dark: 'Sombre' },
@@ -34,8 +34,7 @@ export default function SettingsPanel({ onClose }: IProps) {
 
     function applyLang(l: Lang) {
         setLang(l)
-        localStorage.setItem('gearup-lang', l)
-        window.dispatchEvent(new CustomEvent('gearup-lang-change', { detail: l }))
+        tolgee.changeLanguage(l)
     }
 
     function applyTheme(t: 'light' | 'dark') {
