@@ -35,7 +35,7 @@ export default async function TeamPage() {
         >
             <div className="tl">
                 <h2 className="tl-title">Planning de la semaine</h2>
-                <div className="tl-grid">
+                <div className="tl-scroll"><div className="tl-grid">
                     <div className="tl-header-row">
                         <div />
                         {DAYS.map(d => (
@@ -80,7 +80,7 @@ export default async function TeamPage() {
                             </div>
                         )
                     })}
-                </div>
+                </div></div>
 
                 <div className="tl-legend">
                     {Object.entries(REASON_CONFIG).map(([k, cfg]) => (
@@ -95,7 +95,8 @@ export default async function TeamPage() {
             <style>{`
                 .tl { display: flex; flex-direction: column; gap: 1.5rem; max-width: 800px; }
                 .tl-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
-                .tl-grid { display: flex; flex-direction: column; gap: 0.25rem; }
+                .tl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                .tl-grid { display: flex; flex-direction: column; gap: 0.25rem; min-width: 520px; }
                 .tl-header-row, .tl-row { display: grid; grid-template-columns: 130px repeat(5, 1fr); gap: 0.25rem; }
                 .tl-daylabel { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); text-align: center; padding: 0.25rem 0; border-radius: var(--radius-sm); }
                 .tl-daylabel-today { color: var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); }

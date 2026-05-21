@@ -76,6 +76,9 @@ export default async function MissionsPage() {
                 @media (max-width: 900px) {
                     .kanban { grid-template-columns: repeat(2, 1fr); }
                 }
+                @media (max-width: 540px) {
+                    .kanban { grid-template-columns: 1fr; }
+                }
                 .kanban-col {
                     display: flex;
                     flex-direction: column;

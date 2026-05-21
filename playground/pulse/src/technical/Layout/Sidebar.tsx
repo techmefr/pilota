@@ -82,7 +82,12 @@ export default function Sidebar() {
                     left: 0;
                     bottom: 0;
                     z-index: 50;
+                    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
                 }
+                @media (max-width: 768px) {
+                    .sidebar { transform: translateX(-100%); }
+                }
+                html.sidebar-open .sidebar { transform: translateX(0); }
                 .sidebar-logo {
                     display: flex;
                     align-items: center;

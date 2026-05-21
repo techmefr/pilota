@@ -83,6 +83,7 @@ export default async function ContractsPage() {
             <style>{`
                 .ct-layout { display: flex; flex-direction: column; gap: 1.5rem; max-width: 600px; }
                 .ct-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+                @media (max-width: 480px) { .ct-cards { grid-template-columns: 1fr; } }
                 .ct-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.875rem; }
                 .ct-card-top { display: flex; align-items: center; justify-content: space-between; }
                 .ct-type-tag { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.625rem; border-radius: 99px; }

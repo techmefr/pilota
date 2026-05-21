@@ -1,6 +1,7 @@
 import Sidebar from './Sidebar'
 import SettingsButton from './SettingsButton'
 import PresentationControls from './PresentationControls'
+import MobileMenuButton from './MobileMenuButton'
 
 interface IProps {
     children: React.ReactNode
@@ -19,6 +20,7 @@ export default function Shell({ children, title, subtitle }: IProps) {
                         {subtitle && <p className="shell-subtitle">{subtitle}</p>}
                     </div>
                     <div className="shell-header-actions">
+                        <MobileMenuButton />
                         <PresentationControls />
                         <SettingsButton />
                     </div>
@@ -73,6 +75,10 @@ export default function Shell({ children, title, subtitle }: IProps) {
                     flex: 1;
                     padding: 1.75rem;
                     background: var(--bg);
+                }
+                @media (max-width: 768px) {
+                    .shell-content { margin-left: 0; }
+                    .shell-main { padding: 1rem; }
                 }
             `}</style>
         </div>

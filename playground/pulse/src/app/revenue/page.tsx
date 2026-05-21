@@ -73,6 +73,7 @@ export default async function RevenuePage() {
                 .rev-layout { display: flex; flex-direction: column; gap: 2rem; max-width: 720px; }
                 .rev-section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.875rem; }
                 .rev-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+                @media (max-width: 480px) { .rev-cards { grid-template-columns: 1fr; } }
                 .rev-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
                 .rev-card-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
                 .rev-card-amount { font-size: 2rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.1; margin-top: 0.25rem; }
