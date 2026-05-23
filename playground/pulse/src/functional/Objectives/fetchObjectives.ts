@@ -1,4 +1,3 @@
-import { sdk } from '@/technical/Sdk'
 import { mockObjectives } from '@/technical/Sdk/mock'
 import type { Objective } from '@/technical/Sdk'
 
@@ -14,11 +13,7 @@ export function getCurrentWeek(): { week: number; year: number } {
     return { week, year: d.getFullYear() }
 }
 
+// Objectives utilisent le mock driver Pilota SDK — démo du système mock
 export async function fetchObjectives(week: number, year: number): Promise<Objective[]> {
-    try {
-        const result = await (sdk as any).lomkit.objectives.get({ week, year })
-        return result.data ?? mockObjectives.filter(o => o.week === week && o.year === year)
-    } catch {
-        return mockObjectives.filter(o => o.week === week && o.year === year)
-    }
+    return mockObjectives.filter(o => o.week === week && o.year === year)
 }

@@ -9,4 +9,7 @@ $json['autoload']['psr-4']['Functional\\Products\\Database\\Seeders\\'] = 'funct
 $json['autoload']['psr-4']['Functional\\Gearup\\'] = 'functional/Gearup/src/';
 $json['autoload']['psr-4']['Functional\\Gearup\\Database\\Seeders\\'] = 'functional/Gearup/database/seeders/';
 $json['autoload']['psr-4']['Functional\\Gearup\\Database\\Migrations\\'] = 'functional/Gearup/database/migrations/';
+$json['autoload']['psr-4']['Functional\\Pulse\\'] = 'functional/Pulse/src/';
+$json['autoload']['psr-4']['Functional\\Pulse\\Database\\Seeders\\'] = 'functional/Pulse/database/seeders/';
+$json['autoload']['psr-4']['Functional\\Pulse\\Database\\Migrations\\'] = 'functional/Pulse/database/migrations/';
 file_put_contents('composer.json', json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

@@ -8,6 +8,7 @@ use Functional\Gearup\Database\Seeders\GearupSeeder;
 use Functional\Gearup\Database\Seeders\OrdersSeeder;
 use Functional\Products\Database\Seeders\ProductsSeeder;
 use Functional\Users\Database\Seeders\UsersSeeder;
+use Functional\Pulse\Database\Seeders\PulseSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AssignmentsSeeder::class,
             OrdersSeeder::class,
             AlertsSeeder::class,
+            PulseSeeder::class,
         ]);
     }
 }

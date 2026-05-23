@@ -27,6 +27,7 @@ RUN cp functional/Users/database/migrations/*.php database/migrations/ \
     && cp functional/Cart/database/migrations/*.php database/migrations/ \
     && cp functional/Products/database/migrations/*.php database/migrations/ \
     && cp functional/Gearup/database/migrations/*.php database/migrations/ \
+    && cp functional/Pulse/database/migrations/*.php database/migrations/ \
     && php setup-autoload.php && rm setup-autoload.php && composer dump-autoload --optimize
 
 RUN chmod -R 775 storage bootstrap/cache
