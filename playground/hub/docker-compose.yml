@@ -5,3 +5,8 @@ services:
       - "9999:80"
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hub.rule=Host(`hub.localhost`)"
+      - "traefik.http.routers.hub.entrypoints=web"
+      - "traefik.http.services.hub.loadbalancer.server.port=80"

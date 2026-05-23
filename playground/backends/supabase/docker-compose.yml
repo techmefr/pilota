@@ -65,3 +65,8 @@ services:
     depends_on:
       - supabase_rest
       - supabase_realtime
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.supabase.rule=Host(`supabase.localhost`)"
+      - "traefik.http.routers.supabase.entrypoints=web"
+      - "traefik.http.services.supabase.loadbalancer.server.port=80"

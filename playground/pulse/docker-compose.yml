@@ -8,9 +8,12 @@ services:
     volumes:
       - ./src:/app/playground/pulse/src
     environment:
-      LARAVEL_API_URL: http://host.docker.internal:8000/api
-      NEXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      LARAVEL_API_URL: http://laravel:8000/api
+      NEXT_PUBLIC_TOLGEE_API_URL: http://tolgee.localhost
       NEXT_PUBLIC_TOLGEE_API_KEY: ${NEXT_PUBLIC_TOLGEE_API_KEY:-}
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pulse.rule=Host(`pulse.localhost`)"
+      - "traefik.http.routers.pulse.entrypoints=web"
+      - "traefik.http.services.pulse.loadbalancer.server.port=3001"

@@ -14,6 +14,11 @@ services:
     depends_on:
       laravel_db:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.laravel.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.laravel.entrypoints=web"
+      - "traefik.http.services.laravel.loadbalancer.server.port=8000"
 
   laravel_db:
     image: postgres:16-alpine

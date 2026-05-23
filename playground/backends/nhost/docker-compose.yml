@@ -20,6 +20,11 @@ services:
       timeout: 5s
       retries: 15
       start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hasura.rule=Host(`hasura.localhost`)"
+      - "traefik.http.routers.hasura.entrypoints=web"
+      - "traefik.http.services.hasura.loadbalancer.server.port=8080"
 
   nhost_db:
     image: postgres:14-alpine

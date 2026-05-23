@@ -6,8 +6,11 @@ services:
     ports:
       - "3010:3000"
     environment:
-      NUXT_PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      NUXT_PUBLIC_TOLGEE_API_URL: http://tolgee.localhost
       NUXT_PUBLIC_TOLGEE_API_KEY: ${NUXT_PUBLIC_TOLGEE_API_KEY:-}
       NUXT_PUBLIC_SENTRY_DSN: ${NUXT_PUBLIC_SENTRY_DSN:-}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shoplab.rule=Host(`shoplab.localhost`)"
+      - "traefik.http.routers.shoplab.entrypoints=web"
+      - "traefik.http.services.shoplab.loadbalancer.server.port=3000"

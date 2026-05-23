@@ -8,10 +8,13 @@ services:
     volumes:
       - ./src:/app/playground/gearup/src
     environment:
-      PUBLIC_SUPABASE_URL: http://host.docker.internal:54321
+      PUBLIC_SUPABASE_URL: http://supabase.localhost
       PUBLIC_SUPABASE_ANON_KEY: pilota
-      PUBLIC_TOLGEE_API_URL: http://host.docker.internal:8085
+      PUBLIC_TOLGEE_API_URL: http://tolgee.localhost
       PUBLIC_TOLGEE_API_KEY: ${PUBLIC_TOLGEE_API_KEY:-}
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gearup.rule=Host(`gearup.localhost`)"
+      - "traefik.http.routers.gearup.entrypoints=web"
+      - "traefik.http.services.gearup.loadbalancer.server.port=3003"

@@ -6,10 +6,13 @@ services:
     ports:
       - "3002:3002"
     environment:
-      NHOST_GRAPHQL_URL: http://host.docker.internal:8080/v1/graphql
-      PUBLIC_NHOST_GRAPHQL_URL: http://localhost:8080/v1/graphql
+      NHOST_GRAPHQL_URL: http://nhost_hasura:8080/v1/graphql
+      PUBLIC_NHOST_GRAPHQL_URL: http://hasura.localhost/v1/graphql
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
-      VITE_TOLGEE_API_URL: http://host.docker.internal:8085
+      VITE_TOLGEE_API_URL: http://tolgee.localhost
       VITE_TOLGEE_API_KEY: ${VITE_TOLGEE_API_KEY:-}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vota.rule=Host(`vota.localhost`)"
+      - "traefik.http.routers.vota.entrypoints=web"
+      - "traefik.http.services.vota.loadbalancer.server.port=3002"
