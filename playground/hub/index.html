@@ -1,621 +1,539 @@
 <!doctype html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pilota — Dev Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-@layer reset, tokens, layout, components;
-
-@layer reset {
-  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-  a { text-decoration: none; color: inherit; }
-  button { cursor: pointer; border: none; background: none; font: inherit; }
+:root {
+  --teal:       #2BA8A2;
+  --teal-light: #3CC4BD;
+  --teal-dark:  #1E8C86;
+  --teal-bg:    #E8F6F5;
+  --gold:       #FFD23F;
+  --gold-dark:  #B38A00;
+  --coral:      #EF6C4A;
+  --coral-dark: #D45233;
+  --sky:        #5DADE2;
+  --cream:      #FFF8E7;
+  --surface:    #EFF8F7;
+  --card:       #FFFFFF;
+  --text:       #0D1E1D;
+  --text-muted: #527774;
+  --border:     #C2DAD7;
 }
 
-@layer tokens {
-  :root {
-    --red:     oklch(47% 0.21 27);
-    --red-a8:  color-mix(in oklch, var(--red)  8%, transparent);
-    --red-a16: color-mix(in oklch, var(--red) 16%, transparent);
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+a { text-decoration: none; color: inherit; }
 
-  [data-theme="dark"] {
-    --bg:        oklch(11%  0.006 27);
-    --surface:   oklch(14%  0.006 27);
-    --surface-2: oklch(18%  0.006 27);
-    --border:    oklch(100% 0     0 / .08);
-    --border-hi: oklch(100% 0     0 / .16);
-    --text:      oklch(95%  0.005 27);
-    --text-2:    oklch(58%  0.005 27);
-    --text-3:    oklch(36%  0.005 27);
-    --ok:        oklch(62%  0.17  145);
-    --ok-dim:    color-mix(in oklch, oklch(62% 0.17 145) 13%, transparent);
-    --wip:       oklch(72%  0.16  65);
-    --wip-dim:   color-mix(in oklch, oklch(72% 0.16 65)  13%, transparent);
-    color-scheme: dark;
-  }
-
-  [data-theme="light"] {
-    --bg:        oklch(95%  0.005 27);
-    --surface:   oklch(100% 0     0);
-    --surface-2: oklch(92%  0.005 27);
-    --border:    oklch(0%   0     0 / .09);
-    --border-hi: oklch(0%   0     0 / .18);
-    --text:      oklch(13%  0.006 27);
-    --text-2:    oklch(46%  0.005 27);
-    --text-3:    oklch(67%  0.005 27);
-    --ok:        oklch(44%  0.15  145);
-    --ok-dim:    color-mix(in oklch, oklch(44% 0.15 145) 12%, transparent);
-    --wip:       oklch(52%  0.14  65);
-    --wip-dim:   color-mix(in oklch, oklch(52% 0.14 65)  12%, transparent);
-    color-scheme: light;
-  }
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-@layer layout {
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, sans-serif;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrapper {
-    max-width: 1160px;
-    margin-inline: auto;
-    padding: 5rem 2.5rem 9rem;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    align-items: stretch;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    overflow: hidden;
-  }
-
-  .grid.col-3 { grid-template-columns: repeat(3, 1fr); }
-
-  @media (width <= 900px) {
-    .grid.col-3 { grid-template-columns: repeat(2, 1fr); }
-    .grid.col-3 > a:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  }
-
-  @media (width <= 600px) {
-    .wrapper { padding-inline: 1.25rem; padding-block-start: 3rem; }
-    .grid, .grid.col-3 { grid-template-columns: 1fr; }
-    .grid.col-3 > a:last-child:nth-child(odd) { grid-column: auto; }
-  }
+/* ── Header ── */
+.header {
+  background: var(--teal-dark);
+  padding: 2rem 2rem 1.875rem;
+  position: relative;
+  overflow: hidden;
 }
 
-@layer components {
-  .theme-toggle {
-    position: fixed;
-    inset-block-start: 1.25rem;
-    inset-inline-end: 1.25rem;
-    z-index: 50;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color .15s, color .15s;
+.header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(60,196,189,0.12);
+  pointer-events: none;
+}
 
-    & svg { width: 14px; height: 14px; }
-    &:hover { border-color: var(--red); color: var(--red); }
-  }
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: 30%;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,210,63,0.06);
+  pointer-events: none;
+}
 
-  header {
-    margin-block-end: 5rem;
-    position: relative;
-  }
+.header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
 
-  .header-glow {
-    position: absolute;
-    inset: -4rem -2.5rem 0;
-    background: radial-gradient(ellipse 55% 60% at 0% 0%, var(--red-a8), transparent 65%);
-    pointer-events: none;
-  }
+/* Logo — Flip7 packaging: cream parallelogram box */
+.logo-box {
+  display: inline-flex;
+  background: var(--cream);
+  padding: 0.5rem 1.125rem 0.5rem 1.25rem;
+  border-radius: 14px;
+  border: 3px solid rgba(0,0,0,0.22);
+  transform: skewX(-5deg);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.18);
+  margin-bottom: 0.875rem;
+}
 
-  .eyebrow {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-block-end: 2rem;
-  }
+.logo-inner {
+  transform: skewX(5deg);
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  line-height: 1;
+}
 
-  .xefi-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--red);
-  }
+.logo-name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--teal-dark);
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
 
-  .eyebrow-text {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--text-3);
-  }
+.logo-poc {
+  font-size: 2.375rem;
+  font-weight: 900;
+  color: var(--gold-dark);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  transform: rotate(3deg) translateY(-1px);
+  display: inline-block;
+  letter-spacing: -1px;
+  line-height: 1;
+}
 
-  h1 {
-    position: relative;
-    font-size: clamp(2.5rem, 7vw, 3.5rem);
-    font-weight: 900;
-    letter-spacing: -.05em;
-    line-height: .9;
-    text-wrap: balance;
-    margin-block-end: 2rem;
+.header-eyebrow {
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  margin-bottom: 0.5rem;
+}
 
-    & em { font-style: normal; color: var(--red); }
-  }
+.branch-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--gold);
+  color: #5a3d00;
+  padding: 0.3rem 0.875rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 12px rgba(255,210,63,0.45);
+}
 
-  .header-stats {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+.branch-pill svg { flex-shrink: 0; }
 
-  .stat-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    padding: 0.375rem 0.875rem;
-    border-radius: 99px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-2);
-  }
+.header-status {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 0.25rem;
+}
 
-  .stat-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.11);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  color: #fff;
+  padding: 0.35rem 0.875rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
 
-    &.ok  { background: var(--ok); }
-    &.wip { background: var(--wip); }
-    &.off { background: var(--text-3); }
-  }
+.pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse-ring 2s ease-out infinite;
+}
 
-  section { margin-block-end: 5rem; }
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(255,210,63,0.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(255,210,63,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(255,210,63,0);   }
+}
 
-  .section-head {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    margin-block-end: 1.75rem;
-  }
+/* ── Main ── */
+.main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.25rem 2rem 4rem;
+}
 
-  .section-num {
-    font-size: 3rem;
-    font-weight: 900;
-    letter-spacing: -.04em;
-    color: var(--red);
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    flex-shrink: 0;
-  }
+/* ── Section ── */
+.section { margin-bottom: 2.75rem; }
 
-  .section-title {
-    font-size: 1.375rem;
-    font-weight: 700;
-    letter-spacing: -.025em;
-  }
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2.5px dashed var(--border);
+}
 
-  .section-count {
-    margin-inline-start: auto;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-3);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
+.section-num {
+  font-size: 2.75rem;
+  font-weight: 900;
+  color: var(--teal);
+  line-height: 1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
 
-  a.card {
-    display: flex;
-    flex-direction: column;
-    background: var(--surface);
-    color: var(--text);
-    transition: background .18s, transform .18s;
-    border-top: 2px solid transparent;
-    min-height: 220px;
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: var(--teal-dark);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
 
-    &.ok  { border-top-color: var(--ok); }
-    &.wip { border-top-color: var(--wip); }
-    &:hover { background: var(--surface-2); }
-    &:active { opacity: .8; transition-duration: .06s; }
-    &.disabled { opacity: .3; pointer-events: none; }
-  }
+.section-count {
+  margin-left: auto;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--teal-bg);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-  a.card:hover .port {
-    color: var(--red);
-    background: var(--red-a8);
-    border-color: var(--red-a16);
-  }
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.875rem;
+}
 
-  .card-lead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem 1.5rem 0;
-  }
+.grid.col-3 { grid-template-columns: repeat(3, 1fr); }
 
-  .card-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    padding: 0.3rem 0.65rem;
-    border-radius: 99px;
+@media (max-width: 900px) {
+  .grid.col-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid.col-3 > a:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 
-    &.ok  { background: var(--ok-dim);  color: var(--ok); }
-    &.wip { background: var(--wip-dim); color: var(--wip); }
-    &.off { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
-  }
+@media (max-width: 600px) {
+  .grid, .grid.col-3 { grid-template-columns: 1fr; }
+  .grid.col-3 > a:last-child:nth-child(odd) { grid-column: auto; }
+  .main { padding: 1.5rem 1rem 3rem; }
+  .header { padding: 1.5rem 1rem 1.5rem; }
+}
 
-  .badge-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-  }
+/* ── Card ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--teal);
+  padding: 1.125rem 1.125rem 1rem 1rem;
+  min-height: 210px;
+  transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 2px 8px rgba(43,168,162,0.07);
+}
 
-  .port {
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    color: var(--text-3);
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    padding: 0.25rem 0.6rem;
-    border-radius: 0.4rem;
-    transition: color .15s, background .15s, border-color .15s;
-  }
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(43,168,162,0.18);
+}
 
-  .card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
-    padding: 1rem 1.5rem 1.5rem;
-  }
+.card.gold  { border-left-color: var(--gold); }
+.card.gold:hover  { box-shadow: 0 8px 28px rgba(255,210,63,0.28); }
 
-  .card-name {
-    font-size: 1.25rem;
-    font-weight: 800;
-    letter-spacing: -.035em;
-    line-height: 1.1;
-  }
+.card.coral { border-left-color: var(--coral); }
+.card.coral:hover { box-shadow: 0 8px 28px rgba(239,108,74,0.22); }
 
-  .card-desc {
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: var(--text-2);
-    text-wrap: pretty;
-    font-weight: 400;
-  }
+.card.sky   { border-left-color: var(--sky); }
+.card.sky:hover   { box-shadow: 0 8px 28px rgba(93,173,226,0.25); }
 
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    padding: 0.875rem 1.5rem;
-    border-top: 1px solid var(--border);
-    margin-block-start: auto;
-  }
+.card-lead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
 
-  .tag {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    padding: 0.2rem 0.55rem;
-    border-radius: 0.3rem;
-    background: var(--surface-2);
-    color: var(--text-3);
-    border: 1px solid var(--border);
-  }
+.card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--teal);
+  padding: 0.225rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+  flex-shrink: 0;
+}
 
-  footer {
-    padding-block-start: 2rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
+.card-status .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 5px rgba(255,210,63,0.9);
+}
 
-  .footer-brand {
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: var(--text-3);
-    letter-spacing: -.01em;
+.card-domain {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--teal-dark);
+  background: var(--teal-bg);
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 62%;
+}
 
-    & span { color: var(--red); }
-  }
+.card-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--teal-dark);
+  letter-spacing: 0.25px;
+  margin-bottom: 0.375rem;
+}
 
-  .footer-note { font-size: 0.8125rem; color: var(--text-3); }
+.card-desc {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  flex: 1;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.875rem;
+}
+
+.tag {
+  font-size: 0.585rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--teal-dark);
+  background: var(--teal-bg);
+  border: 1px solid var(--border);
+  padding: 0.175rem 0.45rem;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
+/* ── Footer ── */
+footer {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 2.5rem;
+  border-top: 2.5px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--teal);
+  letter-spacing: 1px;
+}
+
+.footer-note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="themeBtn" aria-label="Changer le thème">
-  <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-  <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
-</button>
-
-<div class="wrapper">
-
-  <header>
-    <div class="header-glow"></div>
-    <div class="eyebrow">
-      <div class="xefi-dot"></div>
-      <span class="eyebrow-text">Internal — Dev Hub</span>
+<header class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo-box">
+        <div class="logo-inner">
+          <span class="logo-name">Pilota</span>
+          <span class="logo-poc">POC</span>
+        </div>
+      </div>
+      <div class="header-eyebrow">Internal — Dev Hub</div>
+      <div class="branch-pill">
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5zm-2.25.75a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.492 2.492 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25zM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5z"/>
+        </svg>
+        <span id="branch-label">...</span>
+      </div>
     </div>
-    <h1>Pilota <em>POC</em></h1>
-    <div class="header-stats">
-      <span class="stat-chip"><span class="stat-dot ok"></span>10 en ligne</span>
+    <div class="header-status">
+      <span class="status-chip">
+        <span class="pulse-dot"></span>
+        <span id="service-count">10</span> services
+      </span>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section>
+<main class="main">
+
+  <section class="section">
     <div class="section-head">
       <span class="section-num">01</span>
       <span class="section-title">Frontends</span>
       <span class="section-count">4 services</span>
     </div>
-    <div class="grid">
-
-      <a class="card ok" href="http://shoplab.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">shoplab.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Shoplab</p>
-          <p class="card-desc">Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime. Démo des 3 drivers Pilota simultanés.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">Nuxt 4</span>
-          <span class="tag">Vuetify</span>
-          <span class="tag">Nhost</span>
-          <span class="tag">Lomkit</span>
-          <span class="tag">Supabase</span>
-          <span class="tag">Tolgee</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://pulse.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">pulse.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Pulse</p>
-          <p class="card-desc">Dashboard hebdo équipe, remplace les slides Canva. 9 sections : santé projets, objectifs, congés, livraisons, DevOps, infos semaine, CA, contrats, missions. Données mock dynamiques, mode présentation.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">Next.js 15</span>
-          <span class="tag">React 19</span>
-          <span class="tag">Lomkit</span>
-          <span class="tag">Tolgee</span>
-          <span class="tag">OSDD</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://vota.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">vota.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Vota</p>
-          <p class="card-desc">Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV / JSON / Jira. Nhost/Hasura avec subscriptions WebSocket.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">SvelteKit</span>
-          <span class="tag">Svelte 5</span>
-          <span class="tag">Nhost</span>
-          <span class="tag">GraphQL WS</span>
-          <span class="tag">Tolgee</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://gearup.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">gearup.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Gearup</p>
-          <p class="card-desc">Configurateur postes HP XEFI par profil (dev, CDP, commercial). Driver Lomkit, OSDD complet, resources Zod. Remplace le PDF/Excel partagé par cycle d'achat.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">Astro 5</span>
-          <span class="tag">React</span>
-          <span class="tag">Lomkit</span>
-          <span class="tag">OSDD</span>
-          <span class="tag">Tolgee</span>
-        </div>
-      </a>
-
-    </div>
+    <div class="grid" id="frontends"></div>
   </section>
 
-  <section>
+  <section class="section">
     <div class="section-head">
       <span class="section-num">02</span>
       <span class="section-title">Backends</span>
       <span class="section-count">3 services</span>
     </div>
-    <div class="grid col-3">
-
-      <a class="card ok" href="http://api.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">api.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Laravel</p>
-          <p class="card-desc">API REST avec Laravel Interact (Lomkit). Ressources produits, panier, profils HP. Utilisé par Shoplab, Pulse et Gearup.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">PHP 8.3</span>
-          <span class="tag">Laravel 11</span>
-          <span class="tag">Lomkit</span>
-          <span class="tag">Postgres</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://hasura.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">hasura.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Nhost / Hasura</p>
-          <p class="card-desc">GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel. Utilisé par Shoplab et Vota.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">GraphQL</span>
-          <span class="tag">WebSocket</span>
-          <span class="tag">Hasura v2</span>
-          <span class="tag">Postgres</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://supabase.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">supabase.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Supabase</p>
-          <p class="card-desc">PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota. Utilisé par Shoplab.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">PostgREST</span>
-          <span class="tag">Realtime</span>
-          <span class="tag">Postgres</span>
-          <span class="tag">JWT</span>
-        </div>
-      </a>
-
-    </div>
+    <div class="grid col-3" id="backends"></div>
   </section>
 
-  <section>
+  <section class="section">
     <div class="section-head">
       <span class="section-num">03</span>
       <span class="section-title">Tooling</span>
       <span class="section-count">3 services</span>
     </div>
-    <div class="grid">
-
-      <a class="card ok" href="http://tolgee.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">tolgee.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Tolgee</p>
-          <p class="card-desc">Plateforme i18n self-hosted. SDK intégré sur les 4 frontends (Shoplab, Vota, Pulse, Gearup). Traductions FR / EN. Fallback staticData pour le SSR Next.js.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">i18n</span>
-          <span class="tag">Self-hosted</span>
-          <span class="tag">FR / EN</span>
-          <span class="tag">SDK</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://localhost:9000" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">:9000</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Sentry</p>
-          <p class="card-desc">Monitoring d'erreurs self-hosted. Widget feedback natif (FR) sur tous les frontends. Suivi des incidents par projet.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">Error tracking</span>
-          <span class="tag">Self-hosted</span>
-          <span class="tag">Feedback</span>
-        </div>
-      </a>
-
-      <a class="card ok" href="http://traefik.localhost" target="_blank" rel="noopener">
-        <div class="card-lead">
-          <span class="card-badge ok"><span class="badge-dot"></span>Prêt</span>
-          <span class="port">traefik.localhost</span>
-        </div>
-        <div class="card-body">
-          <p class="card-name">Traefik</p>
-          <p class="card-desc">Reverse proxy unifié. Route tous les services sur des domaines <code>*.localhost</code> sans gestion de ports. Dashboard de supervision des routes actives.</p>
-        </div>
-        <div class="card-tags">
-          <span class="tag">Reverse proxy</span>
-          <span class="tag">*.localhost</span>
-          <span class="tag">Dashboard</span>
-        </div>
-      </a>
-
-    </div>
+    <div class="grid col-3" id="tooling"></div>
   </section>
 
-  <footer>
-    <span class="footer-brand">Pilota <span>POC</span></span>
-    <span class="footer-note">Internal dev tools · Not for production</span>
-  </footer>
+</main>
 
-</div>
+<footer>
+  <span class="footer-brand">Pilota POC</span>
+  <span class="footer-note">Internal dev tools · Not for production</span>
+</footer>
 
 <script>
-const html = document.documentElement
-const btn = document.getElementById('themeBtn')
-const sun = document.getElementById('sunIcon')
-const moon = document.getElementById('moonIcon')
+// Extract branch from current hostname.
+// "feature-auth-hub.localhost" → branch = "feature-auth"
+// "dev-hub.localhost"          → branch = "dev"
+const hostname = window.location.hostname
+const branch = hostname.replace(/-hub\.localhost$/, '')
 
-function apply(t) {
-  html.setAttribute('data-theme', t)
-  localStorage.setItem('pilota_theme', t)
-  sun.style.display = t === 'dark' ? 'block' : 'none'
-  moon.style.display = t === 'light' ? 'block' : 'none'
+document.getElementById('branch-label').textContent = branch || 'local'
+
+const b  = (slug) => `http://${branch}-${slug}.localhost`
+const sh = (slug) => `http://${slug}.localhost`
+
+const frontends = [
+  {
+    url: b('shoplab'), domain: `${branch}-shoplab.localhost`,
+    name: 'Shoplab', accent: '',
+    desc: 'Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime. Démo des 3 drivers Pilota simultanés.',
+    tags: ['Nuxt 4', 'Vuetify', 'Nhost', 'Lomkit', 'Supabase', 'Tolgee'],
+  },
+  {
+    url: b('pulse'), domain: `${branch}-pulse.localhost`,
+    name: 'Pulse', accent: 'gold',
+    desc: 'Dashboard hebdo équipe. 9 sections: santé projets, objectifs, congés, livraisons, DevOps, infos semaine, CA, contrats, missions. Données Laravel, mode présentation.',
+    tags: ['Next.js 15', 'React 19', 'Lomkit', 'Tolgee', 'OSDD'],
+  },
+  {
+    url: b('vota'), domain: `${branch}-vota.localhost`,
+    name: 'Vota', accent: '',
+    desc: 'Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV/JSON/Jira. Nhost/Hasura avec subscriptions WebSocket.',
+    tags: ['SvelteKit', 'Svelte 5', 'Nhost', 'GraphQL WS', 'Tolgee'],
+  },
+  {
+    url: b('gearup'), domain: `${branch}-gearup.localhost`,
+    name: 'Gearup', accent: 'coral',
+    desc: 'Configurateur postes HP par profil (dev, CDP, commercial). Driver Lomkit, OSDD complet, resources Zod. Remplace le PDF/Excel partagé par cycle d\'achat.',
+    tags: ['Astro 5', 'React', 'Lomkit', 'OSDD', 'Tolgee'],
+  },
+]
+
+const backends = [
+  {
+    url: b('api'), domain: `${branch}-api.localhost`,
+    name: 'Laravel', accent: '',
+    desc: 'API REST avec Lomkit. Ressources produits, panier, profils HP, Pulse. Architecture OSDD, 5 layers fonctionnels. Utilisé par Shoplab, Pulse et Gearup.',
+    tags: ['PHP 8.3', 'Laravel 11', 'Lomkit', 'Postgres', 'OSDD'],
+  },
+  {
+    url: b('hasura'), domain: `${branch}-hasura.localhost`,
+    name: 'Nhost / Hasura', accent: 'gold',
+    desc: 'GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel. Utilisé par Shoplab et Vota.',
+    tags: ['GraphQL', 'WebSocket', 'Hasura v2', 'Postgres'],
+  },
+  {
+    url: b('supabase'), domain: `${branch}-supabase.localhost`,
+    name: 'Supabase', accent: '',
+    desc: 'PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota. Utilisé par Shoplab.',
+    tags: ['PostgREST', 'Realtime', 'Postgres', 'JWT'],
+  },
+]
+
+const tooling = [
+  {
+    url: sh('tolgee'), domain: 'tolgee.localhost',
+    name: 'Tolgee', accent: 'gold',
+    desc: 'Plateforme i18n self-hosted partagée entre toutes les branches. SDK intégré sur les 4 frontends. Traductions FR/EN. Fallback staticData pour le SSR Next.js.',
+    tags: ['i18n', 'Self-hosted', 'FR / EN', 'SDK', 'Partagé'],
+  },
+  {
+    url: 'http://localhost:9000', domain: 'localhost:9000',
+    name: 'Sentry', accent: 'coral',
+    desc: 'Monitoring d\'erreurs self-hosted. Widget feedback natif (FR) sur tous les frontends. Suivi des incidents par projet.',
+    tags: ['Error tracking', 'Self-hosted', 'Feedback'],
+  },
+  {
+    url: sh('traefik'), domain: 'traefik.localhost',
+    name: 'Traefik', accent: 'sky',
+    desc: 'Reverse proxy unifié partagé entre toutes les branches. Route chaque stack sur ${BRANCH}-*.localhost. Dashboard de supervision en temps réel.',
+    tags: ['Reverse proxy', '*.localhost', 'Dashboard', 'Partagé'],
+  },
+]
+
+function card({ url, domain, name, desc, tags, accent }) {
+  return `<a class="card ${accent}" href="${url}" target="_blank" rel="noopener">
+    <div class="card-lead">
+      <span class="card-status"><span class="dot"></span>Prêt</span>
+      <span class="card-domain">${domain}</span>
+    </div>
+    <p class="card-name">${name}</p>
+    <p class="card-desc">${desc}</p>
+    <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+  </a>`
 }
 
-const saved = localStorage.getItem('pilota_theme')
-const preferred = window.matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark'
-apply(saved || preferred)
-btn.addEventListener('click', () => apply(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'))
+document.getElementById('frontends').innerHTML = frontends.map(card).join('')
+document.getElementById('backends').innerHTML  = backends.map(card).join('')
+document.getElementById('tooling').innerHTML   = tooling.map(card).join('')
 </script>
 
 </body>

@@ -1,18 +1,24 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   vota:
     build:
       context: ../..
       dockerfile: playground/vota/Dockerfile
-    ports:
-      - "3002:3002"
     environment:
       NHOST_GRAPHQL_URL: http://nhost_hasura:8080/v1/graphql
-      PUBLIC_NHOST_GRAPHQL_URL: http://hasura.localhost/v1/graphql
+      PUBLIC_NHOST_GRAPHQL_URL: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
       VITE_TOLGEE_API_URL: http://tolgee.localhost
       VITE_TOLGEE_API_KEY: ${VITE_TOLGEE_API_KEY:-}
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vota.rule=Host(`vota.localhost`)"
-      - "traefik.http.routers.vota.entrypoints=web"
-      - "traefik.http.services.vota.loadbalancer.server.port=3002"
+      - "traefik.http.routers.vota-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-vota.localhost`)"
+      - "traefik.http.routers.vota-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.vota-${BRANCH:-dev}.loadbalancer.server.port=3002"

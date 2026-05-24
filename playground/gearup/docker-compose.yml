@@ -1,20 +1,26 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   gearup:
     build:
       context: ../..
       dockerfile: playground/gearup/Dockerfile
-    ports:
-      - "3003:3003"
     volumes:
       - ./src:/app/playground/gearup/src
     environment:
-      PUBLIC_SUPABASE_URL: http://supabase.localhost
+      PUBLIC_SUPABASE_URL: http://${BRANCH:-dev}-supabase.localhost
       PUBLIC_SUPABASE_ANON_KEY: pilota
       PUBLIC_TOLGEE_API_URL: http://tolgee.localhost
       PUBLIC_TOLGEE_API_KEY: ${PUBLIC_TOLGEE_API_KEY:-}
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.gearup.rule=Host(`gearup.localhost`)"
-      - "traefik.http.routers.gearup.entrypoints=web"
-      - "traefik.http.services.gearup.loadbalancer.server.port=3003"
+      - "traefik.http.routers.gearup-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-gearup.localhost`)"
+      - "traefik.http.routers.gearup-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.gearup-${BRANCH:-dev}.loadbalancer.server.port=3003"

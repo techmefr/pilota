@@ -1,9 +1,12 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   laravel:
     build:
       context: .
-    ports:
-      - "8000:8000"
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: laravel_db
@@ -14,11 +17,14 @@ services:
     depends_on:
       laravel_db:
         condition: service_healthy
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.laravel.rule=Host(`api.localhost`)"
-      - "traefik.http.routers.laravel.entrypoints=web"
-      - "traefik.http.services.laravel.loadbalancer.server.port=8000"
+      - "traefik.http.routers.laravel-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-api.localhost`)"
+      - "traefik.http.routers.laravel-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.laravel-${BRANCH:-dev}.loadbalancer.server.port=8000"
 
   laravel_db:
     image: postgres:16-alpine

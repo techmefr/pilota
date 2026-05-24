@@ -1,0 +1,56 @@
+# Shared infrastructure — run once per machine: make proxy-up
+# Traefik and Tolgee are branch-independent; they run at their clean domain always.
+
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
+volumes:
+  tolgee_data:
+    external: true
+    name: tolgee_data
+
+services:
+  traefik:
+    image: traefik:v3
+    ports:
+      - "80:80"
+      - "8090:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=pilota-proxy
+      - --entrypoints.web.address=:80
+    networks:
+      - pilota-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+    restart: unless-stopped
+
+  tolgee:
+    image: tolgee/tolgee:latest
+    environment:
+      spring_datasource_url: "jdbc:h2:file:/data/tolgee;DB_CLOSE_ON_EXIT=FALSE"
+      TOLGEE_AUTHENTICATION_ENABLED: "true"
+      TOLGEE_AUTHENTICATION_INITIAL_USERNAME: admin
+      TOLGEE_AUTHENTICATION_INITIAL_PASSWORD: admin1234
+      TOLGEE_FRONTEND_URL: http://tolgee.localhost
+      TOLGEE_CORS_ALLOWED_ORIGINS: "*"
+    volumes:
+      - tolgee_data:/data
+    networks:
+      - pilota-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tolgee.rule=Host(`tolgee.localhost`)"
+      - "traefik.http.routers.tolgee.entrypoints=web"
+      - "traefik.http.services.tolgee.loadbalancer.server.port=8080"
+    restart: unless-stopped

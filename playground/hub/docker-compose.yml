@@ -1,12 +1,18 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   hub:
     image: nginx:alpine
-    ports:
-      - "9999:80"
     volumes:
       - ./index.html:/usr/share/nginx/html/index.html:ro
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hub.rule=Host(`hub.localhost`)"
-      - "traefik.http.routers.hub.entrypoints=web"
-      - "traefik.http.services.hub.loadbalancer.server.port=80"
+      - "traefik.http.routers.hub-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-hub.localhost`)"
+      - "traefik.http.routers.hub-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.hub-${BRANCH:-dev}.loadbalancer.server.port=80"

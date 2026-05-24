@@ -1,3 +1,8 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   supabase_db:
     image: postgres:15-alpine
@@ -58,15 +63,16 @@ services:
 
   supabase_gateway:
     image: nginx:alpine
-    ports:
-      - "54321:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - supabase_rest
       - supabase_realtime
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.supabase.rule=Host(`supabase.localhost`)"
-      - "traefik.http.routers.supabase.entrypoints=web"
-      - "traefik.http.services.supabase.loadbalancer.server.port=80"
+      - "traefik.http.routers.supabase-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-supabase.localhost`)"
+      - "traefik.http.routers.supabase-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.supabase-${BRANCH:-dev}.loadbalancer.server.port=80"

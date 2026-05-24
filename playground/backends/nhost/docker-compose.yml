@@ -1,9 +1,11 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
 services:
   nhost_hasura:
     image: hasura/graphql-engine:v2.36.0
-    ports:
-      - "8080:8080"
-      - "1337:8080"
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://pilota:pilota@nhost_db:5432/pilota_nhost
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
@@ -20,11 +22,14 @@ services:
       timeout: 5s
       retries: 15
       start_period: 20s
+    networks:
+      - default
+      - pilota-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hasura.rule=Host(`hasura.localhost`)"
-      - "traefik.http.routers.hasura.entrypoints=web"
-      - "traefik.http.services.hasura.loadbalancer.server.port=8080"
+      - "traefik.http.routers.hasura-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-hasura.localhost`)"
+      - "traefik.http.routers.hasura-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.hasura-${BRANCH:-dev}.loadbalancer.server.port=8080"
 
   nhost_db:
     image: postgres:14-alpine
