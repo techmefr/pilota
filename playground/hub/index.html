@@ -6,21 +6,24 @@
 <title>Pilota — Dev Hub</title>
 <style>
 :root {
-  --teal:       #2BA8A2;
-  --teal-light: #3CC4BD;
-  --teal-dark:  #1E8C86;
-  --teal-bg:    #E8F6F5;
-  --gold:       #FFD23F;
-  --gold-dark:  #B38A00;
-  --coral:      #EF6C4A;
-  --coral-dark: #D45233;
-  --sky:        #5DADE2;
-  --cream:      #FFF8E7;
-  --surface:    #EFF8F7;
-  --card:       #FFFFFF;
-  --text:       #0D1E1D;
-  --text-muted: #527774;
-  --border:     #C2DAD7;
+  --teal:       oklch(62% 0.12 192);
+  --teal-light: oklch(70% 0.11 192);
+  --teal-dark:  oklch(50% 0.115 192);
+  --teal-dim:   oklch(96.5% 0.018 192);
+  --gold:       oklch(86% 0.165 88);
+  --gold-dark:  oklch(58% 0.14 88);
+  --gold-dim:   oklch(96% 0.025 88);
+  --coral:      oklch(64% 0.165 35);
+  --coral-dim:  oklch(96% 0.02 35);
+  --sky:        oklch(70% 0.12 238);
+  --sky-dim:    oklch(96% 0.02 238);
+  --surface:    oklch(96% 0.01 192);
+  --card:       oklch(99% 0.006 192);
+  --text:       oklch(20% 0.015 192);
+  --text-2:     oklch(48% 0.02 192);
+  --text-3:     oklch(66% 0.015 192);
+  --border:     oklch(88% 0.02 192);
+  --border-hi:  oklch(76% 0.04 192);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,68 +37,59 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Header ── */
+/* ── Header ─────────────────────────────────────── */
 .header {
   background: var(--teal-dark);
-  padding: 2rem 2rem 1.875rem;
+  padding: 2rem 2.5rem 1.875rem;
   position: relative;
   overflow: hidden;
-}
-
-.header::before {
-  content: '';
-  position: absolute;
-  top: -60px; right: -60px;
-  width: 280px; height: 280px;
-  border-radius: 50%;
-  background: rgba(60,196,189,0.12);
-  pointer-events: none;
 }
 
 .header::after {
   content: '';
   position: absolute;
-  bottom: -40px; left: 30%;
-  width: 180px; height: 180px;
+  top: -80px; right: -80px;
+  width: 320px; height: 320px;
   border-radius: 50%;
-  background: rgba(255,210,63,0.06);
+  background: var(--teal-light);
+  opacity: 0.07;
   pointer-events: none;
 }
 
 .header-inner {
-  max-width: 1120px;
+  max-width: 1100px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
-/* Logo — Flip7 packaging: cream parallelogram box */
+/* Logo — parallelogram box, Flip7 packaging style */
 .logo-box {
   display: inline-flex;
-  background: var(--cream);
-  padding: 0.5rem 1.125rem 0.5rem 1.25rem;
-  border-radius: 14px;
-  border: 3px solid rgba(0,0,0,0.22);
-  transform: skewX(-5deg);
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.18);
+  background: oklch(97% 0.018 90);
+  padding: 0.45rem 1.125rem 0.45rem 1.25rem;
+  border-radius: 12px;
+  border: 2.5px solid oklch(32% 0.07 192);
+  transform: skewX(-4deg);
+  box-shadow: 3px 3px 0 oklch(32% 0.09 192 / 0.28);
   margin-bottom: 0.875rem;
 }
 
 .logo-inner {
-  transform: skewX(5deg);
+  transform: skewX(4deg);
   display: flex;
   align-items: baseline;
-  gap: 0.25rem;
+  gap: 0.2rem;
   line-height: 1;
 }
 
 .logo-name {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 900;
   color: var(--teal-dark);
   letter-spacing: 5px;
@@ -103,23 +97,22 @@ body {
 }
 
 .logo-poc {
-  font-size: 2.375rem;
+  font-size: 2.25rem;
   font-weight: 900;
   color: var(--gold-dark);
-  text-shadow: 2px 2px 0 rgba(0,0,0,0.12);
-  transform: rotate(3deg) translateY(-1px);
+  text-shadow: 2px 2px 0 oklch(40% 0.1 88 / 0.18);
+  transform: rotate(3deg) translateY(-2px);
   display: inline-block;
   letter-spacing: -1px;
-  line-height: 1;
 }
 
 .header-eyebrow {
-  font-size: 0.625rem;
-  font-weight: 800;
+  font-size: 0.595rem;
+  font-weight: 700;
   letter-spacing: 5px;
   text-transform: uppercase;
   color: var(--teal-light);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.625rem;
 }
 
 .branch-pill {
@@ -127,66 +120,62 @@ body {
   align-items: center;
   gap: 0.4rem;
   background: var(--gold);
-  color: #5a3d00;
+  color: oklch(28% 0.06 88);
   padding: 0.3rem 0.875rem;
   border-radius: 999px;
-  font-size: 0.68rem;
+  font-size: 0.67rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  box-shadow: 0 3px 12px rgba(255,210,63,0.45);
+  box-shadow: 0 2px 10px oklch(86% 0.165 88 / 0.4);
 }
 
 .branch-pill svg { flex-shrink: 0; }
 
-.header-status {
-  display: flex;
-  align-items: flex-start;
-  padding-top: 0.25rem;
-}
+.header-right { padding-top: 0.25rem; }
 
 .status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(255,255,255,0.11);
-  border: 1.5px solid rgba(255,255,255,0.18);
-  color: #fff;
+  background: oklch(100% 0 0 / 0.09);
+  border: 1.5px solid oklch(100% 0 0 / 0.16);
+  color: oklch(96% 0.005 192);
   padding: 0.35rem 0.875rem;
   border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.71rem;
+  font-weight: 600;
 }
 
 .pulse-dot {
-  width: 8px; height: 8px;
+  width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--gold);
   animation: pulse-ring 2s ease-out infinite;
 }
 
 @keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0   rgba(255,210,63,0.7); }
-  70%  { box-shadow: 0 0 0 6px rgba(255,210,63,0);   }
-  100% { box-shadow: 0 0 0 0   rgba(255,210,63,0);   }
+  0%   { box-shadow: 0 0 0 0   oklch(86% 0.165 88 / 0.7); }
+  70%  { box-shadow: 0 0 0 5px oklch(86% 0.165 88 / 0);   }
+  100% { box-shadow: 0 0 0 0   oklch(86% 0.165 88 / 0);   }
 }
 
-/* ── Main ── */
+/* ── Main ────────────────────────────────────────── */
 .main {
-  max-width: 1120px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2.25rem 2rem 4rem;
+  padding: 2.5rem 2.5rem 5rem;
 }
 
-/* ── Section ── */
-.section { margin-bottom: 2.75rem; }
+/* ── Section ─────────────────────────────────────── */
+.section { margin-bottom: 3rem; }
 
 .section-head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.375rem;
   padding-bottom: 0.75rem;
-  border-bottom: 2.5px dashed var(--border);
+  border-bottom: 2px dashed var(--border);
 }
 
 .section-num {
@@ -196,34 +185,37 @@ body {
   line-height: 1;
   letter-spacing: -2px;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 .section-title {
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-size: 0.7rem;
+  font-weight: 800;
   color: var(--teal-dark);
   letter-spacing: 4px;
   text-transform: uppercase;
+  align-self: center;
 }
 
 .section-count {
   margin-left: auto;
-  font-size: 0.625rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: var(--teal-bg);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--teal-dim);
   border: 1px solid var(--border);
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  align-self: center;
 }
 
-/* ── Grid ── */
+/* ── Grids ───────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.875rem;
+  gap: 1rem;
 }
 
 .grid.col-3 { grid-template-columns: repeat(3, 1fr); }
@@ -236,149 +228,143 @@ body {
 @media (max-width: 600px) {
   .grid, .grid.col-3 { grid-template-columns: 1fr; }
   .grid.col-3 > a:last-child:nth-child(odd) { grid-column: auto; }
-  .main { padding: 1.5rem 1rem 3rem; }
-  .header { padding: 1.5rem 1rem 1.5rem; }
+  .main { padding: 1.5rem 1.25rem 3rem; }
+  .header { padding: 1.5rem 1.25rem; }
 }
 
-/* ── Card ── */
+/* ── Card ────────────────────────────────────────── */
 .card {
   display: flex;
   flex-direction: column;
   background: var(--card);
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1.5px solid var(--border);
-  border-left: 5px solid var(--teal);
-  padding: 1.125rem 1.125rem 1rem 1rem;
-  min-height: 210px;
-  transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s cubic-bezier(0.16,1,0.3,1);
-  box-shadow: 0 2px 8px rgba(43,168,162,0.07);
+  padding: 1.25rem;
+  min-height: 200px;
+  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
+  box-shadow: 0 1px 3px oklch(50% 0.115 192 / 0.05);
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(43,168,162,0.18);
+  border-color: var(--border-hi);
+  background: oklch(97.5% 0.012 192);
+  box-shadow: 0 4px 16px oklch(50% 0.115 192 / 0.09);
 }
 
-.card.gold  { border-left-color: var(--gold); }
-.card.gold:hover  { box-shadow: 0 8px 28px rgba(255,210,63,0.28); }
-
-.card.coral { border-left-color: var(--coral); }
-.card.coral:hover { box-shadow: 0 8px 28px rgba(239,108,74,0.22); }
-
-.card.sky   { border-left-color: var(--sky); }
-.card.sky:hover   { box-shadow: 0 8px 28px rgba(93,173,226,0.25); }
-
-.card-lead {
+.card-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.875rem;
 }
 
 .card-status {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #fff;
-  background: var(--teal);
-  padding: 0.225rem 0.6rem;
-  border-radius: 999px;
+  font-size: 0.615rem;
+  font-weight: 700;
+  color: var(--teal-dark);
   text-transform: uppercase;
   letter-spacing: 0.75px;
   flex-shrink: 0;
 }
 
-.card-status .dot {
-  width: 5px; height: 5px;
+.card-status::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 5px rgba(255,210,63,0.9);
+  background: var(--teal);
 }
 
+/* Domain chip — color communicates category */
 .card-domain {
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-  font-size: 0.62rem;
+  font-size: 0.625rem;
   font-weight: 600;
-  color: var(--teal-dark);
-  background: var(--teal-bg);
-  border: 1px solid var(--border);
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
+  padding: 0.225rem 0.55rem;
+  border-radius: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 62%;
+  max-width: 65%;
 }
+
+.chip-teal  { background: var(--teal-dim); color: var(--teal-dark); border: 1px solid oklch(86% 0.04 192); }
+.chip-gold  { background: var(--gold-dim); color: oklch(36% 0.1 88);  border: 1px solid oklch(86% 0.05 88);  }
+.chip-sky   { background: var(--sky-dim);  color: oklch(36% 0.1 238); border: 1px solid oklch(86% 0.04 238); }
+.chip-coral { background: var(--coral-dim);color: oklch(36% 0.1 35);  border: 1px solid oklch(86% 0.04 35);  }
 
 .card-name {
   font-size: 1rem;
   font-weight: 800;
   color: var(--teal-dark);
-  letter-spacing: 0.25px;
+  letter-spacing: -0.01em;
   margin-bottom: 0.375rem;
+  line-height: 1.2;
 }
 
 .card-desc {
   font-size: 0.775rem;
-  color: var(--text-muted);
+  color: var(--text-2);
   line-height: 1.55;
-  flex: 1;
 }
 
 .card-valide {
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.7rem;
+  color: var(--text-3);
   font-style: italic;
-  margin-top: 0.5rem;
-  line-height: 1.4;
+  margin-top: 0.625rem;
+  line-height: 1.45;
 }
 
 .valide-label {
-  font-size: 0.58rem;
+  font-size: 0.545rem;
   font-weight: 800;
-  color: var(--teal-dark);
-  background: var(--teal-bg);
-  border: 1px solid var(--border);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
+  color: var(--teal);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
+  letter-spacing: 0.75px;
   font-style: normal;
-  margin-top: 0.15rem;
+  border: 1px solid var(--teal);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  line-height: 1;
 }
 
 .card-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
-  margin-top: 0.875rem;
+  margin-top: auto;
+  padding-top: 0.875rem;
 }
 
 .tag {
-  font-size: 0.585rem;
-  font-weight: 700;
+  font-size: 0.575rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
-  color: var(--teal-dark);
-  background: var(--teal-bg);
+  color: var(--text-3);
+  background: var(--surface);
   border: 1px solid var(--border);
   padding: 0.175rem 0.45rem;
-  border-radius: 5px;
+  border-radius: 4px;
   text-transform: uppercase;
 }
 
-/* ── Footer ── */
+/* ── Footer ──────────────────────────────────────── */
 footer {
-  max-width: 1120px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 1.5rem 2rem 2.5rem;
-  border-top: 2.5px dashed var(--border);
+  padding: 1.5rem 2.5rem 2.5rem;
+  border-top: 2px dashed var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -387,17 +373,14 @@ footer {
 }
 
 .footer-brand {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 800;
   color: var(--teal);
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.footer-note {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
+.footer-note { font-size: 0.67rem; color: var(--text-3); }
 </style>
 </head>
 <body>
@@ -419,7 +402,7 @@ footer {
         <span id="branch-label">...</span>
       </div>
     </div>
-    <div class="header-status">
+    <div class="header-right">
       <span class="status-chip">
         <span class="pulse-dot"></span>
         <span id="service-count">11</span> services
@@ -454,7 +437,7 @@ footer {
       <span class="section-title">Tooling</span>
       <span class="section-count">4 services</span>
     </div>
-    <div class="grid col-3" id="tooling"></div>
+    <div class="grid" id="tooling"></div>
   </section>
 
 </main>
@@ -465,42 +448,41 @@ footer {
 </footer>
 
 <script>
-// Extract branch from current hostname.
-// "feature-auth-hub.localhost" → branch = "feature-auth"
-// "dev-hub.localhost"          → branch = "dev"
-const hostname = window.location.hostname
-const branch = hostname.replace(/-hub\.localhost$/, '')
+// Extract branch from hostname.
+// "feature-auth-hub.localhost" → "feature-auth"
+// "dev-hub.localhost" → "dev"
+const branch = window.location.hostname.replace(/-hub\.localhost$/, '')
 
 document.getElementById('branch-label').textContent = branch || 'local'
 
-const b  = (slug) => `http://${branch}-${slug}.localhost`
-const sh = (slug) => `http://${slug}.localhost`
+const b  = slug => `http://${branch}-${slug}.localhost`
+const sh = slug => `http://${slug}.localhost`
 
 const frontends = [
   {
-    url: b('shoplab'), domain: `${branch}-shoplab.localhost`,
-    name: 'Shoplab', accent: '',
+    url: b('shoplab'), domain: `${branch}-shoplab.localhost`, chip: 'teal',
+    name: 'Shoplab',
     desc: 'Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime.',
     valide: 'Les 3 drivers Pilota actifs simultanément sur un même frontend — le cas d\'usage clé du SDK.',
     tags: ['Nuxt 4', 'Vuetify', 'Nhost', 'Lomkit', 'Supabase', 'Tolgee'],
   },
   {
-    url: b('pulse'), domain: `${branch}-pulse.localhost`,
-    name: 'Pulse', accent: 'gold',
+    url: b('pulse'), domain: `${branch}-pulse.localhost`, chip: 'teal',
+    name: 'Pulse',
     desc: 'Dashboard hebdo équipe. 9 sections : santé projets, objectifs, congés, livraisons, DevOps, infos semaine, CA, contrats, missions.',
     valide: 'Le driver Lomkit avec données réelles Laravel + fallback mock pour la page Objectifs — démo du système de mock Pilota.',
     tags: ['Next.js 15', 'React 19', 'Lomkit', 'Tolgee', 'OSDD'],
   },
   {
-    url: b('vota'), domain: `${branch}-vota.localhost`,
-    name: 'Vota', accent: '',
+    url: b('vota'), domain: `${branch}-vota.localhost`, chip: 'teal',
+    name: 'Vota',
     desc: 'Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV/JSON/Jira.',
     valide: 'Le driver WebSocket/subscriptions GraphQL — état partagé en temps réel sans polling.',
     tags: ['SvelteKit', 'Svelte 5', 'Nhost', 'GraphQL WS', 'Tolgee'],
   },
   {
-    url: b('gearup'), domain: `${branch}-gearup.localhost`,
-    name: 'Gearup', accent: 'coral',
+    url: b('gearup'), domain: `${branch}-gearup.localhost`, chip: 'teal',
+    name: 'Gearup',
     desc: 'Configurateur postes HP par profil (dev, CDP, commercial). Driver Lomkit, OSDD complet, resources Zod typées.',
     valide: 'Le driver Lomkit sur un frontend Astro non-React + OSDD côté client avec resources Zod.',
     tags: ['Astro 5', 'React', 'Lomkit', 'OSDD', 'Tolgee'],
@@ -509,22 +491,22 @@ const frontends = [
 
 const backends = [
   {
-    url: b('api'), domain: `${branch}-api.localhost`,
-    name: 'Laravel', accent: '',
+    url: b('api'), domain: `${branch}-api.localhost`, chip: 'gold',
+    name: 'Laravel',
     desc: 'API REST avec Lomkit. Ressources produits, panier, profils HP, Pulse. Architecture OSDD, 5 layers fonctionnels.',
-    valide: 'L\'interopérabilité Pilota côté serveur — un seul back Laravel répond aux 3 frontends avec des contracts Lomkit stricts.',
+    valide: 'L\'interopérabilité Pilota côté serveur — un seul back répond aux 3 frontends avec des contracts Lomkit stricts.',
     tags: ['PHP 8.3', 'Laravel 11', 'Lomkit', 'Postgres', 'OSDD'],
   },
   {
-    url: b('hasura'), domain: `${branch}-hasura.localhost`,
-    name: 'Nhost / Hasura', accent: 'gold',
+    url: b('hasura'), domain: `${branch}-hasura.localhost`, chip: 'gold',
+    name: 'Nhost / Hasura',
     desc: 'GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel.',
     valide: 'Le driver GraphQL Pilota sur un backend sans code serveur — API générée depuis le schéma Postgres.',
     tags: ['GraphQL', 'WebSocket', 'Hasura v2', 'Postgres'],
   },
   {
-    url: b('supabase'), domain: `${branch}-supabase.localhost`,
-    name: 'Supabase', accent: '',
+    url: b('supabase'), domain: `${branch}-supabase.localhost`, chip: 'gold',
+    name: 'Supabase',
     desc: 'PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota.',
     valide: 'Le driver Supabase Realtime — abonnement aux changements de table, cas d\'usage chat/notifications.',
     tags: ['PostgREST', 'Realtime', 'Postgres', 'JWT'],
@@ -533,40 +515,40 @@ const backends = [
 
 const tooling = [
   {
-    url: sh('tolgee'), domain: 'tolgee.localhost',
-    name: 'Tolgee', accent: 'gold',
+    url: sh('tolgee'), domain: 'tolgee.localhost', chip: 'sky',
+    name: 'Tolgee',
     desc: 'Plateforme i18n self-hosted partagée entre toutes les branches. SDK intégré sur les 4 frontends. Traductions FR/EN.',
     valide: null,
     tags: ['i18n', 'Self-hosted', 'FR / EN', 'SDK', 'Partagé'],
   },
   {
-    url: 'http://localhost:9000', domain: 'localhost:9000',
-    name: 'Sentry', accent: 'coral',
+    url: 'http://localhost:9000', domain: 'localhost:9000', chip: 'coral',
+    name: 'Sentry',
     desc: 'Monitoring d\'erreurs self-hosted. Widget feedback natif (FR) sur tous les frontends. Suivi des incidents par projet.',
     valide: null,
     tags: ['Error tracking', 'Self-hosted', 'Feedback'],
   },
   {
-    url: sh('portainer'), domain: 'portainer.localhost',
-    name: 'Portainer', accent: 'sky',
-    desc: 'Dashboard de gestion des containers Docker. Logs, inspect, start/stop pour tous les services de toutes les branches depuis une seule UI.',
+    url: sh('portainer'), domain: 'portainer.localhost', chip: 'sky',
+    name: 'Portainer',
+    desc: 'Dashboard de gestion des containers Docker. Logs, inspect, start/stop pour tous les services et toutes les branches depuis une seule UI.',
     valide: null,
     tags: ['Docker', 'Self-hosted', 'Dashboard', 'Partagé'],
   },
   {
-    url: sh('traefik'), domain: 'traefik.localhost',
-    name: 'Traefik', accent: 'sky',
-    desc: 'Reverse proxy unifié partagé entre toutes les branches. Route chaque stack sur `${branch}-*.localhost` sans gestion de ports.',
+    url: sh('traefik'), domain: 'traefik.localhost', chip: 'sky',
+    name: 'Traefik',
+    desc: `Reverse proxy unifié partagé entre toutes les branches. Route chaque stack sur ${branch}-*.localhost sans gestion de ports.`,
     valide: null,
     tags: ['Reverse proxy', '*.localhost', 'Dashboard', 'Partagé'],
   },
 ]
 
-function card({ url, domain, name, desc, valide, tags, accent }) {
-  return `<a class="card ${accent}" href="${url}" target="_blank" rel="noopener">
-    <div class="card-lead">
-      <span class="card-status"><span class="dot"></span>Prêt</span>
-      <span class="card-domain">${domain}</span>
+function card({ url, domain, chip, name, desc, valide, tags }) {
+  return `<a class="card" href="${url}" target="_blank" rel="noopener">
+    <div class="card-meta">
+      <span class="card-status">Prêt</span>
+      <span class="card-domain ${chip}">${domain}</span>
     </div>
     <p class="card-name">${name}</p>
     <p class="card-desc">${desc}</p>
