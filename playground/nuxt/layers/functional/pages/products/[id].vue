@@ -203,19 +203,19 @@ const categoryIcon = computed(() => {
 
 /* Info */
 .product-overline {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
+    font-size: 12px;
+    font-weight: 450;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: rgb(var(--v-theme-primary));
     margin-bottom: 14px;
 }
 
 .product-title {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 330;
+    line-height: 1.10;
+    letter-spacing: -0.01em;
     color: rgb(var(--v-theme-on-background));
     margin-bottom: 20px;
 }
@@ -235,10 +235,11 @@ const categoryIcon = computed(() => {
 }
 
 .product-price {
-    font-size: 42px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    color: rgb(var(--v-theme-primary));
+    font-size: 60px;
+    font-weight: 330;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    color: rgb(var(--v-theme-on-background));
 }
 
 .product-actions {
@@ -253,22 +254,21 @@ const categoryIcon = computed(() => {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 52px;
+    height: 50px;
     border-radius: 12px;
     background: rgb(var(--v-theme-primary));
     color: #fff;
-    border: none;
+    border: 2px solid rgb(var(--v-theme-primary));
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0em;
+    transition: all 0.2s ease;
 }
-.btn-primary-action:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.4); }
+.btn-primary-action:hover { background: #006E52; border-color: #006E52; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 128, 96, 0.3); }
 .btn-primary-action:active { transform: translateY(0); }
-.btn-primary-action.success { background: rgb(var(--v-theme-success)); }
-.btn-primary-action:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-primary-action.success { background: rgb(var(--v-theme-success)); border-color: rgb(var(--v-theme-success)); }
+.btn-primary-action:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-secondary-action { width: 100%; }
 

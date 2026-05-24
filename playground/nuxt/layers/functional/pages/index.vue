@@ -139,22 +139,21 @@ onMounted(fetchProducts)
 .hero-inner { position: relative; }
 
 .hero-overline {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
+    font-size: 14px;
+    font-weight: 450;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: rgb(var(--v-theme-primary));
+    color: #36F4A4;
     margin-bottom: 20px;
 }
 
 .hero-title {
     font-size: clamp(52px, 8vw, 96px);
-    font-weight: 900;
-    line-height: 0.93;
-    letter-spacing: -0.04em;
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
     color: rgb(var(--v-theme-on-background));
     margin-bottom: 28px;
-    text-transform: uppercase;
 }
 
 .hero-title-accent {
@@ -189,20 +188,20 @@ onMounted(fetchProducts)
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 16px;
-    border-radius: 100px;
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(128, 128, 128, 0.2);
     background: transparent;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-size: 14px;
+    font-weight: 450;
+    letter-spacing: 0em;
     color: rgb(var(--v-theme-on-background));
-    opacity: 0.55;
+    opacity: 0.65;
     transition: all 0.2s ease;
     white-space: nowrap;
 }
-.filter-btn:hover { opacity: 0.85; border-color: rgba(128, 128, 128, 0.4); }
+.filter-btn:hover { opacity: 1; border-color: rgba(0, 128, 96, 0.4); }
 .filter-btn.active {
     background: rgb(var(--v-theme-primary));
     border-color: rgb(var(--v-theme-primary));

@@ -4,7 +4,7 @@ import TolgeeClientProvider from '../technical/Tolgee/TolgeeClientProvider'
 
 export const metadata: Metadata = {
     title: 'Pulse — Dashboard équipe',
-    description: 'Dashboard hebdomadaire XEFI — Pilota SDK / Next.js 15',
+    description: 'Dashboard hebdomadaire — Pilota SDK / Next.js 15',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -152,6 +152,11 @@ onMounted(() => {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 330;
+}
+
 /* Smooth theme transitions */
 .v-application, .v-application * {
     transition-property: background-color, border-color, color, box-shadow;
@@ -180,41 +185,39 @@ onMounted(() => {
 
 <style scoped>
 .shoplab-nav {
-    background: rgba(var(--v-theme-background), 0.82) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.1) !important;
+    background: #02090A !important;
+    border-bottom: 1px solid #142024 !important;
 }
 
 .nav-logo {
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 15px;
-    font-weight: 900;
-    letter-spacing: 0.18em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgb(var(--v-theme-on-background));
+    color: #FFFFFF;
     line-height: 1;
 }
 
 .nav-sub {
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgb(var(--v-theme-primary));
+    color: #36F4A4;
     padding: 2px 6px;
     border-radius: 4px;
-    border: 1px solid rgba(var(--v-theme-primary), 0.35);
+    border: 1px solid rgba(54, 244, 164, 0.35);
 }
 
 .nav-link {
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    opacity: 0.55;
-    transition: opacity 0.2s !important;
+    font-size: 14px !important;
+    font-weight: 450 !important;
+    letter-spacing: 0em !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    transition: color 0.2s !important;
 }
-.nav-link:hover { opacity: 1; }
+.nav-link:hover { color: #FFFFFF !important; }
 
 .icon-btn {
     display: flex;
@@ -223,13 +226,13 @@ onMounted(() => {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
     cursor: pointer;
-    color: rgb(var(--v-theme-on-background));
-    transition: background 0.2s, border-color 0.2s;
+    color: rgba(255, 255, 255, 0.8);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
-.icon-btn:hover { background: rgba(128, 128, 128, 0.1); }
+.icon-btn:hover { background: rgba(255, 255, 255, 0.08); color: #FFFFFF; }
 
 .cart-btn {
     display: flex;
@@ -238,56 +241,52 @@ onMounted(() => {
     width: 34px;
     height: 34px;
     text-decoration: none;
-    color: rgb(var(--v-theme-on-background));
-    transition: opacity 0.2s;
+    color: rgba(255, 255, 255, 0.8);
+    transition: color 0.2s;
 }
-.cart-btn:hover { opacity: 0.6; }
+.cart-btn:hover { color: #FFFFFF; }
 
 .fontsize-switcher {
     display: flex;
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     overflow: hidden;
 }
 .fontsize-btn {
     padding: 4px 8px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     border: none;
     background: transparent;
-    color: rgb(var(--v-theme-on-background));
-    opacity: 0.45;
-    transition: opacity 0.15s, background 0.15s;
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.15s, background 0.15s;
 }
 .fontsize-btn.active {
-    opacity: 1;
-    background: rgba(var(--v-theme-primary), 0.18);
-    color: rgb(var(--v-theme-primary));
+    background: rgba(54, 244, 164, 0.15);
+    color: #36F4A4;
 }
 
 .lang-switcher {
     display: flex;
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
     overflow: hidden;
 }
 .lang-btn {
     padding: 4px 9px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.04em;
     cursor: pointer;
     border: none;
     background: transparent;
-    color: rgb(var(--v-theme-on-background));
-    opacity: 0.45;
-    transition: opacity 0.15s, background 0.15s;
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.15s, background 0.15s;
 }
 .lang-btn.active {
-    opacity: 1;
-    background: rgba(var(--v-theme-primary), 0.18);
-    color: rgb(var(--v-theme-primary));
+    background: rgba(54, 244, 164, 0.15);
+    color: #36F4A4;
 }
 
 .shoplab-main {
@@ -298,11 +297,14 @@ onMounted(() => {
     border-top: 1px solid rgba(128, 128, 128, 0.1);
 }
 
+.shoplab-footer {
+    background: #02090A;
+}
+
 .footer-note {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    opacity: 0.35;
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.45;
 }
 
 /* ─── Notification stack ─── */

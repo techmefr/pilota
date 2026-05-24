@@ -369,7 +369,7 @@ export const mockDevOpsNeeds: DevOpsNeed[] = [
     { id: 2, title: 'Upgrade PostgreSQL 15 → 16 (Grosdata)',            priority: 'high',     status: 'todo',        owner: 'Damien',  project: 'Grosdata',   notes: `Prévu fenêtre maintenance samedi ${_wd(5)}` },
     { id: 3, title: 'Monitoring alerting Nota prod',                    priority: 'medium',   status: 'in_progress', owner: 'Damien',  project: 'Nota',       notes: 'Grafana + Alertmanager configurés, tests en cours' },
     { id: 4, title: 'Backup vérification mensuelle',                    priority: 'low',      status: 'done',        owner: 'DevOps',  project: null,         notes: 'Tous les projets vérifiés OK' },
-    { id: 5, title: 'Sentry self-hosted — config production',           priority: 'medium',   status: 'todo',        owner: 'Gaetan',  project: 'Pilota POC', notes: 'Installer getsentry/self-hosted sur le serveur XEFI' },
+    { id: 5, title: 'Sentry self-hosted — config production',           priority: 'medium',   status: 'todo',        owner: 'Gaetan',  project: 'Pilota POC', notes: 'Installer getsentry/self-hosted sur le serveur de prod' },
     { id: 6, title: 'CI/CD Pilota SDK — publication packages',          priority: 'medium',   status: 'todo',        owner: 'Gaetan',  project: 'Pilota POC', notes: 'Pipeline pnpm publish → npm registry interne' },
     { id: 7, title: 'Migration serveur Shoplab vers Hetzner',           priority: 'high',     status: 'todo',        owner: null,      project: 'Shoplab',    notes: 'Contrat OVH expire fin de mois' },
     { id: 8, title: 'Redis cache Nexeren — optimisation perf',          priority: 'low',      status: 'todo',        owner: 'Bob',     project: 'Nexeren',    notes: 'Temps de réponse API > 800ms sur /search' },

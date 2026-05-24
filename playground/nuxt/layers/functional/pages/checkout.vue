@@ -204,9 +204,9 @@ function formatPrice(n: number): string {
 
 .page-title {
     font-size: clamp(28px, 4vw, 44px);
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+    font-weight: 330;
+    letter-spacing: -0.01em;
+    line-height: 1.10;
 }
 
 /* ─── Form sections ─── */
@@ -218,9 +218,9 @@ function formatPrice(n: number): string {
 }
 
 .form-section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-size: 14px;
+    font-weight: 450;
+    letter-spacing: 0em;
     text-transform: uppercase;
     color: rgb(var(--v-theme-primary));
     margin-bottom: 4px;
@@ -303,20 +303,19 @@ function formatPrice(n: number): string {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 52px;
+    height: 50px;
     border-radius: 12px;
     background: rgb(var(--v-theme-primary));
     color: #fff;
-    border: none;
+    border: 2px solid rgb(var(--v-theme-primary));
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0em;
+    transition: all 0.2s ease;
     margin-bottom: 12px;
 }
-.order-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.4); }
+.order-btn:hover { background: #006E52; border-color: #006E52; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 128, 96, 0.3); }
 .order-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .secure-label {
@@ -379,18 +378,17 @@ function formatPrice(n: number): string {
 .success-btn {
     display: inline-flex;
     align-items: center;
-    height: 52px;
-    padding: 0 32px;
+    height: 50px;
+    padding: 0 28px;
     border-radius: 12px;
     background: rgb(var(--v-theme-primary));
     color: #fff;
-    border: none;
+    border: 2px solid rgb(var(--v-theme-primary));
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0em;
+    transition: all 0.2s ease;
 }
-.success-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.4); }
+.success-btn:hover { background: #006E52; border-color: #006E52; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 128, 96, 0.3); }
 </style>

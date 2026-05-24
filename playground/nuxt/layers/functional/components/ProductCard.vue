@@ -89,9 +89,9 @@ const CATEGORY_ICONS: Record<string, string> = {
 }
 
 .pcard:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 60px rgba(var(--v-theme-primary), 0.15), 0 4px 20px rgba(0, 0, 0, 0.12);
-    border-color: rgba(var(--v-theme-primary), 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 48px rgba(24, 24, 27, 0.18), 0 4px 8px rgba(24, 24, 27, 0.10);
+    border-color: rgba(0, 128, 96, 0.3);
 }
 
 /* Visual area */
@@ -145,17 +145,17 @@ const CATEGORY_ICONS: Record<string, string> = {
 }
 
 .pcard-category {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    font-size: 12px;
+    font-weight: 450;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: rgb(var(--v-theme-primary));
     margin-bottom: 8px;
 }
 
 .pcard-name {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 420;
     line-height: 1.3;
     color: rgb(var(--v-theme-on-surface));
     margin-bottom: 16px;
@@ -176,8 +176,8 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 .pcard-price {
     font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-weight: 330;
+    letter-spacing: -0.015em;
     color: rgb(var(--v-theme-on-surface));
 }
 

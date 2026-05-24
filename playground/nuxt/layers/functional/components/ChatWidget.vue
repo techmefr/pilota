@@ -129,10 +129,10 @@ async function submit(): Promise<void> {
 /* ─── Chat window ─── */
 .chat-window {
     width: 320px;
-    border-radius: 20px;
+    border-radius: 16px;
     background: rgb(var(--v-theme-surface));
-    border: 1px solid rgba(128, 128, 128, 0.12);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+    border: 1px solid #142024;
+    box-shadow: 0 8px 48px rgba(24, 24, 27, 0.24), 0 4px 8px rgba(24, 24, 27, 0.16);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -167,8 +167,8 @@ async function submit(): Promise<void> {
 }
 
 .chat-header-title {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: rgb(var(--v-theme-on-surface));
     margin-bottom: 2px;
 }
@@ -241,8 +241,8 @@ async function submit(): Promise<void> {
 }
 
 .bubble-client {
-    background: rgb(var(--v-theme-primary));
-    color: #fff;
+    background: #36F4A4;
+    color: #02090A;
     border-bottom-right-radius: 4px;
 }
 
