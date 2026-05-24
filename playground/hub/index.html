@@ -328,6 +328,32 @@ body {
   flex: 1;
 }
 
+.card-valide {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.valide-label {
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: var(--teal-dark);
+  background: var(--teal-bg);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  font-style: normal;
+  margin-top: 0.15rem;
+}
+
 .card-tags {
   display: flex;
   flex-wrap: wrap;
@@ -396,7 +422,7 @@ footer {
     <div class="header-status">
       <span class="status-chip">
         <span class="pulse-dot"></span>
-        <span id="service-count">10</span> services
+        <span id="service-count">11</span> services
       </span>
     </div>
   </div>
@@ -426,7 +452,7 @@ footer {
     <div class="section-head">
       <span class="section-num">03</span>
       <span class="section-title">Tooling</span>
-      <span class="section-count">3 services</span>
+      <span class="section-count">4 services</span>
     </div>
     <div class="grid col-3" id="tooling"></div>
   </section>
@@ -454,25 +480,29 @@ const frontends = [
   {
     url: b('shoplab'), domain: `${branch}-shoplab.localhost`,
     name: 'Shoplab', accent: '',
-    desc: 'Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime. Démo des 3 drivers Pilota simultanés.',
+    desc: 'Vitrine e-commerce multi-driver. Produits via Nhost (GraphQL), panier via Lomkit (REST Laravel), chat SAV en temps réel via Supabase Realtime.',
+    valide: 'Les 3 drivers Pilota actifs simultanément sur un même frontend — le cas d\'usage clé du SDK.',
     tags: ['Nuxt 4', 'Vuetify', 'Nhost', 'Lomkit', 'Supabase', 'Tolgee'],
   },
   {
     url: b('pulse'), domain: `${branch}-pulse.localhost`,
     name: 'Pulse', accent: 'gold',
-    desc: 'Dashboard hebdo équipe. 9 sections: santé projets, objectifs, congés, livraisons, DevOps, infos semaine, CA, contrats, missions. Données Laravel, mode présentation.',
+    desc: 'Dashboard hebdo équipe. 9 sections : santé projets, objectifs, congés, livraisons, DevOps, infos semaine, CA, contrats, missions.',
+    valide: 'Le driver Lomkit avec données réelles Laravel + fallback mock pour la page Objectifs — démo du système de mock Pilota.',
     tags: ['Next.js 15', 'React 19', 'Lomkit', 'Tolgee', 'OSDD'],
   },
   {
     url: b('vota'), domain: `${branch}-vota.localhost`,
     name: 'Vota', accent: '',
-    desc: 'Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV/JSON/Jira. Nhost/Hasura avec subscriptions WebSocket.',
+    desc: 'Planning poker collaboratif en temps réel. Sessions de vote, révélation synchronisée, export CSV/JSON/Jira.',
+    valide: 'Le driver WebSocket/subscriptions GraphQL — état partagé en temps réel sans polling.',
     tags: ['SvelteKit', 'Svelte 5', 'Nhost', 'GraphQL WS', 'Tolgee'],
   },
   {
     url: b('gearup'), domain: `${branch}-gearup.localhost`,
     name: 'Gearup', accent: 'coral',
-    desc: 'Configurateur postes HP par profil (dev, CDP, commercial). Driver Lomkit, OSDD complet, resources Zod. Remplace le PDF/Excel partagé par cycle d\'achat.',
+    desc: 'Configurateur postes HP par profil (dev, CDP, commercial). Driver Lomkit, OSDD complet, resources Zod typées.',
+    valide: 'Le driver Lomkit sur un frontend Astro non-React + OSDD côté client avec resources Zod.',
     tags: ['Astro 5', 'React', 'Lomkit', 'OSDD', 'Tolgee'],
   },
 ]
@@ -481,19 +511,22 @@ const backends = [
   {
     url: b('api'), domain: `${branch}-api.localhost`,
     name: 'Laravel', accent: '',
-    desc: 'API REST avec Lomkit. Ressources produits, panier, profils HP, Pulse. Architecture OSDD, 5 layers fonctionnels. Utilisé par Shoplab, Pulse et Gearup.',
+    desc: 'API REST avec Lomkit. Ressources produits, panier, profils HP, Pulse. Architecture OSDD, 5 layers fonctionnels.',
+    valide: 'L\'interopérabilité Pilota côté serveur — un seul back Laravel répond aux 3 frontends avec des contracts Lomkit stricts.',
     tags: ['PHP 8.3', 'Laravel 11', 'Lomkit', 'Postgres', 'OSDD'],
   },
   {
     url: b('hasura'), domain: `${branch}-hasura.localhost`,
     name: 'Nhost / Hasura', accent: 'gold',
-    desc: 'GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel. Utilisé par Shoplab et Vota.',
+    desc: 'GraphQL auto-généré sur Postgres. Console Hasura, subscriptions WebSocket temps réel.',
+    valide: 'Le driver GraphQL Pilota sur un backend sans code serveur — API générée depuis le schéma Postgres.',
     tags: ['GraphQL', 'WebSocket', 'Hasura v2', 'Postgres'],
   },
   {
     url: b('supabase'), domain: `${branch}-supabase.localhost`,
     name: 'Supabase', accent: '',
-    desc: 'PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota. Utilisé par Shoplab.',
+    desc: 'PostgREST + Realtime sur Postgres. Chat SAV temps réel via le driver Supabase de Pilota.',
+    valide: 'Le driver Supabase Realtime — abonnement aux changements de table, cas d\'usage chat/notifications.',
     tags: ['PostgREST', 'Realtime', 'Postgres', 'JWT'],
   },
 ]
@@ -502,24 +535,34 @@ const tooling = [
   {
     url: sh('tolgee'), domain: 'tolgee.localhost',
     name: 'Tolgee', accent: 'gold',
-    desc: 'Plateforme i18n self-hosted partagée entre toutes les branches. SDK intégré sur les 4 frontends. Traductions FR/EN. Fallback staticData pour le SSR Next.js.',
+    desc: 'Plateforme i18n self-hosted partagée entre toutes les branches. SDK intégré sur les 4 frontends. Traductions FR/EN.',
+    valide: null,
     tags: ['i18n', 'Self-hosted', 'FR / EN', 'SDK', 'Partagé'],
   },
   {
     url: 'http://localhost:9000', domain: 'localhost:9000',
     name: 'Sentry', accent: 'coral',
     desc: 'Monitoring d\'erreurs self-hosted. Widget feedback natif (FR) sur tous les frontends. Suivi des incidents par projet.',
+    valide: null,
     tags: ['Error tracking', 'Self-hosted', 'Feedback'],
+  },
+  {
+    url: sh('portainer'), domain: 'portainer.localhost',
+    name: 'Portainer', accent: 'sky',
+    desc: 'Dashboard de gestion des containers Docker. Logs, inspect, start/stop pour tous les services de toutes les branches depuis une seule UI.',
+    valide: null,
+    tags: ['Docker', 'Self-hosted', 'Dashboard', 'Partagé'],
   },
   {
     url: sh('traefik'), domain: 'traefik.localhost',
     name: 'Traefik', accent: 'sky',
-    desc: 'Reverse proxy unifié partagé entre toutes les branches. Route chaque stack sur ${BRANCH}-*.localhost. Dashboard de supervision en temps réel.',
+    desc: 'Reverse proxy unifié partagé entre toutes les branches. Route chaque stack sur `${branch}-*.localhost` sans gestion de ports.',
+    valide: null,
     tags: ['Reverse proxy', '*.localhost', 'Dashboard', 'Partagé'],
   },
 ]
 
-function card({ url, domain, name, desc, tags, accent }) {
+function card({ url, domain, name, desc, valide, tags, accent }) {
   return `<a class="card ${accent}" href="${url}" target="_blank" rel="noopener">
     <div class="card-lead">
       <span class="card-status"><span class="dot"></span>Prêt</span>
@@ -527,6 +570,7 @@ function card({ url, domain, name, desc, tags, accent }) {
     </div>
     <p class="card-name">${name}</p>
     <p class="card-desc">${desc}</p>
+    ${valide ? `<p class="card-valide"><span class="valide-label">Valide</span>${valide}</p>` : ''}
     <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
   </a>`
 }
