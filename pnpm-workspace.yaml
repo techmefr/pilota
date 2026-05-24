@@ -5,3 +5,4 @@ packages:
   - 'playground/pulse'
   - 'playground/vota'
   - 'playground/gearup'
+  - 'playground/fleet-commander'

@@ -718,7 +718,7 @@ footer {
       <span class="section-num">01</span>
       <span class="section-title col-teal">Frontends</span>
       <span class="section-rule"></span>
-      <span class="section-count">4 apps</span>
+      <span class="section-count">5 apps</span>
     </div>
     <div class="grid-2" id="frontends"></div>
   </section>
@@ -805,6 +805,14 @@ const frontends = [
     valide: 'Driver Lomkit sur un frontend Astro non-React + OSDD côté client avec resources Zod.',
     front: 'Astro 5 · React', backends: ['Lomkit'],
     tags: ['OSDD', 'Tolgee'],
+  },
+  {
+    url: b('fleet'), domain: `${branch}-fleet.localhost`, chip: 'teal',
+    name: 'Fleet Commander', status: 'pret',
+    desc: 'Hypervision parc HP. Dashboard temps réel (Supabase), inventaire réactif (Lomkit), vue détail PC agrégée (3 drivers).',
+    valide: 'Intégration Pilota SDK dans Angular 19 — PilotaService Injectable + adapter RxJS transformant les Promise/subscribe en Observables.',
+    front: 'Angular 19 · Standalone', backends: ['Lomkit', 'Supabase', 'Nhost'],
+    tags: ['RxJS', 'Signals', 'Tolgee'],
   },
 ]
 

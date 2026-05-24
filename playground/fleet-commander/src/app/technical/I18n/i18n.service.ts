@@ -1,0 +1,289 @@
+import { Injectable, signal, computed } from '@angular/core'
+
+export type Lang = 'fr' | 'en'
+
+const fr = {
+    nav_fleet:      'Tableau de bord',
+    nav_dashboard:  'Tableau de bord',
+    nav_profiles:   'Configurateur',
+    nav_inventory:  'Inventaire',
+    nav_repairs:    'Réparations',
+    nav_orders:     'Commandes',
+    nav_prevention: 'Prévention',
+    nav_alerts:     'Alertes',
+    nav_cycle:      'Cycle',
+
+    kpi_devices:    'Appareils',
+    kpi_total:      'Appareils en parc',
+    kpi_repairs:    'En réparation',
+    kpi_orders:     'Commandes en cours',
+    kpi_alerts:     'Alertes actives',
+    kpi_profiles:   'profils configurés',
+    kpi_repairs_sub: 'tickets ouverts',
+    kpi_orders_sub:  'en attente ou en cours',
+    kpi_alerts_sub:  'critiques ou avertissements',
+
+    recent_activity: 'Activité récente',
+    critical_alerts: 'Alertes critiques',
+
+    profiles_title: 'Configurateur',
+    profiles_sub:   'Configurations HP recommandées par profil métier · Cycle',
+    col_profile:    'Profil',
+    col_model:      'Modèle',
+    col_specs:      'Spécifications',
+    col_screens:    'Écrans',
+    col_total:      'Postes',
+    col_stock:      'Stock',
+    col_to_order:   'À commander',
+
+    inventory_title: 'Inventaire',
+    inventory_sub:   'Parc actuel · Qui a quoi par équipe',
+    col_employee:    'Employé',
+    col_team:        'Équipe',
+    col_device:      'Appareil',
+    col_serial:      'N° série',
+    col_assigned:    'Attribution',
+    col_status:      'Statut',
+
+    repairs_title:   'Réparations',
+    repairs_sub:     'Tickets ouverts et historique',
+    col_ticket:      'Ticket',
+    col_issue:       'Problème',
+    col_technician:  'Technicien',
+    col_opened:      'Ouvert le',
+    col_closed:      'Clôturé le',
+    new_repair:      'Nouveau ticket',
+
+    orders_title:    'Commandes',
+    orders_sub:      'Matériel et pièces · Demandes en cours',
+    col_ref:         'Réf.',
+    col_item:        'Article',
+    col_qty:         'Qté',
+    col_reason:      'Motif',
+    col_requested:   'Demandé par',
+    col_created:     'Date',
+    new_order:       'Nouvelle commande',
+
+    prevention_title: 'Prévention',
+    prevention_sub:   'Garanties, ancienneté, alertes planifiées',
+    col_device_emp:   'Appareil · Employé',
+    col_type:         'Type',
+    col_due:          'Échéance',
+    acknowledge:      'Traité',
+
+    alerts_title:    'Alertes',
+    alerts_sub:      'Garanties, ancienneté, alertes planifiées',
+
+    status_active:        'Actif',
+    status_repair:        'En réparation',
+    status_returned:      'Rendu',
+    status_open:          'Ouvert',
+    status_in_progress:   'En cours',
+    status_waiting_parts: 'Attente pièces',
+    status_closed:        'Clôturé',
+    status_pending:       'En attente',
+    status_approved:      'Approuvé',
+    status_ordered:       'Commandé',
+    status_delivered:     'Livré',
+    status_acknowledged:  'Traité',
+    status_resolved:      'Résolu',
+
+    all_teams:    'Toutes les équipes',
+    all_statuses: 'Tous les statuts',
+    all_types:    'Tous les types',
+    search:       'Rechercher…',
+    no_results:   'Aucun résultat',
+
+    order_item:      'Article',
+    order_type:      'Type',
+    order_qty:       'Quantité',
+    order_reason:    'Motif',
+    order_type_hardware:   'Matériel',
+    order_type_parts:      'Pièces',
+    order_type_consumable: 'Consommable',
+
+    repair_device:      'Appareil',
+    repair_employee:    'Employé',
+    repair_issue:       'Description du problème',
+    repair_technician:  'Technicien assigné',
+
+    cancel:  'Annuler',
+    confirm: 'Confirmer',
+    save:    'Enregistrer',
+    close:   'Fermer',
+
+    perf:  'Performance',
+    std:   'Standard',
+    apple: 'Apple',
+
+    hub_link: '← Hub',
+
+    pc_detail_title:   'Détail appareil',
+    pc_detail_sub:     'Données agrégées depuis 3 drivers',
+    assignment_info:   'Affectation',
+    hardware_info:     'Configuration matérielle',
+    maintenance_info:  'Maintenance',
+    driver_lomkit:     'Lomkit / Laravel',
+    driver_supabase:   'Supabase Realtime',
+    driver_nhost:      'Nhost / GraphQL',
+    placeholder_data:  'Données placeholder',
+
+    realtime_feed:   'Flux temps réel',
+    no_events:       'En attente d\'événements…',
+}
+
+const en: typeof fr = {
+    nav_fleet:      'Dashboard',
+    nav_dashboard:  'Dashboard',
+    nav_profiles:   'Configurator',
+    nav_inventory:  'Inventory',
+    nav_repairs:    'Repairs',
+    nav_orders:     'Orders',
+    nav_prevention: 'Prevention',
+    nav_alerts:     'Alerts',
+    nav_cycle:      'Cycle',
+
+    kpi_devices:    'Devices',
+    kpi_total:      'Devices in fleet',
+    kpi_repairs:    'Under repair',
+    kpi_orders:     'Active orders',
+    kpi_alerts:     'Active alerts',
+    kpi_profiles:   'configured profiles',
+    kpi_repairs_sub: 'open tickets',
+    kpi_orders_sub:  'pending or in progress',
+    kpi_alerts_sub:  'critical or warnings',
+
+    recent_activity: 'Recent activity',
+    critical_alerts: 'Critical alerts',
+
+    profiles_title: 'Configurator',
+    profiles_sub:   'Recommended HP configurations by role · Cycle',
+    col_profile:    'Profile',
+    col_model:      'Model',
+    col_specs:      'Specifications',
+    col_screens:    'Screens',
+    col_total:      'Seats',
+    col_stock:      'Stock',
+    col_to_order:   'To order',
+
+    inventory_title: 'Inventory',
+    inventory_sub:   'Current fleet · Who has what by team',
+    col_employee:    'Employee',
+    col_team:        'Team',
+    col_device:      'Device',
+    col_serial:      'Serial no.',
+    col_assigned:    'Assigned',
+    col_status:      'Status',
+
+    repairs_title:   'Repairs',
+    repairs_sub:     'Open tickets and history',
+    col_ticket:      'Ticket',
+    col_issue:       'Issue',
+    col_technician:  'Technician',
+    col_opened:      'Opened',
+    col_closed:      'Closed',
+    new_repair:      'New ticket',
+
+    orders_title:    'Orders',
+    orders_sub:      'Hardware and parts · Active requests',
+    col_ref:         'Ref.',
+    col_item:        'Item',
+    col_qty:         'Qty',
+    col_reason:      'Reason',
+    col_requested:   'Requested by',
+    col_created:     'Date',
+    new_order:       'New order',
+
+    prevention_title: 'Prevention',
+    prevention_sub:   'Warranties, device age, scheduled alerts',
+    col_device_emp:   'Device · Employee',
+    col_type:         'Type',
+    col_due:          'Due date',
+    acknowledge:      'Acknowledge',
+
+    alerts_title:    'Alerts',
+    alerts_sub:      'Warranties, device age, scheduled alerts',
+
+    status_active:        'Active',
+    status_repair:        'Under repair',
+    status_returned:      'Returned',
+    status_open:          'Open',
+    status_in_progress:   'In progress',
+    status_waiting_parts: 'Waiting parts',
+    status_closed:        'Closed',
+    status_pending:       'Pending',
+    status_approved:      'Approved',
+    status_ordered:       'Ordered',
+    status_delivered:     'Delivered',
+    status_acknowledged:  'Acknowledged',
+    status_resolved:      'Resolved',
+
+    all_teams:    'All teams',
+    all_statuses: 'All statuses',
+    all_types:    'All types',
+    search:       'Search…',
+    no_results:   'No results',
+
+    order_item:      'Item',
+    order_type:      'Type',
+    order_qty:       'Quantity',
+    order_reason:    'Reason',
+    order_type_hardware:   'Hardware',
+    order_type_parts:      'Parts',
+    order_type_consumable: 'Consumable',
+
+    repair_device:      'Device',
+    repair_employee:    'Employee',
+    repair_issue:       'Issue description',
+    repair_technician:  'Assigned technician',
+
+    cancel:  'Cancel',
+    confirm: 'Confirm',
+    save:    'Save',
+    close:   'Close',
+
+    perf:  'Performance',
+    std:   'Standard',
+    apple: 'Apple',
+
+    hub_link: '← Hub',
+
+    pc_detail_title:   'Device detail',
+    pc_detail_sub:     'Aggregated data from 3 drivers',
+    assignment_info:   'Assignment',
+    hardware_info:     'Hardware configuration',
+    maintenance_info:  'Maintenance',
+    driver_lomkit:     'Lomkit / Laravel',
+    driver_supabase:   'Supabase Realtime',
+    driver_nhost:      'Nhost / GraphQL',
+    placeholder_data:  'Placeholder data',
+
+    realtime_feed:   'Realtime feed',
+    no_events:       'Waiting for events…',
+}
+
+export const translations = { fr, en }
+
+export type Translations = typeof fr
+
+export function getTranslations(lang: Lang): Translations {
+    return translations[lang]
+}
+
+@Injectable({ providedIn: 'root' })
+export class I18nService {
+    readonly lang = signal<Lang>('fr')
+    readonly t = computed(() => getTranslations(this.lang()))
+
+    constructor() {
+        const saved = localStorage.getItem('fleet-lang')
+        if (saved === 'fr' || saved === 'en') {
+            this.lang.set(saved)
+        }
+    }
+
+    setLang(lang: Lang): void {
+        this.lang.set(lang)
+        localStorage.setItem('fleet-lang', lang)
+    }
+}

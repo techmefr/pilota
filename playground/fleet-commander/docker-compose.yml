@@ -1,0 +1,25 @@
+networks:
+  pilota-proxy:
+    external: true
+    name: pilota-proxy
+
+services:
+  fleet-commander:
+    build:
+      context: ../..
+      dockerfile: playground/fleet-commander/Dockerfile
+    environment:
+      LARAVEL_API_URL: http://${BRANCH:-dev}-api.localhost/api
+      SUPABASE_URL: http://${BRANCH:-dev}-supabase.localhost
+      NHOST_ENDPOINT: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
+      TOLGEE_API_URL: http://tolgee.localhost
+      TOLGEE_API_KEY: ${FLEET_TOLGEE_API_KEY:-}
+      SENTRY_DSN: ${FLEET_SENTRY_DSN:-}
+    networks:
+      - default
+      - pilota-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fleet-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-fleet.localhost`)"
+      - "traefik.http.routers.fleet-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.services.fleet-${BRANCH:-dev}.loadbalancer.server.port=3004"
