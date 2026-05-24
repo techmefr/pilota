@@ -13,21 +13,21 @@ export const mockPcProfiles: PcProfile[] = [
 ]
 
 export const mockAssignments: Assignment[] = [
-    { id: 1,  employee: 'Lucas Martin',     email: 'l.martin@xefi.fr',     team: 'Dev Backend',   department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-001', assigned_at: '2024-03-15', status: 'active'   },
-    { id: 2,  employee: 'Camille Dubois',   email: 'c.dubois@xefi.fr',     team: 'Dev Frontend',  department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-002', assigned_at: '2024-03-15', status: 'active'   },
-    { id: 3,  employee: 'Thomas Bernard',   email: 't.bernard@xefi.fr',    team: 'Mobile iOS',    department: 'Technique', model: 'MacBook Pro 16" M3 Pro', serial: 'MBP-2024-001', assigned_at: '2024-04-01', status: 'active'   },
-    { id: 4,  employee: 'Sophie Laurent',   email: 's.laurent@xefi.fr',    team: 'UX/UI',         department: 'Technique', model: 'MacBook Pro 14" M3',     serial: 'MBP-2024-002', assigned_at: '2024-04-01', status: 'active'   },
-    { id: 5,  employee: 'Nicolas Petit',    email: 'n.petit@xefi.fr',      team: 'Support N1',    department: 'Technique', model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-001', assigned_at: '2024-02-10', status: 'repair'   },
-    { id: 6,  employee: 'Emma Rousseau',    email: 'e.rousseau@xefi.fr',   team: 'Commercial Est',department: 'Commerce',  model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-002', assigned_at: '2024-01-20', status: 'active'   },
-    { id: 7,  employee: 'Antoine Moreau',   email: 'a.moreau@xefi.fr',     team: 'Commercial Sud',department: 'Commerce',  model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-003', assigned_at: '2024-01-20', status: 'active'   },
-    { id: 8,  employee: 'Julie Simon',      email: 'j.simon@xefi.fr',      team: 'Gestion',       department: 'Finance',   model: 'HP EliteBook 840 G10',   serial: 'EBK-2022-015', assigned_at: '2022-09-01', status: 'active'   },
-    { id: 9,  employee: 'Marc Lefebvre',    email: 'm.lefebvre@xefi.fr',   team: 'Infra',         department: 'Technique', model: 'HP ZBook Fury G10',      serial: 'ZBF-2024-001', assigned_at: '2024-05-10', status: 'active'   },
-    { id: 10, employee: 'Léa Girard',       email: 'l.girard@xefi.fr',     team: 'PMO',           department: 'Direction', model: 'HP EliteBook 1040 G10',  serial: 'EBM-2024-001', assigned_at: '2024-03-01', status: 'active'   },
-    { id: 11, employee: 'Pierre Bonnet',    email: 'p.bonnet@xefi.fr',     team: 'Dev Backend',   department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-003', assigned_at: '2024-03-15', status: 'active'   },
-    { id: 12, employee: 'Clara Henry',      email: 'c.henry@xefi.fr',      team: 'Support N2',    department: 'Technique', model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-004', assigned_at: '2024-02-10', status: 'active'   },
-    { id: 13, employee: 'Hugo Blanc',       email: 'h.blanc@xefi.fr',      team: 'Commercial Nord',department: 'Commerce', model: 'HP EliteBook 840 G10',   serial: 'EBK-2021-007', assigned_at: '2021-06-15', status: 'active'   },
-    { id: 14, employee: 'Manon Garnier',    email: 'm.garnier@xefi.fr',    team: 'Finance',       department: 'Finance',   model: 'HP EliteBook 840 G10',   serial: 'EBK-2023-011', assigned_at: '2023-04-01', status: 'active'   },
-    { id: 15, employee: 'Kevin Faure',      email: 'k.faure@xefi.fr',      team: 'Mobile iOS',    department: 'Technique', model: 'MacBook Pro 16" M3 Pro', serial: 'MBP-2024-003', assigned_at: '2024-04-01', status: 'returned' },
+    { id: 1,  employee: 'Lucas Martin',     email: 'l.martin@pilota.dev',     team: 'Dev Backend',   department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-001', assigned_at: '2024-03-15', status: 'active'   },
+    { id: 2,  employee: 'Camille Dubois',   email: 'c.dubois@pilota.dev',     team: 'Dev Frontend',  department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-002', assigned_at: '2024-03-15', status: 'active'   },
+    { id: 3,  employee: 'Thomas Bernard',   email: 't.bernard@pilota.dev',    team: 'Mobile iOS',    department: 'Technique', model: 'MacBook Pro 16" M3 Pro', serial: 'MBP-2024-001', assigned_at: '2024-04-01', status: 'active'   },
+    { id: 4,  employee: 'Sophie Laurent',   email: 's.laurent@pilota.dev',    team: 'UX/UI',         department: 'Technique', model: 'MacBook Pro 14" M3',     serial: 'MBP-2024-002', assigned_at: '2024-04-01', status: 'active'   },
+    { id: 5,  employee: 'Nicolas Petit',    email: 'n.petit@pilota.dev',      team: 'Support N1',    department: 'Technique', model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-001', assigned_at: '2024-02-10', status: 'repair'   },
+    { id: 6,  employee: 'Emma Rousseau',    email: 'e.rousseau@pilota.dev',   team: 'Commercial Est',department: 'Commerce',  model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-002', assigned_at: '2024-01-20', status: 'active'   },
+    { id: 7,  employee: 'Antoine Moreau',   email: 'a.moreau@pilota.dev',     team: 'Commercial Sud',department: 'Commerce',  model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-003', assigned_at: '2024-01-20', status: 'active'   },
+    { id: 8,  employee: 'Julie Simon',      email: 'j.simon@pilota.dev',      team: 'Gestion',       department: 'Finance',   model: 'HP EliteBook 840 G10',   serial: 'EBK-2022-015', assigned_at: '2022-09-01', status: 'active'   },
+    { id: 9,  employee: 'Marc Lefebvre',    email: 'm.lefebvre@pilota.dev',   team: 'Infra',         department: 'Technique', model: 'HP ZBook Fury G10',      serial: 'ZBF-2024-001', assigned_at: '2024-05-10', status: 'active'   },
+    { id: 10, employee: 'Léa Girard',       email: 'l.girard@pilota.dev',     team: 'PMO',           department: 'Direction', model: 'HP EliteBook 1040 G10',  serial: 'EBM-2024-001', assigned_at: '2024-03-01', status: 'active'   },
+    { id: 11, employee: 'Pierre Bonnet',    email: 'p.bonnet@pilota.dev',     team: 'Dev Backend',   department: 'Technique', model: 'HP ZBook Power G10',     serial: 'ZBP-2024-003', assigned_at: '2024-03-15', status: 'active'   },
+    { id: 12, employee: 'Clara Henry',      email: 'c.henry@pilota.dev',      team: 'Support N2',    department: 'Technique', model: 'HP EliteBook 840 G10',   serial: 'EBK-2024-004', assigned_at: '2024-02-10', status: 'active'   },
+    { id: 13, employee: 'Hugo Blanc',       email: 'h.blanc@pilota.dev',      team: 'Commercial Nord',department: 'Commerce', model: 'HP EliteBook 840 G10',   serial: 'EBK-2021-007', assigned_at: '2021-06-15', status: 'active'   },
+    { id: 14, employee: 'Manon Garnier',    email: 'm.garnier@pilota.dev',    team: 'Finance',       department: 'Finance',   model: 'HP EliteBook 840 G10',   serial: 'EBK-2023-011', assigned_at: '2023-04-01', status: 'active'   },
+    { id: 15, employee: 'Kevin Faure',      email: 'k.faure@pilota.dev',      team: 'Mobile iOS',    department: 'Technique', model: 'MacBook Pro 16" M3 Pro', serial: 'MBP-2024-003', assigned_at: '2024-04-01', status: 'returned' },
 ]
 
 export const mockRepairs: Repair[] = [

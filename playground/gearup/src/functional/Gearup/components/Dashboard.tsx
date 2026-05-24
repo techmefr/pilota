@@ -26,7 +26,7 @@ function alertIconClass(severity: Alert['severity']) {
 function activityDotColor(type: 'repair' | 'order' | 'alert') {
     if (type === 'repair') return 'var(--amber)'
     if (type === 'order') return 'var(--blue)'
-    return 'var(--red)'
+    return 'var(--coral)'
 }
 
 function formatDate(d: string) {
@@ -81,7 +81,7 @@ export default function Dashboard({ profiles, inventory, repairs, orders, alerts
                 </div>
                 <div className="kpi-cell">
                     <div className="kpi-label">{t.kpi_alerts}</div>
-                    <div className="kpi-value" style={{ color: activeAlerts > 0 ? 'var(--red)' : 'var(--green)' }}>{activeAlerts}</div>
+                    <div className="kpi-value" style={{ color: activeAlerts > 0 ? 'var(--coral)' : 'var(--green)' }}>{activeAlerts}</div>
                     <div className="kpi-sub">{t.kpi_alerts_sub}</div>
                 </div>
             </div>
@@ -90,7 +90,7 @@ export default function Dashboard({ profiles, inventory, repairs, orders, alerts
                 <div>
                     <div className="section-header">
                         <span className="section-title">{t.critical_alerts}</span>
-                        <AlertTriangle size={16} style={{ color: 'var(--red)' }} />
+                        <AlertTriangle size={16} style={{ color: 'var(--coral)' }} />
                     </div>
                     <div className="alert-list">
                         {criticalAlerts.length === 0 && (

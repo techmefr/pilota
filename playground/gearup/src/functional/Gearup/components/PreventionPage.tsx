@@ -69,10 +69,10 @@ export default function PreventionPage({ alerts: initialAlerts }: IProps) {
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
                 {critCount > 0 && (
-                    <div style={{ background: 'var(--red-dim)', border: '1px solid var(--red)', borderRadius: 'var(--radius)', padding: '0.875rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <ShieldAlert size={18} style={{ color: 'var(--red)', flexShrink: 0 }} />
+                    <div style={{ background: 'var(--coral-dim)', border: '1px solid var(--coral)', borderRadius: 'var(--radius)', padding: '0.875rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <ShieldAlert size={18} style={{ color: 'var(--coral)', flexShrink: 0 }} />
                         <div>
-                            <div style={{ fontWeight: 700, fontSize: 'var(--text-sm)', color: 'var(--red)' }}>{critCount} alerte{critCount > 1 ? 's' : ''} critique{critCount > 1 ? 's' : ''}</div>
+                            <div style={{ fontWeight: 700, fontSize: 'var(--text-sm)', color: 'var(--coral)' }}>{critCount} alerte{critCount > 1 ? 's' : ''} critique{critCount > 1 ? 's' : ''}</div>
                             <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Action immédiate requise</div>
                         </div>
                     </div>

@@ -22,8 +22,6 @@ export default function Sidebar({ currentPath, cycle }: IProps) {
     return (
         <div style={{ display: 'contents' }}>
             <div className="brand">
-                <span className="brand-xefi">XEFI</span>
-                <span className="brand-sep" />
                 <span className="brand-name">Gearup</span>
             </div>
 
