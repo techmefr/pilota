@@ -3,19 +3,41 @@ import { useTranslate } from '@tolgee/vue'
 import { useResourceForm } from '@pilota/hooks'
 import { orderResource } from '../../technical/sdk/resources'
 import { useCart } from '../composables/useCart'
+import { apiBase } from '../../technical/sdk/index'
 
 const { items, total, count } = useCart()
 const { t } = useTranslate()
-const isSuccess = ref(false)
 const isSubmitting = ref(false)
+const submitError = ref<string | null>(null)
 
-const { values, errors, isDirty, handleSubmit, reset } = useResourceForm(orderResource)
+const { values, errors, isDirty, handleSubmit } = useResourceForm(orderResource)
 
 const submit = handleSubmit(async () => {
+    if (count.value === 0) return
     isSubmitting.value = true
+    submitError.value = null
     try {
-        isSuccess.value = true
-        reset()
+        const data = await $fetch<{ url: string; order_id: number }>(`${apiBase()}/api/stripe/checkout`, {
+            method: 'POST',
+            body: {
+                full_name: values.full_name,
+                email:     values.email,
+                address:   values.address,
+                city:      values.city,
+                zip_code:  values.zip_code,
+                phone:     values.phone ?? null,
+                notes:     values.notes ?? null,
+                items: items.value.map(i => ({
+                    product_id:   i.product_id,
+                    product_name: i.product_name,
+                    unit_price:   i.unit_price,
+                    quantity:     i.quantity,
+                })),
+            },
+        })
+        window.location.href = data.url
+    } catch {
+        submitError.value = t('Payment error. Please try again.')
     } finally {
         isSubmitting.value = false
     }
@@ -34,25 +56,8 @@ function formatPrice(n: number): string {
             </v-btn>
         </div>
 
-        <!-- Success -->
-        <Transition name="success">
-            <div v-if="isSuccess" data-test-id="checkout-success" class="success-state">
-                <div class="success-ring">
-                    <v-icon size="52" color="success">mdi-check</v-icon>
-                </div>
-                <h2 class="success-title">{{ t('Order confirmed!') }}</h2>
-                <p class="success-sub">{{ t('Thank you for your order. You will receive a confirmation by email.') }}</p>
-                <NuxtLink to="/" class="text-decoration-none">
-                    <button class="success-btn">
-                        <v-icon size="18" class="mr-2">mdi-store-outline</v-icon>
-                        {{ t('Back to catalog') }}
-                    </button>
-                </NuxtLink>
-            </div>
-        </Transition>
-
         <!-- Form -->
-        <div v-if="!isSuccess" class="checkout-layout pb-24">
+        <div class="checkout-layout pb-24">
             <!-- Left: form -->
             <div class="checkout-form-col">
                 <h1 class="page-title mb-10">{{ t('Finalize your order') }}</h1>
@@ -152,6 +157,11 @@ function formatPrice(n: number): string {
                         <div class="summary-total">
                             <span>{{ t('Total') }}</span>
                             <span data-test-id="checkout-total" class="summary-total-value">{{ formatPrice(total) }}</span>
+                        </div>
+
+                        <div v-if="submitError" class="submit-error mb-3">
+                            <v-icon size="14" class="mr-1">mdi-alert-circle-outline</v-icon>
+                            {{ submitError }}
                         </div>
 
                         <button
@@ -336,59 +346,11 @@ function formatPrice(n: number): string {
     font-weight: 500;
 }
 
-/* ─── Success ─── */
-.success-enter-active { animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-
-.success-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 80px 0 120px;
-}
-
-.success-ring {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: rgba(var(--v-theme-success), 0.12);
-    border: 2px solid rgba(var(--v-theme-success), 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 32px;
-}
-
-.success-title {
-    font-size: 36px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    margin-bottom: 12px;
-}
-
-.success-sub {
-    font-size: 15px;
-    opacity: 0.5;
-    max-width: 420px;
-    line-height: 1.6;
-    margin-bottom: 40px;
-}
-
-.success-btn {
-    display: inline-flex;
-    align-items: center;
-    height: 50px;
-    padding: 0 28px;
-    border-radius: 12px;
-    background: rgb(var(--v-theme-primary));
-    color: #fff;
-    border: 2px solid rgb(var(--v-theme-primary));
-    cursor: pointer;
-    font-size: 16px;
+.submit-error {
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0em;
-    transition: all 0.2s ease;
+    color: rgb(var(--v-theme-error));
+    display: flex;
+    align-items: center;
 }
-.success-btn:hover { background: #006E52; border-color: #006E52; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0, 128, 96, 0.3); }
 </style>

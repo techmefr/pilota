@@ -82,5 +82,13 @@ export function useCart() {
         ).catch(() => null)
     }
 
-    return { items, count, total, isLoading, loadCart, addItem, removeItem, updateQuantity }
+    async function clearCart(): Promise<void> {
+        const ids = items.value.filter(i => i.id !== undefined).map(i => i.id as number)
+        if (ids.length > 0) {
+            await sdk.lomkit.cartItems.delete({ resources: ids }).catch(() => null)
+        }
+        items.value = []
+    }
+
+    return { items, count, total, isLoading, loadCart, addItem, removeItem, updateQuantity, clearCart }
 }

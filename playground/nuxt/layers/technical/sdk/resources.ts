@@ -78,3 +78,38 @@ export const orderResource = defineResource({
     }),
 })
 export type Order = z.infer<typeof orderResource.schema>
+
+export const shopOrderItemSchema = z.object({
+    id: z.number(),
+    shop_order_id: z.number().optional(),
+    product_id: z.number(),
+    product_name: z.string(),
+    unit_price: z.number(),
+    quantity: z.number(),
+})
+
+export const shopOrderResource = defineResource({
+    name: 'shopOrders',
+    schema: z.object({
+        id: z.number(),
+        stripe_session_id: z.string().nullable().optional(),
+        stripe_payment_intent_id: z.string().nullable().optional(),
+        status: z.enum(['pending', 'paid', 'cancelled']),
+        full_name: z.string(),
+        email: z.string().email(),
+        address: z.string(),
+        city: z.string(),
+        zip_code: z.string(),
+        phone: z.string().nullable().optional(),
+        notes: z.string().nullable().optional(),
+        total_amount: z.number(),
+        items: z.array(shopOrderItemSchema).optional(),
+        created_at: z.string().nullable().optional(),
+    }),
+    fragments: {
+        default: ['id', 'status', 'full_name', 'email', 'total_amount', 'created_at'],
+        detail: ['id', 'stripe_session_id', 'status', 'full_name', 'email', 'address', 'city', 'zip_code', 'phone', 'notes', 'total_amount', 'created_at'],
+    },
+})
+export type ShopOrder = z.infer<typeof shopOrderResource.schema>
+export type ShopOrderItem = z.infer<typeof shopOrderItemSchema>

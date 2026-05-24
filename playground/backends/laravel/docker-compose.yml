@@ -14,6 +14,8 @@ services:
       DB_DATABASE: pilota_laravel
       DB_USERNAME: pilota
       DB_PASSWORD: pilota
+      APP_FRONTEND_URL: http://${BRANCH:-dev}-shoplab.localhost
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
     depends_on:
       laravel_db:
         condition: service_healthy

@@ -11,7 +11,7 @@ RUN composer create-project laravel/laravel:^11.0 . --no-interaction --prefer-di
     && cp .env.example .env \
     && php artisan key:generate
 
-RUN composer require lomkit/laravel-rest-api --no-interaction
+RUN composer require lomkit/laravel-rest-api stripe/stripe-php --no-interaction
 
 RUN rm -rf database/migrations/*
 
@@ -28,6 +28,7 @@ RUN cp functional/Users/database/migrations/*.php database/migrations/ \
     && cp functional/Products/database/migrations/*.php database/migrations/ \
     && cp functional/Gearup/database/migrations/*.php database/migrations/ \
     && cp functional/Pulse/database/migrations/*.php database/migrations/ \
+    && cp functional/Shoplab/database/migrations/*.php database/migrations/ \
     && php setup-autoload.php && rm setup-autoload.php && composer dump-autoload --optimize
 
 RUN chmod -R 775 storage bootstrap/cache

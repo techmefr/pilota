@@ -66,6 +66,9 @@ onMounted(() => {
                     <v-btn to="/" variant="text" size="small" class="nav-link">
                         {{ t('Catalog') }}
                     </v-btn>
+                    <v-btn to="/orders" variant="text" size="small" class="nav-link">
+                        Commandes
+                    </v-btn>
                 </div>
 
                 <v-spacer />

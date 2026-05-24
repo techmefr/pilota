@@ -12,4 +12,5 @@ $json['autoload']['psr-4']['Functional\\Gearup\\Database\\Migrations\\'] = 'func
 $json['autoload']['psr-4']['Functional\\Pulse\\'] = 'functional/Pulse/src/';
 $json['autoload']['psr-4']['Functional\\Pulse\\Database\\Seeders\\'] = 'functional/Pulse/database/seeders/';
 $json['autoload']['psr-4']['Functional\\Pulse\\Database\\Migrations\\'] = 'functional/Pulse/database/migrations/';
+$json['autoload']['psr-4']['Functional\\Shoplab\\'] = 'functional/Shoplab/src/';
 file_put_contents('composer.json', json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

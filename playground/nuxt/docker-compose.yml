@@ -12,6 +12,9 @@ services:
       NUXT_PUBLIC_TOLGEE_API_URL: http://tolgee.localhost
       NUXT_PUBLIC_TOLGEE_API_KEY: ${NUXT_PUBLIC_TOLGEE_API_KEY:-}
       NUXT_PUBLIC_SENTRY_DSN: ${NUXT_PUBLIC_SENTRY_DSN:-}
+      VITE_LOMKIT_BASE_URL: http://${BRANCH:-dev}-api.localhost/api
+      VITE_NHOST_ENDPOINT: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
+      VITE_SUPABASE_URL: http://${BRANCH:-dev}-supabase.localhost
     networks:
       - default
       - pilota-proxy

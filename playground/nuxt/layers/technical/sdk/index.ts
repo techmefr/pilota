@@ -11,8 +11,9 @@ import {
     cartItemResource,
     messageResource,
     productResource,
+    shopOrderResource,
 } from './resources'
-import type { CartItem, Message, Product } from './resources'
+import type { CartItem, Message, Product, ShopOrder } from './resources'
 
 type ProductsApi = {
     query: (p: object, onEvent?: PilotaEventHandler) => Promise<NhostQueryResult<{ products: Product[] }>>
@@ -22,6 +23,10 @@ type CartItemsApi = {
     get: (p: object, onEvent?: PilotaEventHandler) => Promise<LomkitGetResult<CartItem>>
     mutate: (p: object, onEvent?: PilotaEventHandler) => Promise<LomkitMutateResult<CartItem>>
     delete: (p: { resources: number[] }, onEvent?: PilotaEventHandler) => Promise<LomkitDeleteResult>
+}
+
+type ShopOrdersApi = {
+    get: (p: object, onEvent?: PilotaEventHandler) => Promise<LomkitGetResult<ShopOrder>>
 }
 
 type MessagesApi = {
@@ -53,6 +58,7 @@ const supabase = new SupabaseDriver({
 
 nhost.bindResource('products', productResource)
 lomkit.bindResource('cartItems', cartItemResource)
+lomkit.bindResource('shopOrders', shopOrderResource)
 supabase.bindResource('messages', messageResource)
 
 const _sdk = createPilota({
@@ -62,6 +68,10 @@ const _sdk = createPilota({
 
 export const sdk = _sdk as typeof _sdk & {
     nhost: NhostDriver & { products: ProductsApi }
-    lomkit: LomkitDriver & { cartItems: CartItemsApi }
+    lomkit: LomkitDriver & { cartItems: CartItemsApi; shopOrders: ShopOrdersApi }
     supabase: SupabaseDriver & { messages: MessagesApi }
 }
+
+export const apiBase = (): string =>
+    (import.meta.env.VITE_LOMKIT_BASE_URL as string | undefined)?.replace(/\/api$/, '') ||
+    'http://main-api.localhost'

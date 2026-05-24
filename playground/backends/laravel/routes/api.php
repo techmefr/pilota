@@ -16,6 +16,9 @@ use Functional\Pulse\Http\Controllers\DevOpsNeedController;
 use Functional\Pulse\Http\Controllers\WeekInfoController;
 use Functional\Pulse\Http\Controllers\RevenueController;
 use Functional\Pulse\Http\Controllers\ContractController;
+use Functional\Shoplab\Http\Controllers\ShopOrderController;
+use Functional\Shoplab\Http\Controllers\StripeController;
+use Illuminate\Support\Facades\Route;
 use Lomkit\Rest\Facades\Rest;
 
 Rest::resource('users', UserController::class);
@@ -35,3 +38,9 @@ Rest::resource('devops_needs', DevOpsNeedController::class);
 Rest::resource('week_info', WeekInfoController::class);
 Rest::resource('revenue', RevenueController::class);
 Rest::resource('contracts', ContractController::class);
+
+Rest::resource('shopOrders', ShopOrderController::class);
+
+Route::post('/stripe/checkout', [StripeController::class, 'createCheckoutSession']);
+Route::get('/stripe/confirm/{sessionId}', [StripeController::class, 'confirmSession']);
+Route::get('/stripe/order/{orderId}', [StripeController::class, 'getOrder']);
