@@ -75,9 +75,10 @@ import type { Repair } from '../../technical/Sdk/resources'
                     class="fc-input"
                     type="text"
                     [placeholder]="'search' | translate"
-                    [(ngModel)]="searchQuery"
+                    [ngModel]="searchQuery()"
+                    (ngModelChange)="searchQuery.set($event)"
                 />
-                <select class="fc-select" [(ngModel)]="selectedStatus">
+                <select class="fc-select" [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
                     <option value="">{{ 'all_statuses' | translate }}</option>
                     <option value="open">{{ 'status_open' | translate }}</option>
                     <option value="in_progress">{{ 'status_in_progress' | translate }}</option>
@@ -148,12 +149,12 @@ export class RepairsComponent implements OnInit, OnDestroy {
 
     readonly repairs = signal<Repair[]>([])
 
-    searchQuery = ''
-    selectedStatus = ''
+    readonly searchQuery = signal('')
+    readonly selectedStatus = signal('')
 
     readonly filteredRepairs = computed(() => {
-        const query = this.searchQuery.toLowerCase()
-        const status = this.selectedStatus
+        const query = this.searchQuery().toLowerCase()
+        const status = this.selectedStatus()
 
         return this.repairs().filter(r => {
             const matchesQuery =

@@ -81,15 +81,16 @@ import type { Alert } from '../../technical/Sdk/resources'
                     class="fc-input"
                     type="text"
                     [placeholder]="'search' | translate"
-                    [(ngModel)]="searchQuery"
+                    [ngModel]="searchQuery()"
+                    (ngModelChange)="searchQuery.set($event)"
                 />
-                <select class="fc-select" [(ngModel)]="selectedSeverity">
+                <select class="fc-select" [ngModel]="selectedSeverity()" (ngModelChange)="selectedSeverity.set($event)">
                     <option value="">Toutes sévérités</option>
                     <option value="critical">Critique</option>
                     <option value="warning">Avertissement</option>
                     <option value="info">Info</option>
                 </select>
-                <select class="fc-select" [(ngModel)]="selectedType">
+                <select class="fc-select" [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
                     <option value="">{{ 'all_types' | translate }}</option>
                     <option value="warranty">Garantie</option>
                     <option value="age">Ancienneté</option>
@@ -165,14 +166,14 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
     readonly alerts = signal<Alert[]>([])
 
-    searchQuery = ''
-    selectedSeverity = ''
-    selectedType = ''
+    readonly searchQuery = signal('')
+    readonly selectedSeverity = signal('')
+    readonly selectedType = signal('')
 
     readonly filteredAlerts = computed(() => {
-        const query = this.searchQuery.toLowerCase()
-        const severity = this.selectedSeverity
-        const type = this.selectedType
+        const query = this.searchQuery().toLowerCase()
+        const severity = this.selectedSeverity()
+        const type = this.selectedType()
 
         return this.alerts().filter(a => {
             const matchesQuery =

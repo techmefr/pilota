@@ -75,15 +75,16 @@ import type { Assignment } from '../../technical/Sdk/resources'
                     class="fc-input"
                     type="text"
                     [placeholder]="'search' | translate"
-                    [(ngModel)]="searchQuery"
+                    [ngModel]="searchQuery()"
+                    (ngModelChange)="searchQuery.set($event)"
                 />
-                <select class="fc-select" [(ngModel)]="selectedTeam">
+                <select class="fc-select" [ngModel]="selectedTeam()" (ngModelChange)="selectedTeam.set($event)">
                     <option value="">{{ 'all_teams' | translate }}</option>
                     @for (team of availableTeams(); track team) {
                         <option [value]="team">{{ team }}</option>
                     }
                 </select>
-                <select class="fc-select" [(ngModel)]="selectedStatus">
+                <select class="fc-select" [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
                     <option value="">{{ 'all_statuses' | translate }}</option>
                     <option value="active">{{ 'status_active' | translate }}</option>
                     <option value="repair">{{ 'status_repair' | translate }}</option>
@@ -143,9 +144,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
     readonly assignments = signal<Assignment[]>([])
 
-    searchQuery = ''
-    selectedTeam = ''
-    selectedStatus = ''
+    readonly searchQuery = signal('')
+    readonly selectedTeam = signal('')
+    readonly selectedStatus = signal('')
 
     readonly availableTeams = computed(() => {
         const teams = new Set(this.assignments().map(a => a.team))
@@ -153,9 +154,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
     })
 
     readonly filteredAssignments = computed(() => {
-        const query = this.searchQuery.toLowerCase()
-        const team = this.selectedTeam
-        const status = this.selectedStatus
+        const query = this.searchQuery().toLowerCase()
+        const team = this.selectedTeam()
+        const status = this.selectedStatus()
 
         return this.assignments().filter(a => {
             const matchesQuery =
@@ -166,7 +167,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
                 a.team.toLowerCase().includes(query)
 
             const matchesTeam = !team || a.team === team
-            const matchesStatus = !status || a.status === status
+            const matchesStatus = !status || (a.status as string) === status
 
             return matchesQuery && matchesTeam && matchesStatus
         })

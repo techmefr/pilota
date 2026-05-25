@@ -76,15 +76,16 @@ import type { Order } from '../../technical/Sdk/resources'
                     class="fc-input"
                     type="text"
                     [placeholder]="'search' | translate"
-                    [(ngModel)]="searchQuery"
+                    [ngModel]="searchQuery()"
+                    (ngModelChange)="searchQuery.set($event)"
                 />
-                <select class="fc-select" [(ngModel)]="selectedType">
+                <select class="fc-select" [ngModel]="selectedType()" (ngModelChange)="selectedType.set($event)">
                     <option value="">{{ 'all_types' | translate }}</option>
                     <option value="hardware">{{ 'order_type_hardware' | translate }}</option>
                     <option value="parts">{{ 'order_type_parts' | translate }}</option>
                     <option value="consumable">{{ 'order_type_consumable' | translate }}</option>
                 </select>
-                <select class="fc-select" [(ngModel)]="selectedStatus">
+                <select class="fc-select" [ngModel]="selectedStatus()" (ngModelChange)="selectedStatus.set($event)">
                     <option value="">{{ 'all_statuses' | translate }}</option>
                     <option value="pending">{{ 'status_pending' | translate }}</option>
                     <option value="approved">{{ 'status_approved' | translate }}</option>
@@ -152,14 +153,14 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     readonly orders = signal<Order[]>([])
 
-    searchQuery = ''
-    selectedType = ''
-    selectedStatus = ''
+    readonly searchQuery = signal('')
+    readonly selectedType = signal('')
+    readonly selectedStatus = signal('')
 
     readonly filteredOrders = computed(() => {
-        const query = this.searchQuery.toLowerCase()
-        const type = this.selectedType
-        const status = this.selectedStatus
+        const query = this.searchQuery().toLowerCase()
+        const type = this.selectedType()
+        const status = this.selectedStatus()
 
         return this.orders().filter(o => {
             const matchesQuery =
