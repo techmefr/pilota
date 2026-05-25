@@ -57,7 +57,14 @@ test.describe('Tableau de bord', () => {
     })
 
     test('topbar affiche Dashboard en anglais', async ({ page }) => {
-        await page.locator('.lang-btn').nth(1).click()
+        await page.goto('/settings')
+        await page.waitForSelector('.settings-stack', { timeout: 10_000 })
+        await page.locator('.opt-btn.lang-btn').filter({ hasText: 'English' }).click()
+        await page.goto('/')
+        await page.waitForSelector('.kpi-grid', { timeout: 10_000 })
         await expect(page.locator('fc-topbar')).toContainText('Dashboard')
+        await page.goto('/settings')
+        await page.waitForSelector('.settings-stack', { timeout: 10_000 })
+        await page.locator('.opt-btn.lang-btn').filter({ hasText: 'Français' }).click()
     })
 })

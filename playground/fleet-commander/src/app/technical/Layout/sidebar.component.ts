@@ -5,7 +5,7 @@ import { TranslatePipe } from '../I18n/translate.pipe'
 
 interface NavItem {
     path: string
-    labelKey: 'nav_fleet' | 'nav_inventory' | 'nav_profiles' | 'nav_repairs' | 'nav_orders' | 'nav_alerts'
+    labelKey: 'nav_fleet' | 'nav_inventory' | 'nav_profiles' | 'nav_repairs' | 'nav_orders' | 'nav_alerts' | 'nav_settings'
     icon: string
 }
 
@@ -88,39 +88,6 @@ interface NavItem {
             opacity: 1;
         }
 
-        .sidebar-footer {
-            padding: 0.75rem 0.5rem 1rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .lang-toggle {
-            display: flex;
-            gap: 0.35rem;
-            padding: 0.35rem 0.75rem;
-        }
-
-        .lang-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            color: var(--text-3);
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.25rem 0.6rem;
-            cursor: pointer;
-            transition: background 0.12s, color 0.12s, border-color 0.12s;
-        }
-
-        .lang-btn:hover {
-            background: var(--card);
-            color: var(--text);
-        }
-
-        .lang-btn.active {
-            background: var(--accent-bg);
-            border-color: var(--accent-brd);
-            color: var(--accent);
-        }
     `],
     template: `
         <aside class="sidebar">
@@ -143,25 +110,32 @@ interface NavItem {
                 }
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="lang-toggle">
-                    <button
-                        class="lang-btn"
-                        [class.active]="i18n.lang() === 'fr'"
-                        (click)="i18n.setLang('fr')"
-                    >FR</button>
-                    <button
-                        class="lang-btn"
-                        [class.active]="i18n.lang() === 'en'"
-                        (click)="i18n.setLang('en')"
-                    >EN</button>
-                </div>
+            <div class="nav" style="flex: 0; padding-bottom: 1rem; border-top: 1px solid var(--border);">
+                @for (item of bottomItems; track item.path) {
+                    <a
+                        class="nav-link"
+                        [routerLink]="item.path"
+                        routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: false }"
+                    >
+                        <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor" [innerHTML]="item.icon"></svg>
+                        {{ item.labelKey | translate }}
+                    </a>
+                }
             </div>
         </aside>
     `,
 })
 export class SidebarComponent {
     readonly i18n = inject(I18nService)
+
+    readonly bottomItems: NavItem[] = [
+        {
+            path: '/settings',
+            labelKey: 'nav_settings',
+            icon: '<circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+        },
+    ]
 
     readonly navItems: NavItem[] = [
         {

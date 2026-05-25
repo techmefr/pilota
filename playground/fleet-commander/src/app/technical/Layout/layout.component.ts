@@ -5,14 +5,16 @@ import { toSignal } from '@angular/core/rxjs-interop'
 import { SidebarComponent } from './sidebar.component'
 import { TopbarComponent } from './topbar.component'
 import { I18nService } from '../I18n/i18n.service'
+import { SettingsService } from '../Settings/settings.service'
 
-const ROUTE_TITLES: Record<string, string> = {
-    '/':          'Tableau de bord',
-    '/inventory': 'Inventaire',
-    '/profiles':  'Configurateur',
-    '/repairs':   'Réparations',
-    '/orders':    'Commandes',
-    '/alerts':    'Alertes',
+const ROUTE_TITLES: Record<string, Record<string, string>> = {
+    '/':          { fr: 'Tableau de bord', en: 'Dashboard',     it: 'Dashboard'      },
+    '/inventory': { fr: 'Inventaire',      en: 'Inventory',     it: 'Inventario'     },
+    '/profiles':  { fr: 'Configurateur',   en: 'Configurator',  it: 'Configuratore'  },
+    '/repairs':   { fr: 'Réparations',     en: 'Repairs',       it: 'Riparazioni'    },
+    '/orders':    { fr: 'Commandes',       en: 'Orders',        it: 'Ordini'         },
+    '/alerts':    { fr: 'Alertes',         en: 'Alerts',        it: 'Avvisi'         },
+    '/settings':  { fr: 'Réglages',        en: 'Settings',      it: 'Impostazioni'   },
 }
 
 @Component({
@@ -54,6 +56,7 @@ const ROUTE_TITLES: Record<string, string> = {
 export class LayoutComponent {
     private readonly router = inject(Router)
     private readonly i18n = inject(I18nService)
+    readonly _settings = inject(SettingsService)
 
     private readonly currentUrl = toSignal(
         this.router.events.pipe(
@@ -67,19 +70,6 @@ export class LayoutComponent {
         const url = this.currentUrl()
         const lang = this.i18n.lang()
         const base = url.split('?')[0].split('#')[0]
-
-        if (lang === 'en') {
-            const enTitles: Record<string, string> = {
-                '/':          'Dashboard',
-                '/inventory': 'Inventory',
-                '/profiles':  'Configurator',
-                '/repairs':   'Repairs',
-                '/orders':    'Orders',
-                '/alerts':    'Alerts',
-            }
-            return enTitles[base] ?? 'Fleet Commander'
-        }
-
-        return ROUTE_TITLES[base] ?? 'Fleet Commander'
+        return ROUTE_TITLES[base]?.[lang] ?? 'Fleet Commander'
     })
 }

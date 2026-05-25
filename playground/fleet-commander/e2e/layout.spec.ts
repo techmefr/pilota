@@ -11,9 +11,10 @@ test.describe('Layout', () => {
         await expect(page.locator('.logo-sub')).toContainText('HP Fleet Hypervision')
     })
 
-    test('affiche les 6 liens de navigation', async ({ page }) => {
+    test('affiche 7 liens de navigation dont Réglages', async ({ page }) => {
         const navLinks = page.locator('.nav-link')
-        await expect(navLinks).toHaveCount(6)
+        const count = await navLinks.count()
+        expect(count).toBe(7)
     })
 
     test('contient les liens de navigation attendus', async ({ page }) => {
@@ -23,28 +24,26 @@ test.describe('Layout', () => {
         await expect(page.locator('.nav-link').nth(3)).toContainText('Réparations')
         await expect(page.locator('.nav-link').nth(4)).toContainText('Commandes')
         await expect(page.locator('.nav-link').nth(5)).toContainText('Alertes')
+        await expect(page.locator('.nav-link').nth(6)).toContainText('Réglages')
     })
 
     test('le lien Tableau de bord est actif par défaut', async ({ page }) => {
         await expect(page.locator('.nav-link').nth(0)).toHaveClass(/active/)
     })
 
-    test('affiche les boutons de langue FR et EN', async ({ page }) => {
-        await expect(page.locator('.lang-btn').nth(0)).toContainText('FR')
-        await expect(page.locator('.lang-btn').nth(1)).toContainText('EN')
-        await expect(page.locator('.lang-btn.active')).toContainText('FR')
-    })
-
-    test('bascule la langue EN', async ({ page }) => {
-        await page.locator('.lang-btn').nth(1).click()
-        await expect(page.locator('.lang-btn.active')).toContainText('EN')
+    test('bascule la langue EN via la page Réglages', async ({ page }) => {
+        await page.goto('/settings')
+        await page.waitForSelector('.settings-stack', { timeout: 10_000 })
+        await page.locator('.opt-btn.lang-btn').filter({ hasText: 'English' }).click()
         await expect(page.locator('.nav-link').nth(0)).toContainText('Dashboard')
         await expect(page.locator('.nav-link').nth(1)).toContainText('Inventory')
     })
 
     test('bascule retour FR depuis EN', async ({ page }) => {
-        await page.locator('.lang-btn').nth(1).click()
-        await page.locator('.lang-btn').nth(0).click()
+        await page.goto('/settings')
+        await page.waitForSelector('.settings-stack', { timeout: 10_000 })
+        await page.locator('.opt-btn.lang-btn').filter({ hasText: 'English' }).click()
+        await page.locator('.opt-btn.lang-btn').filter({ hasText: 'Français' }).click()
         await expect(page.locator('.nav-link').nth(0)).toContainText('Tableau de bord')
     })
 

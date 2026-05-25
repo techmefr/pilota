@@ -41,6 +41,11 @@ export const appRoutes: Routes = [
                 loadComponent: () =>
                     import('./functional/PcDetail/pc-detail.component').then(m => m.PcDetailComponent),
             },
+            {
+                path: 'settings',
+                loadComponent: () =>
+                    import('./functional/Settings/settings.component').then(m => m.SettingsComponent),
+            },
         ],
     },
     { path: '**', redirectTo: '' },

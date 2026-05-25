@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core'
 
-export type Lang = 'fr' | 'en'
+export type Lang = 'fr' | 'en' | 'it'
 
 const fr = {
     nav_fleet:      'Tableau de bord',
@@ -117,6 +117,19 @@ const fr = {
     apple: 'Apple',
 
     hub_link: '← Hub',
+
+    nav_settings:    'Réglages',
+    settings_title:  'Réglages',
+    settings_sub:    'Apparence et langue',
+    settings_appearance: 'Apparence',
+    settings_theme:       'Thème',
+    settings_theme_dark:  'Sombre',
+    settings_theme_light: 'Clair',
+    settings_font_size:   'Taille des polices',
+    settings_font_sm:     'Petite',
+    settings_font_md:     'Moyenne',
+    settings_font_lg:     'Grande',
+    settings_language:    'Langue',
 
     pc_detail_title:   'Détail appareil',
     pc_detail_sub:     'Données agrégées depuis 3 drivers',
@@ -248,6 +261,19 @@ const en: typeof fr = {
 
     hub_link: '← Hub',
 
+    nav_settings:    'Settings',
+    settings_title:  'Settings',
+    settings_sub:    'Appearance & language',
+    settings_appearance: 'Appearance',
+    settings_theme:       'Theme',
+    settings_theme_dark:  'Dark',
+    settings_theme_light: 'Light',
+    settings_font_size:   'Font size',
+    settings_font_sm:     'Small',
+    settings_font_md:     'Medium',
+    settings_font_lg:     'Large',
+    settings_language:    'Language',
+
     pc_detail_title:   'Device detail',
     pc_detail_sub:     'Aggregated data from 3 drivers',
     assignment_info:   'Assignment',
@@ -262,7 +288,150 @@ const en: typeof fr = {
     no_events:       'Waiting for events…',
 }
 
-export const translations = { fr, en }
+const it: typeof fr = {
+    nav_fleet:      'Dashboard',
+    nav_dashboard:  'Dashboard',
+    nav_profiles:   'Configuratore',
+    nav_inventory:  'Inventario',
+    nav_repairs:    'Riparazioni',
+    nav_orders:     'Ordini',
+    nav_prevention: 'Prevenzione',
+    nav_alerts:     'Avvisi',
+    nav_cycle:      'Ciclo',
+
+    kpi_devices:    'Dispositivi',
+    kpi_total:      'Dispositivi in flotta',
+    kpi_repairs:    'In riparazione',
+    kpi_orders:     'Ordini attivi',
+    kpi_alerts:     'Avvisi attivi',
+    kpi_profiles:   'profili configurati',
+    kpi_repairs_sub: 'ticket aperti',
+    kpi_orders_sub:  'in attesa o in corso',
+    kpi_alerts_sub:  'critici o avvisi',
+
+    recent_activity: 'Attività recente',
+    critical_alerts: 'Avvisi critici',
+
+    profiles_title: 'Configuratore',
+    profiles_sub:   'Configurazioni HP raccomandate per profilo · Ciclo',
+    col_profile:    'Profilo',
+    col_model:      'Modello',
+    col_specs:      'Specifiche',
+    col_screens:    'Schermi',
+    col_total:      'Postazioni',
+    col_stock:      'Stock',
+    col_to_order:   'Da ordinare',
+
+    inventory_title: 'Inventario',
+    inventory_sub:   'Flotta attuale · Chi ha cosa per team',
+    col_employee:    'Dipendente',
+    col_team:        'Team',
+    col_device:      'Dispositivo',
+    col_serial:      'N° serie',
+    col_assigned:    'Assegnato',
+    col_status:      'Stato',
+
+    repairs_title:   'Riparazioni',
+    repairs_sub:     'Ticket aperti e storico',
+    col_ticket:      'Ticket',
+    col_issue:       'Problema',
+    col_technician:  'Tecnico',
+    col_opened:      'Aperto il',
+    col_closed:      'Chiuso il',
+    new_repair:      'Nuovo ticket',
+
+    orders_title:    'Ordini',
+    orders_sub:      'Hardware e componenti · Richieste in corso',
+    col_ref:         'Rif.',
+    col_item:        'Articolo',
+    col_qty:         'Qtà',
+    col_reason:      'Motivo',
+    col_requested:   'Richiesto da',
+    col_created:     'Data',
+    new_order:       'Nuovo ordine',
+
+    prevention_title: 'Prevenzione',
+    prevention_sub:   'Garanzie, anzianità, avvisi pianificati',
+    col_device_emp:   'Dispositivo · Dipendente',
+    col_type:         'Tipo',
+    col_due:          'Scadenza',
+    acknowledge:      'Preso in carico',
+
+    alerts_title:    'Avvisi',
+    alerts_sub:      'Garanzie, anzianità, avvisi pianificati',
+
+    status_active:        'Attivo',
+    status_repair:        'In riparazione',
+    status_returned:      'Restituito',
+    status_open:          'Aperto',
+    status_in_progress:   'In corso',
+    status_waiting_parts: 'Attesa pezzi',
+    status_closed:        'Chiuso',
+    status_pending:       'In attesa',
+    status_approved:      'Approvato',
+    status_ordered:       'Ordinato',
+    status_delivered:     'Consegnato',
+    status_acknowledged:  'Preso in carico',
+    status_resolved:      'Risolto',
+
+    all_teams:    'Tutti i team',
+    all_statuses: 'Tutti gli stati',
+    all_types:    'Tutti i tipi',
+    search:       'Cerca…',
+    no_results:   'Nessun risultato',
+
+    order_item:      'Articolo',
+    order_type:      'Tipo',
+    order_qty:       'Quantità',
+    order_reason:    'Motivo',
+    order_type_hardware:   'Hardware',
+    order_type_parts:      'Componenti',
+    order_type_consumable: 'Consumabile',
+
+    repair_device:      'Dispositivo',
+    repair_employee:    'Dipendente',
+    repair_issue:       'Descrizione del problema',
+    repair_technician:  'Tecnico assegnato',
+
+    cancel:  'Annulla',
+    confirm: 'Conferma',
+    save:    'Salva',
+    close:   'Chiudi',
+
+    perf:  'Prestazioni',
+    std:   'Standard',
+    apple: 'Apple',
+
+    hub_link: '← Hub',
+
+    nav_settings:    'Impostazioni',
+    settings_title:  'Impostazioni',
+    settings_sub:    'Aspetto e lingua',
+    settings_appearance: 'Aspetto',
+    settings_theme:       'Tema',
+    settings_theme_dark:  'Scuro',
+    settings_theme_light: 'Chiaro',
+    settings_font_size:   'Dimensione carattere',
+    settings_font_sm:     'Piccolo',
+    settings_font_md:     'Medio',
+    settings_font_lg:     'Grande',
+    settings_language:    'Lingua',
+
+    pc_detail_title:   'Dettaglio dispositivo',
+    pc_detail_sub:     'Dati aggregati da 3 driver',
+    assignment_info:   'Assegnazione',
+    hardware_info:     'Configurazione hardware',
+    maintenance_info:  'Manutenzione',
+    driver_lomkit:     'Lomkit / Laravel',
+    driver_supabase:   'Supabase Realtime',
+    driver_nhost:      'Nhost / GraphQL',
+    placeholder_data:  'Dati placeholder',
+
+    realtime_feed:   'Feed in tempo reale',
+    no_events:       'In attesa di eventi…',
+}
+
+export const translations = { fr, en, it }
 
 export type Translations = typeof fr
 
@@ -277,7 +446,7 @@ export class I18nService {
 
     constructor() {
         const saved = localStorage.getItem('fleet-lang')
-        if (saved === 'fr' || saved === 'en') {
+        if (saved === 'fr' || saved === 'en' || saved === 'it') {
             this.lang.set(saved)
         }
     }
