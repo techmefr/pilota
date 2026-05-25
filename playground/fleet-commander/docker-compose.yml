@@ -13,6 +13,7 @@ services:
       SUPABASE_URL: http://${BRANCH:-dev}-supabase.localhost
       NHOST_ENDPOINT: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
       TOLGEE_API_URL: http://tolgee.localhost
+      SUPABASE_ANON_KEY: ${FLEET_SUPABASE_ANON_KEY:-pilota}
       TOLGEE_API_KEY: ${FLEET_TOLGEE_API_KEY:-}
       SENTRY_DSN: ${FLEET_SENTRY_DSN:-}
     networks:

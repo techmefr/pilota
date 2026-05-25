@@ -28,6 +28,7 @@ declare global {
         __fleet_env: {
             laravelApiUrl: string
             supabaseUrl: string
+            supabaseAnonKey: string
             nhostEndpoint: string
             tolgeeApiUrl: string
             tolgeeApiKey: string
@@ -81,7 +82,7 @@ export class SdkService {
 
         this.supabase = new SupabaseDriver({
             url: env?.supabaseUrl ?? 'http://localhost:54321',
-            key: 'anon',
+            key: env?.supabaseAnonKey ?? 'pilota',
         })
 
         const _nhost = new NhostDriver({ endpoint: env?.nhostEndpoint ?? '' })

@@ -6,42 +6,258 @@
       {
         "name": "default",
         "kind": "postgres",
+        "tables": [
+          {
+            "table": {
+              "name": "messages",
+              "schema": "public"
+            },
+            "insert_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "check": {},
+                  "columns": [
+                    "room_id",
+                    "content",
+                    "author"
+                  ]
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "planning_participants",
+              "schema": "public"
+            },
+            "insert_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "check": {},
+                  "columns": "*"
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {},
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "planning_sessions",
+              "schema": "public"
+            },
+            "insert_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "check": {},
+                  "columns": "*"
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {},
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "planning_tasks",
+              "schema": "public"
+            },
+            "insert_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "check": {},
+                  "columns": "*"
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {},
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "planning_votes",
+              "schema": "public"
+            },
+            "insert_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "check": {},
+                  "columns": "*"
+                }
+              }
+            ],
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ],
+            "update_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {},
+                  "check": null
+                }
+              }
+            ],
+            "delete_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "posts",
+              "schema": "public"
+            },
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "products",
+              "schema": "public"
+            },
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ]
+          },
+          {
+            "table": {
+              "name": "users",
+              "schema": "public"
+            },
+            "select_permissions": [
+              {
+                "role": "public",
+                "permission": {
+                  "columns": "*",
+                  "filter": {}
+                }
+              }
+            ]
+          }
+        ],
         "configuration": {
           "connection_info": {
-            "database_url": { "from_env": "HASURA_GRAPHQL_DATABASE_URL" },
+            "database_url": {
+              "from_env": "HASURA_GRAPHQL_DATABASE_URL"
+            },
             "isolation_level": "read-committed",
             "use_prepared_statements": false
           }
-        },
-        "tables": [
-          {
-            "table": { "schema": "public", "name": "users" },
-            "select_permissions": [
-              { "role": "public", "permission": { "columns": "*", "filter": {} } }
-            ]
-          },
-          {
-            "table": { "schema": "public", "name": "posts" },
-            "select_permissions": [
-              { "role": "public", "permission": { "columns": "*", "filter": {} } }
-            ]
-          },
-          {
-            "table": { "schema": "public", "name": "messages" },
-            "select_permissions": [
-              { "role": "public", "permission": { "columns": "*", "filter": {} } }
-            ],
-            "insert_permissions": [
-              { "role": "public", "permission": { "columns": ["room_id", "content", "author"], "check": {} } }
-            ]
-          },
-          {
-            "table": { "schema": "public", "name": "products" },
-            "select_permissions": [
-              { "role": "public", "permission": { "columns": "*", "filter": {} } }
-            ]
-          }
-        ]
+        }
       }
     ]
   }

@@ -15,4 +15,5 @@ include:
   - playground/pulse/docker-compose.yml
   - playground/vota/docker-compose.yml
   - playground/gearup/docker-compose.yml
+  - playground/fleet-commander/docker-compose.yml
   - playground/hub/docker-compose.yml
