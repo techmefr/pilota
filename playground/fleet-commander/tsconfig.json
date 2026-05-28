@@ -9,6 +9,7 @@
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     "lib": ["ES2022", "dom"]
   },
   "angularCompilerOptions": {

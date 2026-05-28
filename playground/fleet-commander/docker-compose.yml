@@ -14,7 +14,7 @@ services:
       NHOST_ENDPOINT: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
       TOLGEE_API_URL: http://tolgee.localhost
       SUPABASE_ANON_KEY: ${FLEET_SUPABASE_ANON_KEY:-pilota}
-      TOLGEE_API_KEY: ${FLEET_TOLGEE_API_KEY:-}
+      TOLGEE_API_KEY: ${FLEET_TOLGEE_API_KEY:-tgpak_gqzv62dggj2tkzddhfyxk5jyn5ywymttnnsta5jshfqxcoa}
       SENTRY_DSN: ${FLEET_SENTRY_DSN:-}
     networks:
       - default
