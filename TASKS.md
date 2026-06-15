@@ -24,4 +24,17 @@
 - [x] Créer `TolgeeClientProvider.tsx` — wrapper client-side
 - [x] Wrapper `layout.tsx` avec `TolgeeClientProvider`
 - [x] Remplacer les chaînes hardcodées par `useTranslate` dans Sidebar et SettingsPanel
-- [ ] Rebuild container pulse (si HMR ne suffit pas)
+- [x] Rebuild container pulse (si HMR ne suffit pas)
+
+## Fleet Commander (Angular 19) — Hypervision PC · OSDD · RxJS
+
+- [ ] Scaffold `playground/fleet-commander` (Angular 19 + Tailwind/Shadcn-like)
+- [ ] Setup OSDD structure (`src/app/technical` vs `src/app/functional`)
+- [ ] Intégration Pilota SDK dans Angular (Service Injectable `PilotaService`)
+- [ ] **Technical** : Créer l'adapter RxJS pour transformer les `subscribe` du SDK en `Observables`
+- [ ] **Functional** : Dashboard Fleet (Realtime via Supabase)
+- [ ] **Functional** : Inventory List (Lomkit/Laravel) avec filtres réactifs
+- [ ] **Functional** : PC Detail View (Agrégation 3 drivers : Lomkit, Nhost, Supabase)
+- [ ] Intégration Tolgee pour Angular
+- [ ] Dockerisation du service et ajout au `docker-compose.yml` racine
+- [ ] Tests unitaires via Vitest (Angular + Vitest setup)
