@@ -5,9 +5,13 @@
         "build": "pnpm -r build",
         "test": "pnpm -r test",
         "lint": "pnpm -r lint",
-        "dev": "pnpm --filter playground-nuxt dev"
+        "dev": "pnpm --filter playground-nuxt dev",
+        "changeset": "changeset",
+        "version-packages": "changeset version",
+        "release": "pnpm --filter \"./packages/**\" build && changeset publish"
     },
     "devDependencies": {
+        "@changesets/cli": "^2.27.0",
         "typescript": "^5.5.0"
     },
     "pnpm": {
