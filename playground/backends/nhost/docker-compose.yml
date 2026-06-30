@@ -28,7 +28,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hasura-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-hasura.localhost`)"
-      - "traefik.http.routers.hasura-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.routers.hasura-${BRANCH:-dev}.entrypoints=websecure"
+      - "traefik.http.routers.hasura-${BRANCH:-dev}.tls=true"
       - "traefik.http.services.hasura-${BRANCH:-dev}.loadbalancer.server.port=8080"
 
   nhost_db:
@@ -38,7 +39,11 @@ services:
       POSTGRES_USER: pilota
       POSTGRES_PASSWORD: pilota
     volumes:
-      - ./nhost/migrations/default/001_init/up.sql:/docker-entrypoint-initdb.d/init.sql
+      # All migrations run on a fresh DB, in filename order. 002 creates the
+      # planning_* tables the Hasura metadata tracks — without it metadata apply
+      # fails (inconsistent: no such table) and Vota's GraphQL/realtime is dead.
+      - ./nhost/migrations/default/001_init/up.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./nhost/migrations/default/002_vota_planning/up.sql:/docker-entrypoint-initdb.d/02_vota_planning.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U pilota -d pilota_nhost"]
       interval: 5s
