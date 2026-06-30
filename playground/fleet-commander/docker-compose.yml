@@ -22,5 +22,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fleet-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-fleet.localhost`)"
-      - "traefik.http.routers.fleet-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.routers.fleet-${BRANCH:-dev}.entrypoints=websecure"
+      - "traefik.http.routers.fleet-${BRANCH:-dev}.tls=true"
       - "traefik.http.services.fleet-${BRANCH:-dev}.loadbalancer.server.port=3004"

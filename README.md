@@ -198,21 +198,83 @@ await sdk.lomkit.cartItems.mutate(
 ## Démarrage rapide
 
 ```bash
-# Tous les services (backends + frontends + tooling)
-make up
+# Une seule fois par machine : proxy partagé (Traefik + Tolgee) + certificats HTTPS
+make proxy-up
 
-# Ou service par service
-docker compose up -d
+# Puis la stack de la branche courante (backends + frontends)
+make up
 ```
 
 ### Commandes utiles
 
 ```bash
-make up       # lance tout
-make down     # arrête tout
+make certs    # génère le certificat mkcert local (auto-appelé par proxy-up)
+make proxy-up # proxy partagé Traefik/Tolgee + certs (une fois par machine)
+make up       # lance la stack de la branche
+make down     # arrête la stack
 make logs     # logs de tous les services
 make restart  # redémarre tout
+make status   # état du proxy + de la stack
 ```
+
+## Infrastructure — HTTPS local via mkcert
+
+Les services sont exposés par **URL** (et non par port) derrière Traefik, en
+**HTTPS par défaut** : `https://<branche>-<service>.localhost`
+(ex. `https://main-shoplab.localhost`). Tout hit en HTTP est redirigé (301)
+vers HTTPS.
+
+### Prérequis : mkcert
+
+[mkcert](https://github.com/FiloSottile/mkcert) génère un certificat local de
+confiance. Installe-le une fois :
+
+```bash
+# macOS
+brew install mkcert nss
+# Linux (Debian/Ubuntu)
+apt install libnss3-tools   # + binaire mkcert depuis les releases GitHub
+# Windows
+choco install mkcert
+```
+
+`make certs` (appelé automatiquement par `make proxy-up`) exécute
+`mkcert -install` — cela installe l'autorité racine **de ta propre machine**
+dans ton trust store — puis génère le certificat wildcard dans `certs/`. Les
+`.pem` sont machine-spécifiques et **non versionnés** (`.gitignore`).
+
+> Si le certificat est absent, Traefik démarre quand même avec un certificat
+> auto-signé (simple avertissement navigateur, jamais de crash).
+
+### Accès — URLs propres par défaut
+
+Sur une machine où les ports **80 / 443** sont libres, les URLs sont sans port :
+
+| Service | URL |
+|---------|-----|
+| Hub | `https://<branche>-hub.localhost` |
+| Shoplab | `https://<branche>-shoplab.localhost` |
+| Pulse | `https://<branche>-pulse.localhost` |
+| Vota | `https://<branche>-vota.localhost` |
+| Gearup | `https://<branche>-gearup.localhost` |
+| Fleet Commander | `https://<branche>-fleet.localhost` |
+| API Laravel | `https://<branche>-api.localhost` |
+| Tolgee / Portainer / Traefik | `https://tolgee.localhost`, etc. |
+
+### Ports occupés ? Override (machine partagée)
+
+Si une autre stack tient déjà 80/443, on paramètre les ports hôte via un
+**`.env` racine** (voir `.env.example`) — la stack ne crashe jamais sur un
+conflit de port :
+
+```dotenv
+PILOTA_HTTP_PORT=8081     # défaut 80
+PILOTA_HTTPS_PORT=8443    # défaut 443
+PILOTA_DASHBOARD_PORT=8090
+```
+
+`docker compose` et le `Makefile` lisent ce `.env` automatiquement. Les URLs
+portent alors le port : `https://<branche>-shoplab.localhost:8443`.
 
 ### Tests E2E (Shoplab)
 

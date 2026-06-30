@@ -12,3 +12,9 @@ pnpm-lock.yaml
 *.log
 playwright-report/
 test-results/
+
+# Locally generated mkcert certificates — machine-specific, key is sensitive.
+# Keep the directory (certs/.gitkeep) but never commit the .pem files.
+certs/*.pem
+
+*.tsbuildinfo

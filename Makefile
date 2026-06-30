@@ -1,9 +1,14 @@
 BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null | tr '/' '-' | tr '_' '-' | sed 's/^HEAD$$/dev/')
 
+# Optional: load host-port overrides from a root .env (PILOTA_HTTP_PORT, etc.).
+# docker compose reads .env on its own; this propagates the same values to make.
+-include .env
+export PILOTA_HTTP_PORT PILOTA_HTTPS_PORT PILOTA_DASHBOARD_PORT
+
 export BRANCH
 export COMPOSE_PROJECT_NAME = pilota-$(BRANCH)
 
-.PHONY: proxy-init proxy-up proxy-down \
+.PHONY: certs proxy-init proxy-up proxy-down \
 	up down restart logs status \
 	laravel-logs laravel-restart laravel-rebuild laravel-shell laravel-seed laravel-reset \
 	pulse-logs pulse-restart pulse-rebuild \
@@ -17,10 +22,40 @@ export COMPOSE_PROJECT_NAME = pilota-$(BRANCH)
 
 # ─── Shared infrastructure (once per machine) ──────────────────────────────
 
+# Service host names served behind Traefik. The wildcard *.localhost covers them
+# all for browsers, but strict TLS verifiers (curl/openssl) refuse to match a
+# wildcard whose parent is the single label "localhost" — so we also embed the
+# concrete hosts as explicit SANs. Branch-scoped hosts use the current BRANCH.
+CERT_HOSTS = \
+	$(BRANCH)-hub.localhost $(BRANCH)-shoplab.localhost $(BRANCH)-pulse.localhost \
+	$(BRANCH)-vota.localhost $(BRANCH)-gearup.localhost $(BRANCH)-fleet.localhost \
+	$(BRANCH)-api.localhost $(BRANCH)-supabase.localhost $(BRANCH)-hasura.localhost \
+	tolgee.localhost portainer.localhost traefik.localhost
+
+# Generate the local mkcert certificate used by Traefik for HTTPS.
+# Idempotent: regenerates the cert cleanly every run. Touches the user's OWN
+# trust store via `mkcert -install` (required for trusted local HTTPS).
+certs:
+	@command -v mkcert >/dev/null 2>&1 || { \
+		echo "mkcert is not installed. Install it, then re-run 'make certs':"; \
+		echo "  macOS:   brew install mkcert nss"; \
+		echo "  Linux:   apt install libnss3-tools && download mkcert from github.com/FiloSottile/mkcert/releases"; \
+		echo "  Windows: choco install mkcert"; \
+		echo "  Then run: mkcert -install"; \
+		exit 1; \
+	}
+	@mkdir -p certs
+	mkcert -install
+	cd certs && mkcert \
+		-cert-file _wildcard.localhost.pem \
+		-key-file _wildcard.localhost-key.pem \
+		"*.localhost" localhost 127.0.0.1 ::1 $(CERT_HOSTS)
+	@echo "Certificates ready in certs/ (_wildcard.localhost.pem) for branch '$(BRANCH)'."
+
 proxy-init:
 	@docker network create pilota-proxy 2>/dev/null || true
 
-proxy-up: proxy-init
+proxy-up: certs proxy-init
 	@echo "Stopping standalone tolgee container if it exists..."
 	-docker stop tolgee 2>/dev/null; docker rm tolgee 2>/dev/null
 	docker compose -p pilota-proxy -f docker-compose.traefik.yml up -d

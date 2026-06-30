@@ -24,5 +24,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.vota-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-vota.localhost`)"
-      - "traefik.http.routers.vota-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.routers.vota-${BRANCH:-dev}.entrypoints=websecure"
+      - "traefik.http.routers.vota-${BRANCH:-dev}.tls=true"
       - "traefik.http.services.vota-${BRANCH:-dev}.loadbalancer.server.port=3002"

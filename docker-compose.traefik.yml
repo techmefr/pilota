@@ -16,23 +16,36 @@ services:
   traefik:
     image: traefik:v3
     ports:
-      - "80:80"
-      - "8090:8080"
+      # Host ports configurable to avoid clashing with another Traefik on :80 / :443
+      - "${PILOTA_HTTP_PORT:-80}:80"
+      - "${PILOTA_HTTPS_PORT:-443}:443"
+      - "${PILOTA_DASHBOARD_PORT:-8090}:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Dynamic file provider: TLS store + mkcert certificate
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./certs:/certs:ro
     command:
       - --api.dashboard=true
       - --api.insecure=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=pilota-proxy
+      # File provider for TLS configuration (watched, hot-reloaded)
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # Redirect all plain HTTP to HTTPS globally
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
     networks:
       - pilota-proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls=true"
       - "traefik.http.routers.traefik.service=api@internal"
     restart: unless-stopped
 
@@ -46,7 +59,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
-      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.tls=true"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
     restart: unless-stopped
 
@@ -66,6 +80,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tolgee.rule=Host(`tolgee.localhost`)"
-      - "traefik.http.routers.tolgee.entrypoints=web"
+      - "traefik.http.routers.tolgee.entrypoints=websecure"
+      - "traefik.http.routers.tolgee.tls=true"
       - "traefik.http.services.tolgee.loadbalancer.server.port=8080"
     restart: unless-stopped

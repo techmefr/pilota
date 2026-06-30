@@ -22,5 +22,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.gearup-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-gearup.localhost`)"
-      - "traefik.http.routers.gearup-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.routers.gearup-${BRANCH:-dev}.entrypoints=websecure"
+      - "traefik.http.routers.gearup-${BRANCH:-dev}.tls=true"
       - "traefik.http.services.gearup-${BRANCH:-dev}.loadbalancer.server.port=3003"

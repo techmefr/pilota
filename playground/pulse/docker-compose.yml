@@ -21,5 +21,6 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pulse-${BRANCH:-dev}.rule=Host(`${BRANCH:-dev}-pulse.localhost`)"
-      - "traefik.http.routers.pulse-${BRANCH:-dev}.entrypoints=web"
+      - "traefik.http.routers.pulse-${BRANCH:-dev}.entrypoints=websecure"
+      - "traefik.http.routers.pulse-${BRANCH:-dev}.tls=true"
       - "traefik.http.services.pulse-${BRANCH:-dev}.loadbalancer.server.port=3001"

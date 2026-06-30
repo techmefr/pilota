@@ -1,0 +1,14 @@
+# TLS configuration loaded by Traefik's file provider.
+# The certificate files are generated locally by `make certs` (mkcert wildcard).
+# If they are missing, Traefik falls back to its own self-signed default
+# certificate and still starts — a missing cert is only a browser warning,
+# never a crash.
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/_wildcard.localhost.pem
+        keyFile: /certs/_wildcard.localhost-key.pem
+  certificates:
+    - certFile: /certs/_wildcard.localhost.pem
+      keyFile: /certs/_wildcard.localhost-key.pem
