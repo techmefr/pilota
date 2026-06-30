@@ -9,7 +9,7 @@ COPY playground/pulse/ playground/pulse/
 
 RUN pnpm install
 
-RUN pnpm --filter "@pilota/*" build
+RUN pnpm --filter "./packages/**" build
 
 WORKDIR /app/playground/pulse
 EXPOSE 3001

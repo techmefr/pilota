@@ -9,7 +9,7 @@ COPY packages/ packages/
 COPY playground/fleet-commander/ playground/fleet-commander/
 
 RUN pnpm install
-RUN pnpm --filter "@pilota/*" build
+RUN pnpm --filter "./packages/**" build
 
 WORKDIR /app/playground/fleet-commander
 EXPOSE 3004

@@ -9,7 +9,7 @@ COPY playground/nuxt/ playground/nuxt/
 
 RUN pnpm install
 
-RUN pnpm --filter "@pilota/*" build
+RUN pnpm --filter "./packages/**" build
 
 WORKDIR /app/playground/nuxt
 EXPOSE 3000

@@ -9,7 +9,7 @@ COPY playground/vota/ playground/vota/
 
 RUN pnpm install
 
-RUN pnpm --filter "@pilota/*" build
+RUN pnpm --filter "./packages/**" build
 
 WORKDIR /app/playground/vota
 EXPOSE 3002

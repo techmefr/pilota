@@ -9,7 +9,7 @@ COPY playground/gearup/ playground/gearup/
 
 RUN pnpm install
 
-RUN pnpm --filter "@pilota/*" build
+RUN pnpm --filter "./packages/**" build
 
 WORKDIR /app/playground/gearup
 EXPOSE 3003
