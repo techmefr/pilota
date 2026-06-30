@@ -1,6 +1,6 @@
 import { ref } from 'vue'
-import { createNotify } from '@pilota/hooks'
-import type { PilotaNotifyAdapter } from '@pilota/hooks'
+import { createNotify } from 'beepr'
+import type { PilotaNotifyAdapter } from 'beepr'
 
 export type { PilotaNotifyAdapter }
 export { createNotify }

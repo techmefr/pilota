@@ -1,4 +1,4 @@
-import { defineResource } from '@pilota/core'
+import { defineResource } from 'nexdk'
 import { z } from 'zod'
 
 export const productResource = defineResource({

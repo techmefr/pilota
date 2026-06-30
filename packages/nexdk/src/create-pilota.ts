@@ -1,7 +1,8 @@
+import type { PilotaEventHandler } from 'beepr'
+import { mergeEventHandlers } from 'beepr'
 import type {
     PilotaConfig,
     PilotaDriver,
-    PilotaEventHandler,
     ResourcesByDriver,
 } from './types.ts'
 import type { TypedPilotaSDK } from './typed-sdk.ts'
@@ -32,18 +33,6 @@ function bindDriverResources(
         if (resource !== undefined) {
             driver.bindResource(resourceName, resource)
         }
-    }
-}
-
-function mergeEventHandlers(
-    global: PilotaEventHandler | undefined,
-    local: PilotaEventHandler | undefined,
-): PilotaEventHandler | undefined {
-    if (global === undefined) return local
-    if (local === undefined) return global
-    return (event, data) => {
-        global(event, data)
-        local(event, data)
     }
 }
 

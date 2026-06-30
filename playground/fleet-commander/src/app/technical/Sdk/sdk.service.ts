@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
-import { createPilota } from '@pilota/core'
+import { createPilota } from 'nexdk'
 import { LomkitDriver } from '@pilota/driver-lomkit'
 import { SupabaseDriver } from '@pilota/driver-supabase'
 import { NhostDriver } from '@pilota/driver-nhost'

@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import { createNotify } from '@pilota/hooks'
+import { createNotify } from 'beepr'
 import { sdk } from '../../technical/sdk'
 import { mockProducts } from '../../technical/sdk/mock'
 import { createSnackAdapter } from './useNotify'

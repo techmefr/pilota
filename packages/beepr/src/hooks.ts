@@ -1,7 +1,5 @@
 import { createHooks } from 'hookable'
-import type { PilotaEvent } from '@pilota/core'
-
-export type { PilotaEvent }
+import type { PilotaEvent } from './types.ts'
 
 export type PilotaHookMap = {
     [K in PilotaEvent]: (data?: unknown) => void

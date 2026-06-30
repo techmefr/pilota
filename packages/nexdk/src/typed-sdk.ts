@@ -10,7 +10,7 @@ import type {
 // parameterized by the resource type `T`. Each driver package augments this
 // interface (declaration merging) with one entry, e.g.:
 //
-//   declare module '@pilota/core' {
+//   declare module 'nexdk' {
 //       interface ResourceApiKinds<T> {
 //           lomkit: LomkitResourceApi<T>
 //       }

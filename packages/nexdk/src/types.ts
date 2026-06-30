@@ -1,4 +1,8 @@
 import type { ZodTypeAny, z } from 'zod'
+import type { PilotaEvent, PilotaEventHandler } from 'beepr'
+
+// The canonical definitions live in beepr; re-exported here for backward-compat.
+export type { PilotaEvent, PilotaEventHandler }
 
 export type AnyResource = Resource<ZodTypeAny>
 
@@ -17,16 +21,6 @@ export interface Resource<TSchema extends ZodTypeAny> {
 }
 
 export type InferSchema<TResource extends AnyResource> = z.infer<TResource['schema']>
-
-export type PilotaEvent =
-    | 'request'
-    | 'success'
-    | 'error'
-    | 'data'
-    | 'connected'
-    | 'disconnected'
-
-export type PilotaEventHandler = (event: PilotaEvent, data?: unknown) => void
 
 export type AsyncMethod<TReturn> = (
     payload?: unknown,

@@ -1,5 +1,5 @@
-import type { PilotaEventHandler } from '@pilota/core'
-import type { PilotaEvent, PilotaHooksInstance } from './hooks.ts'
+import type { PilotaEvent, PilotaEventHandler } from './types.ts'
+import type { PilotaHooksInstance } from './hooks.ts'
 
 export function resolveEventHandler(
     local: PilotaEventHandler | undefined,

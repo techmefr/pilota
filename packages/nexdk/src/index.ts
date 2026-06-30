@@ -1,5 +1,5 @@
 export { createPilota } from './create-pilota.ts'
-export { defineResource, parseMock, parseMockList } from './define-resource.ts'
+export { defineResource } from './define-resource.ts'
 export type {
     AnyResource,
     AsyncMethod,

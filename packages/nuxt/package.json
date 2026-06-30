@@ -15,7 +15,7 @@
         "dev": "unbuild --stub"
     },
     "dependencies": {
-        "@pilota/core": "workspace:*"
+        "nexdk": "workspace:*"
     },
     "peerDependencies": {
         "nuxt": "^3.0.0 || ^4.0.0"

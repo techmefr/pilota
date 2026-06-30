@@ -1,4 +1,4 @@
-import type { PilotaEvent, PilotaEventHandler } from '@pilota/core'
+import type { PilotaEvent, PilotaEventHandler } from './types.ts'
 
 export type PilotaNotifyAdapter = {
     onRequest?: (context: { resource?: string; payload?: unknown }) => void

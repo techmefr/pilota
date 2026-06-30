@@ -1,9 +1,9 @@
-import { createPilota } from '@pilota/core'
+import { createPilota } from 'nexdk'
 import { LomkitDriver } from '@pilota/driver-lomkit'
 import { NhostDriver } from '@pilota/driver-nhost'
 import { SupabaseDriver } from '@pilota/driver-supabase'
-import { createNotify } from '@pilota/hooks'
-import type { PilotaNotifyAdapter } from '@pilota/hooks'
+import { createNotify } from 'beepr'
+import type { PilotaNotifyAdapter } from 'beepr'
 import {
     cartItemResource,
     messageResource,

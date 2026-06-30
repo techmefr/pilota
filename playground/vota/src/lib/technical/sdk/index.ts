@@ -1,4 +1,4 @@
-import { createPilota } from '@pilota/core'
+import { createPilota } from 'nexdk'
 import { NhostDriver } from '@pilota/driver-nhost'
 import { sessionResource, taskResource, participantResource, voteResource } from './resources.ts'
 

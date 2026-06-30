@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
-import { createPilotaHooks } from '@pilota/hooks'
-import type { PilotaEvent } from '@pilota/hooks'
+import { createPilotaHooks } from 'beepr'
+import type { PilotaEvent } from 'beepr'
 
 @Injectable({ providedIn: 'root' })
 export class HooksService {

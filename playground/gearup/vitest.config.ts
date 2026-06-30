@@ -4,7 +4,9 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
     resolve: {
         alias: {
-            '@pilota/core': resolve(__dirname, '../../packages/core/src/index.ts'),
+            nexdk: resolve(__dirname, '../../packages/nexdk/src/index.ts'),
+            beepr: resolve(__dirname, '../../packages/beepr/src/index.ts'),
+            chaff: resolve(__dirname, '../../packages/chaff/src/index.ts'),
             '@pilota/driver-lomkit': resolve(__dirname, '../../packages/drivers/lomkit/src/index.ts'),
         },
     },

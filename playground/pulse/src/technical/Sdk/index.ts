@@ -1,4 +1,4 @@
-import { createPilota } from '@pilota/core'
+import { createPilota } from 'nexdk'
 import { LomkitDriver } from '@pilota/driver-lomkit'
 import {
     productResource, projectResource, objectiveResource,

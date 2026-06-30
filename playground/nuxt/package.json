@@ -13,7 +13,8 @@
         "@playwright/test": "^1.49.0"
     },
     "dependencies": {
-        "@pilota/core": "workspace:*",
+        "beepr": "workspace:*",
+        "nexdk": "workspace:*",
         "@pilota/driver-lomkit": "workspace:*",
         "@pilota/driver-nhost": "workspace:*",
         "@pilota/driver-supabase": "workspace:*",

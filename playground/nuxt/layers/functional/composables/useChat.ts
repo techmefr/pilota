@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { PilotaEventHandler } from '@pilota/core'
+import type { PilotaEventHandler } from 'beepr'
 import { sdk } from '../../technical/sdk'
 import type { Message } from '../../technical/sdk/resources'
 
