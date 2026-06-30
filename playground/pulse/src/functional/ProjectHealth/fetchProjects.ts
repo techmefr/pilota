@@ -6,7 +6,7 @@ export type { Project }
 
 export async function fetchProjects(): Promise<Project[]> {
     try {
-        const result = await (sdk as any).lomkit.projects.get()
+        const result = await sdk.lomkit.projects.get()
         return result.data ?? mockProjects
     } catch {
         return mockProjects

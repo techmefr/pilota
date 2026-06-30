@@ -6,7 +6,7 @@ export type { Revenue, Contract }
 
 export async function fetchRevenue(): Promise<Revenue> {
     try {
-        const result = await (sdk as any).lomkit.revenue.get()
+        const result = await sdk.lomkit.revenue.get()
         return result.data?.[0] ?? mockRevenue
     } catch {
         return mockRevenue
@@ -15,7 +15,7 @@ export async function fetchRevenue(): Promise<Revenue> {
 
 export async function fetchContracts(): Promise<Contract[]> {
     try {
-        const result = await (sdk as any).lomkit.contracts.get()
+        const result = await sdk.lomkit.contracts.get()
         return result.data ?? mockContracts
     } catch {
         return mockContracts

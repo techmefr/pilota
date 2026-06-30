@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
 import { createPilota } from '@pilota/core'
-import type { PilotaEventHandler } from '@pilota/core'
 import { LomkitDriver } from '@pilota/driver-lomkit'
-import type { LomkitGetResult } from '@pilota/driver-lomkit'
 import { SupabaseDriver } from '@pilota/driver-supabase'
 import { NhostDriver } from '@pilota/driver-nhost'
 import {
@@ -37,87 +35,67 @@ declare global {
     }
 }
 
-type PcProfilesApi = {
-    get: (payload?: object, onEvent?: PilotaEventHandler, mock?: PcProfile) => Promise<LomkitGetResult<PcProfile>>
-}
-
-type AssignmentsApi = {
-    get: (payload?: object, onEvent?: PilotaEventHandler, mock?: Assignment) => Promise<LomkitGetResult<Assignment>>
-}
-
-type OrdersApi = {
-    get: (payload?: object, onEvent?: PilotaEventHandler, mock?: Order) => Promise<LomkitGetResult<Order>>
-}
-
-type AlertsApi = {
-    get: (payload?: object, onEvent?: PilotaEventHandler, mock?: Alert) => Promise<LomkitGetResult<Alert>>
-}
-
-type RepairsApi = {
-    get: (payload?: object, onEvent?: PilotaEventHandler, mock?: Repair) => Promise<LomkitGetResult<Repair>>
-}
-
-type FleetLomkit = LomkitDriver & {
-    pcProfiles: PcProfilesApi
-    assignments: AssignmentsApi
-    orders: OrdersApi
-    alerts: AlertsApi
-    repairs: RepairsApi
-}
-
 @Injectable({ providedIn: 'root' })
 export class SdkService {
-    private readonly sdk: ReturnType<typeof createPilota> & { lomkit: FleetLomkit }
+    private readonly sdk: ReturnType<SdkService['createSdk']>
     private readonly supabase: SupabaseDriver
 
     constructor() {
         const env = window.__fleet_env
-
-        const lomkit = new LomkitDriver({ baseUrl: env?.laravelApiUrl ?? '' })
-        lomkit.bindResource('pcProfiles', pcProfileResource)
-        lomkit.bindResource('assignments', assignmentResource)
-        lomkit.bindResource('orders', orderResource)
-        lomkit.bindResource('alerts', alertResource)
-        lomkit.bindResource('repairs', repairResource)
 
         this.supabase = new SupabaseDriver({
             url: env?.supabaseUrl ?? 'http://localhost:54321',
             key: env?.supabaseAnonKey ?? 'pilota',
         })
 
-        const _nhost = new NhostDriver({ endpoint: env?.nhostEndpoint ?? '' })
+        this.sdk = this.createSdk(env)
+    }
 
-        const pilota = createPilota({ drivers: { lomkit, supabase: this.supabase, nhost: _nhost } })
-        this.sdk = pilota as typeof pilota & { lomkit: FleetLomkit }
+    private createSdk(env: Window['__fleet_env']) {
+        const lomkit = new LomkitDriver({ baseUrl: env?.laravelApiUrl ?? '' })
+        const nhost = new NhostDriver({ endpoint: env?.nhostEndpoint ?? '' })
+
+        return createPilota({
+            drivers: { lomkit, supabase: this.supabase, nhost },
+            resources: {
+                lomkit: {
+                    pcProfiles: pcProfileResource,
+                    assignments: assignmentResource,
+                    orders: orderResource,
+                    alerts: alertResource,
+                    repairs: repairResource,
+                },
+            },
+        })
     }
 
     assignments$(filters?: Record<string, unknown>): Observable<Assignment[]> {
         return fromLomkit<Assignment>(
-            this.sdk.lomkit.assignments.get(filters ?? {}, undefined, mockAssignments[0]),
+            this.sdk.lomkit.assignments.get(filters ?? {}, undefined, mockAssignments),
         )
     }
 
     pcProfiles$(): Observable<PcProfile[]> {
         return fromLomkit<PcProfile>(
-            this.sdk.lomkit.pcProfiles.get({}, undefined, mockPcProfiles[0]),
+            this.sdk.lomkit.pcProfiles.get({}, undefined, mockPcProfiles),
         )
     }
 
     orders$(): Observable<Order[]> {
         return fromLomkit<Order>(
-            this.sdk.lomkit.orders.get({}, undefined, mockOrders[0]),
+            this.sdk.lomkit.orders.get({}, undefined, mockOrders),
         )
     }
 
     alerts$(): Observable<Alert[]> {
         return fromLomkit<Alert>(
-            this.sdk.lomkit.alerts.get({}, undefined, mockAlerts[0]),
+            this.sdk.lomkit.alerts.get({}, undefined, mockAlerts),
         )
     }
 
     repairs$(): Observable<Repair[]> {
         return fromLomkit<Repair>(
-            this.sdk.lomkit.repairs.get({}, undefined, mockRepairs[0]),
+            this.sdk.lomkit.repairs.get({}, undefined, mockRepairs),
         )
     }
 

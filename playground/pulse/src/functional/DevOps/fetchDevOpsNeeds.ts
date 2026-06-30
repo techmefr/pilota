@@ -6,7 +6,7 @@ export type { DevOpsNeed }
 
 export async function fetchDevOpsNeeds(): Promise<DevOpsNeed[]> {
     try {
-        const result = await (sdk as any).lomkit.devops_needs.get()
+        const result = await sdk.lomkit.devops_needs.get()
         return result.data ?? mockDevOpsNeeds
     } catch {
         return mockDevOpsNeeds

@@ -135,7 +135,7 @@ sdk.[driver].[resource].[method](payload?, notify?, mock?)
 |-----------|------|------|
 | `payload` | `object` | Données à envoyer : filtre de recherche, objet à créer, etc. |
 | `notify` | `PilotaEventHandler` | Callback d'événements — construit avec `createNotify(adapter)` |
-| `mock` | `unknown` | Données de remplacement — court-circuite l'appel réseau si fourni |
+| `mock` | `T \| T[]` | Données de remplacement — court-circuite l'appel réseau si fourni. Un objet seul renvoie une liste à un élément, un tableau renvoie tous ses éléments |
 
 ```ts
 // payload + notify + mock (pas d'appel réseau, données injectées)
@@ -320,6 +320,53 @@ sdk.nhost.planning_votes.upsert({
 
 ---
 
+## Sécurité — secrets serveur
+
+Le `x-hasura-admin-secret` **contourne TOUTES les permissions Hasura** : c'est un
+bypass complet de la couche de données. Il ne doit **jamais** être joignable
+depuis un bundle client. Toute variable préfixée `VITE_` / `PUBLIC_` /
+`NEXT_PUBLIC_` est **inlinée dans le bundle navigateur** — donc aucun secret
+admin ne porte un de ces préfixes.
+
+Deux patterns selon le transport :
+
+**HTTP (queries / mutations) — proxy serveur.** Le driver Nhost côté navigateur
+pointe sur une route same-origin et est construit **sans `adminSecret`**.
+
+- **Shoplab (Nuxt, vaisseau amiral)** : route Nitro `server/api/graphql.post.ts`.
+  Elle lit `NHOST_ADMIN_SECRET` (server-only, via `useRuntimeConfig()` /
+  `process.env`) et forwarde la requête vers le vrai endpoint Hasura en
+  injectant l'en-tête `x-hasura-admin-secret` côté serveur. Le client appelle
+  `/api/graphql` ; le secret ne vit que sur le serveur.
+
+  ```ts
+  // layers/technical/sdk/index.ts — aucun secret côté client
+  const nhost = new NhostDriver({ endpoint: '/api/graphql' })
+  ```
+
+- **Vota (SvelteKit)** : les `+page.server.ts` s'exécutent côté serveur, ils
+  lisent `NHOST_ADMIN_SECRET` (jamais `PUBLIC_*`) et le passent à
+  `createVotaPilota(ENDPOINT, ADMIN_SECRET)`.
+
+**WebSocket (subscriptions temps-réel) — rôle anonyme.** Les subscriptions
+tournent **dans le navigateur** et ne peuvent pas porter le secret admin. Le
+driver realtime client est donc construit **sans secret**. Les tables concernées
+(`planning_*` côté Vota) doivent exposer un rôle Hasura **`anonymous`** (ici le
+`HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public` du backend nhost) avec les permissions
+`select` — et, pour Vota, les permissions `insert`/`update` nécessaires aux votes
+et à l'ajout de tâches. **Le secret est intentionnellement absent du client.**
+
+> ⚠️ Étape de setup connue : tant que le rôle anonyme/public n'est pas configuré
+> avec les bonnes permissions row-level sur les tables `planning_*`, le temps réel
+> de Vota (et toute mutation client-side) restera bloqué côté Hasura. C'est le
+> compromis correct — on ne réintroduit pas le secret pour débloquer le dev.
+
+Variables d'env : voir `.env.example` de chaque playground, séparé en blocs
+**SERVER-ONLY** (`NHOST_ADMIN_SECRET`, `NHOST_ENDPOINT`/`NHOST_GRAPHQL_URL`) et
+**CLIENT-PUBLIC** (`VITE_*` / `PUBLIC_*` — jamais de secret).
+
+---
+
 ## Playground Gearup — Configurateur HP XEFI (Astro 5 + React)
 
 Configurateur de postes HP par profil (dev, CDP, commercial, technicien…) pour le cycle d'achat XEFI 2024–2027. Remplace le PDF/Excel partagé.
@@ -409,6 +456,8 @@ export async function fetchRepairs(): Promise<Repair[]> {
 }
 ```
 
+Toutes les méthodes des drivers appliquent le même contrat d'erreur : en cas d'échec (réseau, HTTP non-2xx, validation 422) elles émettent l'événement `'error'` puis **lèvent** une exception. Le `catch` du fallback se déclenche donc aussi bien sur une erreur HTTP que sur une coupure réseau.
+
 ---
 
 ## Playground Pulse — Dashboard hebdomadaire équipe (Next.js 15)
@@ -482,16 +531,26 @@ La taille de police cible `html.style.fontSize` — tous les `rem` du CSS s'adap
 
 ## Ce qu'on a appris (problèmes rencontrés et solutions)
 
-### 1. `noUncheckedIndexedAccess` — index signature Nuxt
+### 1. `noUncheckedIndexedAccess` — SDK typé de bout en bout
 
-**Problème** : Nuxt active `noUncheckedIndexedAccess`. Le SDK est typé comme `Record<string, DriverProxy>`, donc `sdk.nhost` retourne `DriverProxy | undefined`.
+**Historique** : le SDK était typé comme `Record<string, ResourceProxy>`. Sous `noUncheckedIndexedAccess` (activé par Nuxt), `sdk.nhost.products` retournait `… | undefined`, ce qui imposait des doubles casts `as unknown as { products: ProductsApi }` et une interface `XxxApi` réécrite à la main dans chaque app.
 
-**Solution** : Pattern d'accesseur typé explicite avec double cast :
+**Solution** : on déclare les ressources une seule fois à la construction, et `createPilota` les lie et les type :
 
 ```ts
-type ProductsApi = { query: (p: object) => Promise<NhostQueryResult<{ products: Product[] }>> }
-const productsApi = (sdk.nhost as unknown as { products: ProductsApi }).products
+export const sdk = createPilota({
+    drivers: { nhost, lomkit, supabase },
+    resources: {
+        nhost: { products: productResource },
+        lomkit: { cartItems: cartItemResource, shopOrders: shopOrderResource },
+        supabase: { messages: messageResource },
+    },
+})
 ```
+
+`sdk.nhost.products.query()` est alors typé automatiquement (méthodes du driver paramétrées par `z.infer<schema>`), sans interface `XxxApi` ni `as unknown as`. Le typage repose sur des mapped types sur les clés de ressources connues — donc robuste sous `noUncheckedIndexedAccess`. Quand la forme de retour diffère du type ressource (liste GraphQL `{ products: Product[] }`), on passe l'override au point d'appel : `sdk.nhost.products.query<{ products: Product[] }>({})`.
+
+Chaque driver publie son interface d'API par ressource (`LomkitResourceApi<T>`, `NhostResourceApi<T>`, `SupabaseResourceApi<T>`) et l'enregistre dans le registre `ResourceApiKinds<T>` de `@pilota/core` via une augmentation de module.
 
 ### 2. `ZodObject<T>` est invariant sur T
 

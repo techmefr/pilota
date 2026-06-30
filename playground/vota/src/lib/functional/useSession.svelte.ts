@@ -15,6 +15,11 @@ interface SessionData {
 }
 
 export function useSession(data: SessionData) {
+    // Browser-side SDK: realtime WS subscriptions + live mutations (vote, add
+    // task...) run here. NO admin secret is passed — it must never reach the
+    // client. These planning_* tables therefore require a Hasura `anonymous`
+    // (public/unauthorized) role with select + the needed insert/update
+    // permissions. See README "Sécurité — secrets serveur".
     const endpoint = env.PUBLIC_NHOST_GRAPHQL_URL ?? 'http://localhost:8080/v1/graphql'
     const sdk = createVotaPilota(endpoint)
     let unsubscribers: Array<() => void> = []

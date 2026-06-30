@@ -6,7 +6,7 @@ export type { Delivery }
 
 export async function fetchDeliveries(): Promise<Delivery[]> {
     try {
-        const result = await (sdk as any).lomkit.deliveries.get()
+        const result = await sdk.lomkit.deliveries.get()
         return result.data ?? mockDeliveries
     } catch {
         return mockDeliveries

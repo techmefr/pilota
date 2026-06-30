@@ -6,7 +6,7 @@ export type { WeekInfo }
 
 export async function fetchWeekInfo(): Promise<WeekInfo[]> {
     try {
-        const result = await (sdk as any).lomkit.week_info.get()
+        const result = await sdk.lomkit.week_info.get()
         return result.data ?? mockWeekInfos
     } catch {
         return mockWeekInfos

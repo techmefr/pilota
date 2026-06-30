@@ -16,7 +16,7 @@ export function useProducts() {
         isLoading.value = true
         error.value = null
         try {
-            const result = await sdk.nhost.products.query(
+            const result = await sdk.nhost.products.query<{ products: Product[] }>(
                 {},
                 createNotify(createSnackAdapter({
                     success: 'Catalogue chargé',

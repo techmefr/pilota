@@ -1,17 +1,38 @@
-import type { PilotaConfig, PilotaDriver, PilotaEventHandler, PilotaSDK } from './types.ts'
+import type {
+    PilotaConfig,
+    PilotaDriver,
+    PilotaEventHandler,
+    ResourcesByDriver,
+} from './types.ts'
+import type { TypedPilotaSDK } from './typed-sdk.ts'
 
-export function createPilota<TDrivers extends Record<string, PilotaDriver>>(
-    config: PilotaConfig<TDrivers>,
-): PilotaSDK<TDrivers> {
-    const sdk = {} as PilotaSDK<TDrivers>
+export function createPilota<
+    TDrivers extends Record<string, PilotaDriver>,
+    TResources extends ResourcesByDriver<TDrivers> = Record<never, never>,
+>(config: PilotaConfig<TDrivers, TResources>): TypedPilotaSDK<TDrivers, TResources> {
+    const sdk = {} as Record<string, unknown>
     const globalHandler = config.notify
 
     for (const key in config.drivers) {
         const driver = config.drivers[key]
-        sdk[key] = createDriverProxy(driver, globalHandler) as PilotaSDK<TDrivers>[typeof key]
+        bindDriverResources(driver, config.resources?.[key])
+        sdk[key] = createDriverProxy(driver, globalHandler)
     }
 
-    return sdk
+    return sdk as TypedPilotaSDK<TDrivers, TResources>
+}
+
+function bindDriverResources(
+    driver: PilotaDriver,
+    resources: ResourcesByDriver<Record<string, PilotaDriver>>[string] | undefined,
+): void {
+    if (resources === undefined) return
+    for (const resourceName in resources) {
+        const resource = resources[resourceName]
+        if (resource !== undefined) {
+            driver.bindResource(resourceName, resource)
+        }
+    }
 }
 
 function mergeEventHandlers(

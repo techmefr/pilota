@@ -76,6 +76,12 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
+        // Server-only — NEVER exposed to the client bundle. Sourced from
+        // NUXT_NHOST_ENDPOINT / NUXT_NHOST_ADMIN_SECRET (or NHOST_* via the
+        // proxy fallback). The admin secret is injected server-side only, by
+        // the `/api/graphql` Nitro route.
+        nhostEndpoint: '',
+        nhostAdminSecret: '',
         public: {
             tolgeeApiUrl: '',
             tolgeeApiKey: '',

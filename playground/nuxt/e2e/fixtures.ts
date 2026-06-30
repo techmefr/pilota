@@ -12,7 +12,9 @@ export const MOCK_CART_ITEMS = [
     { id: 2, product_id: 3, product_name: 'AirPods Pro 2', unit_price: 279, quantity: 2 },
 ]
 
-export const NHOST_GRAPHQL_URL = '**/v1/graphql'
+// The browser-side Nhost driver now POSTs to the same-origin Nitro proxy
+// (`/api/graphql`), not directly to Hasura. e2e routes intercept that URL.
+export const NHOST_GRAPHQL_URL = '**/api/graphql'
 export const LOMKIT_SEARCH_URL = '**/api/cartItems/search'
 export const LOMKIT_MUTATE_URL = '**/api/cartItems/mutate'
 export const LOMKIT_DELETE_URL = '**/api/cartItems'

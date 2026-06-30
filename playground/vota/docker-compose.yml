@@ -9,7 +9,11 @@ services:
       context: ../..
       dockerfile: playground/vota/Dockerfile
     environment:
+      # Server-only — consumed in +page.server.ts, never shipped to the client.
       NHOST_GRAPHQL_URL: http://nhost_hasura:8080/v1/graphql
+      NHOST_ADMIN_SECRET: ${NHOST_ADMIN_SECRET:-}
+      # Client-public — browser-side realtime WS connects with NO admin secret
+      # (requires a Hasura anonymous/public role on the planning_* tables).
       PUBLIC_NHOST_GRAPHQL_URL: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
       PUBLIC_SENTRY_DSN: ${PUBLIC_SENTRY_DSN:-}
       VITE_TOLGEE_API_URL: http://tolgee.localhost

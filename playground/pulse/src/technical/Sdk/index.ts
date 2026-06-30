@@ -10,18 +10,23 @@ const lomkit = new LomkitDriver({
     baseUrl: process.env.LARAVEL_API_URL ?? 'http://localhost:8000/api',
 })
 
-lomkit.bindResource('products', productResource)
-lomkit.bindResource('projects', projectResource)
-lomkit.bindResource('objectives', objectiveResource)
-lomkit.bindResource('deliveries', deliveryResource)
-lomkit.bindResource('missions', missionResource)
-lomkit.bindResource('absences', absenceResource)
-lomkit.bindResource('devops_needs', devopsNeedResource)
-lomkit.bindResource('week_info', weekInfoResource)
-lomkit.bindResource('revenue', revenueResource)
-lomkit.bindResource('contracts', contractResource)
-
-export const sdk = createPilota({ drivers: { lomkit } })
+export const sdk = createPilota({
+    drivers: { lomkit },
+    resources: {
+        lomkit: {
+            products: productResource,
+            projects: projectResource,
+            objectives: objectiveResource,
+            deliveries: deliveryResource,
+            missions: missionResource,
+            absences: absenceResource,
+            devops_needs: devopsNeedResource,
+            week_info: weekInfoResource,
+            revenue: revenueResource,
+            contracts: contractResource,
+        },
+    },
+})
 
 export type {
     Product, Project, Objective, Delivery, Mission,

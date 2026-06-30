@@ -13,8 +13,10 @@ services:
       NUXT_PUBLIC_TOLGEE_API_KEY: ${NUXT_PUBLIC_TOLGEE_API_KEY:-}
       NUXT_PUBLIC_SENTRY_DSN: ${NUXT_PUBLIC_SENTRY_DSN:-}
       VITE_LOMKIT_BASE_URL: http://${BRANCH:-dev}-api.localhost/api
-      VITE_NHOST_ENDPOINT: http://${BRANCH:-dev}-hasura.localhost/v1/graphql
       VITE_SUPABASE_URL: http://${BRANCH:-dev}-supabase.localhost
+      # Server-only — consumed by the /api/graphql Nitro proxy, never shipped to the client.
+      NHOST_ENDPOINT: http://nhost_hasura:8080/v1/graphql
+      NHOST_ADMIN_SECRET: ${NHOST_ADMIN_SECRET:-}
     networks:
       - default
       - pilota-proxy

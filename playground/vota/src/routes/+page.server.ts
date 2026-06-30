@@ -5,7 +5,10 @@ import { createVotaPilota } from '$lib/technical/sdk/index.ts'
 import type { NhostResult } from '$lib/technical/sdk/index.ts'
 import type { Session } from '$lib/technical/types'
 
+// Both vars are SERVER-ONLY (no PUBLIC_ prefix) — this module only runs on the
+// server, so the admin secret never reaches the browser.
 const ENDPOINT = process.env.NHOST_GRAPHQL_URL ?? 'http://host.docker.internal:8080/v1/graphql'
+const ADMIN_SECRET = process.env.NHOST_ADMIN_SECRET
 
 const createSessionSchema = z.object({
     name: z.string().min(1, 'Prénom requis').max(50),
@@ -45,7 +48,7 @@ export const actions: Actions = {
         }
 
         const { name, session_name, project, scale, custom_scale } = parsed.data
-        const sdk = createVotaPilota(ENDPOINT, 'pilota-admin-secret')
+        const sdk = createVotaPilota(ENDPOINT, ADMIN_SECRET)
         const code = generateCode()
 
         const result = await (sdk.nhost.planning_sessions.mutation({
@@ -81,10 +84,10 @@ export const actions: Actions = {
         }
 
         const { name, code } = parsed.data
-        const sdk = createVotaPilota(ENDPOINT, 'pilota-admin-secret')
-        const result = await (sdk.nhost.planning_sessions.query({
+        const sdk = createVotaPilota(ENDPOINT, ADMIN_SECRET)
+        const result = await sdk.nhost.planning_sessions.query<{ planning_sessions: Session[] }>({
             where: { code: { _eq: code } },
-        }) as Promise<NhostResult<{ planning_sessions: Session[] }>>)
+        })
 
         const sessions = result.data?.planning_sessions ?? []
         if (sessions.length === 0) return fail(404, { error: `Session "${code}" introuvable` })

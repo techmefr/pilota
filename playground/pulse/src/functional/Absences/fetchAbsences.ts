@@ -6,7 +6,7 @@ export type { Absence }
 
 export async function fetchAbsences(): Promise<Absence[]> {
     try {
-        const result = await (sdk as any).lomkit.absences.get()
+        const result = await sdk.lomkit.absences.get()
         return result.data ?? mockAbsences
     } catch {
         return mockAbsences
