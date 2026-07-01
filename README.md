@@ -38,7 +38,11 @@ Pilota is split into composable, UnJS-style building blocks — each usable on i
 | `@pilota/driver-nest` | Conventional REST CRUD driver (common NestJS controller shape) | `nexdk`, `beepr` |
 | `@pilota/hooks` | `useResourceForm` (Vue forms + Zod validation) | `nexdk`, `vue` |
 
-Acyclic graph: `beepr` and `chaff` depend on nothing else in the repo; `nexdk` consumes `beepr`'s event contract; the drivers plug in on top.
+**Independence is the rule.** The core tools (`nexdk`, `beepr`, `chaff`) depend on
+nothing else in the repo — `nexdk` has **zero** runtime dependencies (`zod` is a
+peer). Extensions (drivers, hooks) **peer-depend on `nexdk` only** — you bring the
+SDK, they don't bundle it, like an ESLint/Vite plugin. Each package builds, tests
+and ships on its own. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
@@ -169,6 +173,12 @@ pnpm --filter "./packages/**" test      # Vitest (nexdk, beepr, chaff, drivers, 
 | Tests | Vitest + Playwright |
 
 ---
+
+## Contributing
+
+New drivers welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and
+[docs/writing-a-driver.md](docs/writing-a-driver.md). The one rule: keep every
+package independent (core depends on nothing; drivers peer-depend on `nexdk`).
 
 ## License
 
