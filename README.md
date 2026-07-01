@@ -1,62 +1,62 @@
 # Pilota
 
-**Un SDK frontend qui parle à n'importe quel backend — REST, GraphQL ou WebSocket — avec la même grammaire.** Le code métier déclare des ressources ; le protocole derrière (Laravel/Lomkit, Hasura, Supabase Realtime…) devient un détail interchangeable.
+**A frontend SDK that talks to any backend — REST, GraphQL or WebSocket — through one grammar.** Business code declares resources; the protocol behind them (Laravel/Lomkit, Hasura, Supabase Realtime…) becomes an interchangeable detail.
 
 ```ts
-sdk.nhost.products.query({})              // GraphQL  → catalogue
-sdk.lomkit.cartItems.get({})              // REST     → panier
-sdk.supabase.messages.subscribe(handler)  // WebSocket → chat temps réel
+sdk.nhost.products.query({})              // GraphQL   → catalogue
+sdk.lomkit.cartItems.get({})              // REST      → cart
+sdk.supabase.messages.subscribe(handler)  // WebSocket → realtime chat
 ```
 
-Le frontend ne sait pas ce qu'il y a derrière, et s'en fiche. Changer de backend ne touche pas la couche métier.
+The frontend doesn't know — and doesn't care — what's behind a resource. Swapping the backend never touches the business layer.
 
 ---
 
-## Pourquoi
+## Why
 
-La plupart des abstractions d'accès aux données sont liées à un protocole (un client REST, un client GraphQL…) ou à un framework. Pilota sépare deux choses :
+Most data-access abstractions are tied to a protocol (a REST client, a GraphQL client…) or to a framework. Pilota separates two things:
 
-- **la grammaire d'appel** (`resource.method`), uniforme quel que soit le backend ;
-- **le driver**, qui sait traduire cette grammaire vers un protocole concret.
+- **the call grammar** (`resource.method`), uniform across every backend;
+- **the driver**, which knows how to translate that grammar to a concrete protocol.
 
-Résultat : une appli multi-backend (catalogue en GraphQL, transactions en REST, présence en temps réel) s'écrit avec une seule API, validée par des schémas Zod, sur n'importe quel framework front.
-
----
-
-## Les paquets
-
-Pilota est découpé en briques composables, à la UnJS — chacune s'utilise seule.
-
-| Paquet | Rôle | Dépendances |
-|--------|------|-------------|
-| [`nexdk`](packages/nexdk) | Le SDK : `createPilota`, `defineResource`, proxy + types inférés de bout en bout | `beepr`, `zod` |
-| [`beepr`](packages/beepr) | Moteur d'événements : `createNotify`, adapters, `mergeEventHandlers` | `hookable` |
-| [`chaff`](packages/chaff) | Mock piloté par schéma : `parseMock`/`parseMockList`, serveur MirageJS optionnel | `zod` (peer) |
-| `@pilota/driver-lomkit` | Driver REST (Laravel + Lomkit : `search`/`mutate`/`delete`) | `nexdk`, `beepr`, `chaff` |
-| `@pilota/driver-nhost` | Driver GraphQL + subscriptions (Hasura, graphql-transport-ws) | `nexdk`, `beepr` |
-| `@pilota/driver-supabase` | Driver Realtime (`postgres_changes`) | `nexdk`, `beepr` |
-| `@pilota/hooks` | `useResourceForm` (formulaires Vue + validation Zod) | `nexdk`, `vue` |
-
-Graphe acyclique : `beepr` et `chaff` ne dépendent de rien d'autre du repo ; `nexdk` consomme le contrat d'événement de `beepr` ; les drivers se branchent au-dessus.
+The result: a multi-backend app (catalogue over GraphQL, transactions over REST, presence in real time) is written with a single API, validated by Zod schemas, on any frontend framework.
 
 ---
 
-## La signature d'un appel
+## Packages
+
+Pilota is split into composable, UnJS-style building blocks — each usable on its own.
+
+| Package | Role | Depends on |
+|---------|------|------------|
+| [`nexdk`](packages/nexdk) | The SDK: `createPilota`, `defineResource`, proxy + end-to-end inferred types | `beepr`, `zod` |
+| [`beepr`](packages/beepr) | Event engine: `createNotify`, adapters, `mergeEventHandlers` | `hookable` |
+| [`chaff`](packages/chaff) | Schema-driven mock: `parseMock`/`parseMockList`, optional MirageJS server | `zod` (peer) |
+| `@pilota/driver-lomkit` | REST driver (Laravel + Lomkit: `search`/`mutate`/`delete`) | `nexdk`, `beepr`, `chaff` |
+| `@pilota/driver-nhost` | GraphQL + subscriptions driver (Hasura, graphql-transport-ws) | `nexdk`, `beepr` |
+| `@pilota/driver-supabase` | Realtime driver (`postgres_changes`) | `nexdk`, `beepr` |
+| `@pilota/hooks` | `useResourceForm` (Vue forms + Zod validation) | `nexdk`, `vue` |
+
+Acyclic graph: `beepr` and `chaff` depend on nothing else in the repo; `nexdk` consumes `beepr`'s event contract; the drivers plug in on top.
+
+---
+
+## Anatomy of a call
 
 ```
 sdk.[driver].[resource].[method](payload?, notify?, mock?)
                                     │        │       │
-                                 données  events   mock réseau
-                                 / filtre  (beepr)  (chaff)
+                                  data    events   network mock
+                                 / filter  (beepr)  (chaff)
 ```
 
-| Paramètre | Type | Rôle |
+| Parameter | Type | Role |
 |-----------|------|------|
-| `payload` | `object` | Filtre de recherche, objet à créer… |
-| `notify`  | `PilotaEventHandler` | Callback d'événements — construite via `createNotify(adapter)` |
-| `mock`    | `T \| T[]` | Données de remplacement — court-circuite le réseau, validées par le schéma |
+| `payload` | `object` | Search filter, object to create… |
+| `notify`  | `PilotaEventHandler` | Event callback — built with `createNotify(adapter)` |
+| `mock`    | `T \| T[]` | Replacement data — short-circuits the network, validated by the schema |
 
-Événements émis : `request · success · error · data · connected · disconnected`.
+Events emitted: `request · success · error · data · connected · disconnected`.
 
 ```ts
 import { createPilota, defineResource } from 'nexdk'
@@ -76,83 +76,83 @@ export const sdk = createPilota({
 
 ---
 
-## Architecture OSDD
+## OSDD layout
 
-Tous les playgrounds suivent la même séparation, sans dossier fourre-tout :
+Every playground follows the same split — no catch-all folder:
 
 ```
 src/
-├── technical/   ← infrastructure partagée, agnostique du métier (SDK, Layout, i18n, styles)
-└── functional/  ← logique métier, propre à l'app — dépend de technical/, jamais l'inverse
+├── technical/   ← shared infrastructure, business-agnostic (SDK, Layout, i18n, styles)
+└── functional/  ← business logic, app-specific — depends on technical/, never the reverse
 ```
 
 ---
 
-## Les playgrounds
+## Playgrounds
 
-Cinq frontends indépendants consomment le même SDK, sur cinq stacks différentes — la preuve de portabilité.
+Five independent frontends consume the same SDK on five different stacks — the portability proof.
 
-| App | Port | Stack | Valide |
-|-----|------|-------|--------|
-| **Shoplab** | 3010 | Nuxt 4, Vuetify | Les 3 drivers simultanément (REST + GraphQL + WS) |
-| **Pulse** | 3001 | Next.js 15, App Router | Dashboard hebdo, Lomkit |
-| **Vota** | 3002 | SvelteKit, Svelte 5 runes | Planning poker temps réel (Nhost WS) |
-| **Gearup** | 3003 | Astro 5, React islands | Configurateur, OSDD complet, fallback mock |
-| **Fleet Commander** | 3004 | Angular 19, RxJS | Adapter RxJS au-dessus du SDK |
+| App | Port | Stack | Validates |
+|-----|------|-------|-----------|
+| **Shoplab** | 3010 | Nuxt 4, Vuetify | All 3 drivers at once (REST + GraphQL + WS) |
+| **Pulse** | 3001 | Next.js 15, App Router | Weekly dashboard, Lomkit |
+| **Vota** | 3002 | SvelteKit, Svelte 5 runes | Real-time planning poker (Nhost WS) |
+| **Gearup** | 3003 | Astro 5, React islands | Configurator, full OSDD, mock fallback |
+| **Fleet Commander** | 3004 | Angular 19, RxJS | RxJS adapter on top of the SDK |
 
-Hub de navigation + backends (Laravel/Lomkit, Hasura, Supabase) complètent la stack.
+A navigation hub plus the backends (Laravel/Lomkit, Hasura, Supabase) round out the stack.
 
 ---
 
-## Démarrage
+## Getting started
 
-**Prérequis** : Docker, et [`mkcert`](https://github.com/FiloSottile/mkcert) (`mkcert -install` une fois) pour le HTTPS local de confiance.
+**Prerequisites**: Docker, and [`mkcert`](https://github.com/FiloSottile/mkcert) (`mkcert -install` once) for trusted local HTTPS.
 
 ```bash
-make certs      # génère le certificat *.localhost (mkcert)
-make proxy-up   # Traefik + Tolgee (une fois par machine)
+make certs      # generate the *.localhost certificate (mkcert)
+make proxy-up   # Traefik + Tolgee (once per machine)
 make up         # backends + frontends + hub
 ```
 
-Accès par URL, en HTTPS : `https://<branche>-shoplab.localhost`, `…-vota.localhost`, etc.
+URL-based access, over HTTPS: `https://<branch>-shoplab.localhost`, `…-vota.localhost`, etc.
 
-**Ports configurables** — si 80/443 sont déjà pris sur ta machine (autre proxy), surcharge sans rien casser :
+**Configurable ports** — if 80/443 are already taken on your machine (another proxy), override without breaking anything:
 
 ```bash
 PILOTA_HTTP_PORT=8081 PILOTA_HTTPS_PORT=8443 make up
-# → https://<branche>-shoplab.localhost:8443
+# → https://<branch>-shoplab.localhost:8443
 ```
 
-Sur une machine où 80/443 sont libres, les URL sont sans port. Voir `.env.example`.
+On a machine where 80/443 are free, URLs carry no port. See `.env.example`.
 
 ---
 
-## Développement
+## Development
 
 ```bash
 pnpm install
-pnpm --filter "./packages/**" build     # build les paquets
+pnpm --filter "./packages/**" build     # build the packages
 pnpm --filter "./packages/**" test      # Vitest (nexdk, beepr, chaff, drivers, hooks)
 ```
 
-- **Tests** : Vitest sur les paquets, Playwright (réseau mocké) sur les e2e Shoplab/Vota.
-- **CI** : GitHub Actions build + teste les paquets à chaque push/PR.
-- **Release** : changesets — `pnpm changeset`, `pnpm version-packages`, `pnpm release`.
+- **Tests**: Vitest on the packages, Playwright (mocked network) on the Shoplab/Vota e2e.
+- **CI**: GitHub Actions builds + tests the packages on every push/PR.
+- **Release**: changesets — `pnpm changeset`, `pnpm version-packages`, `pnpm release`.
 
 ---
 
-## Stack technique
+## Tech stack
 
-| Couche | Techno |
-|--------|--------|
-| SDK | TypeScript strict, Zod, pnpm workspaces, unbuild |
+| Layer | Tech |
+|-------|------|
+| SDK | Strict TypeScript, Zod, pnpm workspaces, unbuild |
 | Backends | Laravel 11 (Lomkit REST), Hasura v2 (GraphQL + WS), Supabase (Realtime) |
-| Infra | Traefik + mkcert (HTTPS `*.localhost`), Docker Compose multi-branche |
-| i18n | Tolgee self-hosted, fallback statique |
+| Infra | Traefik + mkcert (HTTPS `*.localhost`), multi-branch Docker Compose |
+| i18n | Self-hosted Tolgee, static fallback |
 | Tests | Vitest + Playwright |
 
 ---
 
-## Licence
+## License
 
 MIT © techmefr
