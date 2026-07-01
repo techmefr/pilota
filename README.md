@@ -35,6 +35,7 @@ Pilota is split into composable, UnJS-style building blocks — each usable on i
 | `@pilota/driver-lomkit` | REST driver (Laravel + Lomkit: `search`/`mutate`/`delete`) | `nexdk`, `beepr`, `chaff` |
 | `@pilota/driver-nhost` | GraphQL + subscriptions driver (Hasura, graphql-transport-ws) | `nexdk`, `beepr` |
 | `@pilota/driver-supabase` | Realtime driver (`postgres_changes`) | `nexdk`, `beepr` |
+| `@pilota/driver-nest` | Conventional REST CRUD driver (common NestJS controller shape) | `nexdk`, `beepr` |
 | `@pilota/hooks` | `useResourceForm` (Vue forms + Zod validation) | `nexdk`, `vue` |
 
 Acyclic graph: `beepr` and `chaff` depend on nothing else in the repo; `nexdk` consumes `beepr`'s event contract; the drivers plug in on top.
@@ -73,6 +74,22 @@ export const sdk = createPilota({
   notify: import.meta.dev ? createNotify(logAdapter) : undefined,
 })
 ```
+
+---
+
+## Writing a driver
+
+A driver translates the call grammar into a concrete protocol. The recommended
+path is the `defineDriver` helper (in `nexdk`): you write only the protocol
+translation and the unified event contract (`request`/`success`/`error`, plus
+`data`/`connected`/`disconnected` for reactive methods) is supplied for you.
+`@pilota/driver-nest` is the reference example.
+
+See **[docs/writing-a-driver.md](docs/writing-a-driver.md)** for the runtime
+contract, the `defineDriver` API, and how to add end-to-end typing.
+
+**Naming**: official drivers are `@pilota/driver-*`; community drivers are
+`pilota-driver-*`.
 
 ---
 
