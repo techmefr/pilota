@@ -29,14 +29,15 @@ Pilota is split into composable, UnJS-style building blocks — each usable on i
 
 | Package | Role | Depends on |
 |---------|------|------------|
-| [`nexdk`](packages/nexdk) | The SDK: `createPilota`, `defineResource`, proxy + end-to-end inferred types | `beepr`, `zod` |
+| [`nexdk`](packages/nexdk) | The SDK: `createPilota`, `defineResource`, `defineDriver`, proxy + end-to-end inferred types | **nothing** (`zod` peer) |
 | [`beepr`](packages/beepr) | Event engine: `createNotify`, adapters, `mergeEventHandlers` | `hookable` |
 | [`chaff`](packages/chaff) | Schema-driven mock: `parseMock`/`parseMockList`, optional MirageJS server | `zod` (peer) |
-| `@pilota/driver-lomkit` | REST driver (Laravel + Lomkit: `search`/`mutate`/`delete`) | `nexdk`, `beepr`, `chaff` |
-| `@pilota/driver-nhost` | GraphQL + subscriptions driver (Hasura, graphql-transport-ws) | `nexdk`, `beepr` |
-| `@pilota/driver-supabase` | Realtime driver (`postgres_changes`) | `nexdk`, `beepr` |
-| `@pilota/driver-nest` | Conventional REST CRUD driver (common NestJS controller shape) | `nexdk`, `beepr` |
-| `@pilota/hooks` | `useResourceForm` (Vue forms + Zod validation) | `nexdk`, `vue` |
+| `@pilota/driver-lomkit` | REST driver (Laravel + Lomkit: `search`/`mutate`/`delete`) | `nexdk` (peer), `chaff` |
+| `@pilota/driver-nhost` | GraphQL + subscriptions driver (Hasura, graphql-transport-ws) | `nexdk` (peer) |
+| `@pilota/driver-supabase` | Realtime driver (`postgres_changes`) | `nexdk` (peer), `@supabase/supabase-js` |
+| `@pilota/driver-nest` | Conventional REST CRUD driver (common NestJS controller shape) | `nexdk` (peer) |
+| `@pilota/driver-symfony` | REST driver for Symfony / API Platform (Hydra, merge-patch) | `nexdk` (peer) |
+| `@pilota/hooks` | `useResourceForm` (Vue forms + Zod validation) | `nexdk`, `vue`, `zod` (peers) |
 
 **Independence is the rule.** The core tools (`nexdk`, `beepr`, `chaff`) depend on
 nothing else in the repo — `nexdk` has **zero** runtime dependencies (`zod` is a
@@ -87,7 +88,9 @@ A driver translates the call grammar into a concrete protocol. The recommended
 path is the `defineDriver` helper (in `nexdk`): you write only the protocol
 translation and the unified event contract (`request`/`success`/`error`, plus
 `data`/`connected`/`disconnected` for reactive methods) is supplied for you.
-`@pilota/driver-nest` is the reference example.
+`@pilota/driver-nest` (and `@pilota/driver-symfony`) are the reference examples.
+To start your own, clone **[`packages/driver-template`](packages/driver-template)**
+(`pilota-driver-template`) and rename it.
 
 See **[docs/writing-a-driver.md](docs/writing-a-driver.md)** for the runtime
 contract, the `defineDriver` API, and how to add end-to-end typing.
